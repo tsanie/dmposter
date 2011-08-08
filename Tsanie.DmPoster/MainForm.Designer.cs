@@ -23,8 +23,8 @@
         /// 使用代码编辑器修改此方法的内容。
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.menuOperation = new System.Windows.Forms.ToolStripMenuItem();
             this.menuOperationLogin = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,14 +76,7 @@
             this.statusAccount = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusMessage = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.listDanmakus = new Tsanie.UI.TsListView();
-            this.columnPlayTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnFontsize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnMode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.imageListSmall = new System.Windows.Forms.ImageList(this.components);
+            this.gridDanmakus = new Tsanie.UI.TsDataGridView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolButtonNew = new System.Windows.Forms.ToolStripButton();
             this.toolButtonOpen = new System.Windows.Forms.ToolStripButton();
@@ -99,18 +92,14 @@
             this.toolTextVid = new System.Windows.Forms.ToolStripTextBox();
             this.toolButtonDownload = new System.Windows.Forms.ToolStripButton();
             this.toolButtonUpload = new System.Windows.Forms.ToolStripButton();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.danmakuBaseBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.datacolState = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
             this.statusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDanmakus)).BeginInit();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.danmakuBaseBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -503,8 +492,7 @@
             // 
             // toolStripContainer1.ContentPanel
             // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.dataGridView1);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.listDanmakus);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.gridDanmakus);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(522, 225);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 24);
@@ -560,63 +548,34 @@
             this.statusProgressBar.Size = new System.Drawing.Size(130, 17);
             this.statusProgressBar.Visible = false;
             // 
-            // listDanmakus
+            // gridDanmakus
             // 
-            this.listDanmakus.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listDanmakus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnPlayTime,
-            this.columnColor,
-            this.columnFontsize,
-            this.columnState,
-            this.columnMessage,
-            this.columnMode});
-            this.listDanmakus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listDanmakus.Font = new System.Drawing.Font("MS Gothic", 9F);
-            this.listDanmakus.FullRowSelect = true;
-            this.listDanmakus.HideSelection = false;
-            this.listDanmakus.Location = new System.Drawing.Point(0, 0);
-            this.listDanmakus.Name = "listDanmakus";
-            this.listDanmakus.Size = new System.Drawing.Size(522, 225);
-            this.listDanmakus.SmallImageList = this.imageListSmall;
-            this.listDanmakus.TabIndex = 0;
-            this.listDanmakus.UseCompatibleStateImageBehavior = false;
-            this.listDanmakus.View = System.Windows.Forms.View.Details;
-            this.listDanmakus.VirtualMode = true;
-            this.listDanmakus.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listDanmakus_RetrieveVirtualItem);
-            // 
-            // columnPlayTime
-            // 
-            this.columnPlayTime.Text = "播放时间";
-            this.columnPlayTime.Width = 80;
-            // 
-            // columnColor
-            // 
-            this.columnColor.Text = "颜色";
-            this.columnColor.Width = 80;
-            // 
-            // columnFontsize
-            // 
-            this.columnFontsize.Text = "字号";
-            // 
-            // columnState
-            // 
-            this.columnState.Text = "";
-            this.columnState.Width = 24;
-            // 
-            // columnMessage
-            // 
-            this.columnMessage.Text = "弹幕内容";
-            this.columnMessage.Width = 320;
-            // 
-            // columnMode
-            // 
-            this.columnMode.Text = "模式";
-            // 
-            // imageListSmall
-            // 
-            this.imageListSmall.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageListSmall.ImageSize = new System.Drawing.Size(1, 18);
-            this.imageListSmall.TransparentColor = System.Drawing.Color.Transparent;
+            this.gridDanmakus.AllowUserToAddRows = false;
+            this.gridDanmakus.AllowUserToDeleteRows = false;
+            this.gridDanmakus.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(234)))), ((int)(((byte)(234)))));
+            this.gridDanmakus.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridDanmakus.BackgroundColor = System.Drawing.Color.White;
+            this.gridDanmakus.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.gridDanmakus.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.gridDanmakus.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDanmakus.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.gridDanmakus.ColumnHeadersHeight = 24;
+            this.gridDanmakus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.gridDanmakus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDanmakus.Location = new System.Drawing.Point(0, 0);
+            this.gridDanmakus.Name = "gridDanmakus";
+            this.gridDanmakus.RowHeadersWidth = 10;
+            this.gridDanmakus.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("MS Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gridDanmakus.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridDanmakus.RowTemplate.Height = 21;
+            this.gridDanmakus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDanmakus.Size = new System.Drawing.Size(522, 225);
+            this.gridDanmakus.TabIndex = 1;
+            this.gridDanmakus.VirtualMode = true;
+            this.gridDanmakus.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridDanmakus_CellValueNeeded);
+            this.gridDanmakus.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridDanmakus_CellValuePushed);
             // 
             // toolStrip
             // 
@@ -757,39 +716,6 @@
             this.toolButtonUpload.Text = "上传xml弹幕";
             this.toolButtonUpload.Click += new System.EventHandler(this.Command_OnAction);
             // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dataGridView1.ColumnHeadersHeight = 24;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.datacolState});
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("MS Gothic", 9F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.Location = new System.Drawing.Point(24, 34);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(438, 150);
-            this.dataGridView1.TabIndex = 1;
-            // 
-            // danmakuBaseBindingSource
-            // 
-            this.danmakuBaseBindingSource.DataSource = typeof(Tsanie.DmPoster.Danmaku.DanmakuBase);
-            // 
-            // datacolState
-            // 
-            this.datacolState.HeaderText = "";
-            this.datacolState.Name = "datacolState";
-            this.datacolState.ReadOnly = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -812,10 +738,9 @@
             this.toolStripContainer1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDanmakus)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.danmakuBaseBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -888,18 +813,8 @@
         private System.Windows.Forms.ToolStripStatusLabel statusAccount;
         private System.Windows.Forms.ToolStripStatusLabel statusMessage;
         private System.Windows.Forms.ToolStripProgressBar statusProgressBar;
-        private Tsanie.UI.TsListView listDanmakus;
-        private System.Windows.Forms.ColumnHeader columnPlayTime;
-        private System.Windows.Forms.ColumnHeader columnColor;
-        private System.Windows.Forms.ColumnHeader columnFontsize;
-        private System.Windows.Forms.ColumnHeader columnState;
-        private System.Windows.Forms.ColumnHeader columnMessage;
-        private System.Windows.Forms.ColumnHeader columnMode;
         private System.Windows.Forms.ToolStripSplitButton toolButtonPost;
-        private System.Windows.Forms.ImageList imageListSmall;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.BindingSource danmakuBaseBindingSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn datacolState;
+        private Tsanie.UI.TsDataGridView gridDanmakus;
     }
 }
 

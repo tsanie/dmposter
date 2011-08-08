@@ -17,7 +17,7 @@ namespace Tsanie.DmPoster {
         #region - 私有字段 -
 
         private List<DanmakuBase> _listDanmakus = new List<DanmakuBase>();
-        private Dictionary<DanmakuBase, ListViewItem> _cacheItems = new Dictionary<DanmakuBase, ListViewItem>();
+        private Dictionary<DanmakuBase, DataGridViewRow> _cacheRows = new Dictionary<DanmakuBase, DataGridViewRow>();
 
         #endregion
 
@@ -27,7 +27,42 @@ namespace Tsanie.DmPoster {
             InitializeComponent();
             this.Icon = Tsanie.DmPoster.Properties.Resources.AppIcon;
             this.Text = Language.Untitled + " - " + Config.Title;
-            this.dataGridView1.DataSource = _listDanmakus;
+            // DataGridView 列初始化
+            this.gridDanmakus.Columns.AddRange(new DataGridViewColumn[] {
+                new DataGridViewNumericUpDownColumn() {
+                    Name = "datacolPlayTime",
+                    HeaderText = Language.ColumnPlayTime,
+                    ValueType = typeof(System.Single),
+                    DecimalPlaces = 1,
+                    Increment = 0.1M,
+                    Maximum = 2147483647,
+                    Width = 50,
+                    Frozen = true },
+                new TsDataGridViewColorColumn() {
+                    Name = "datacolColor",
+                    HeaderText = Language.ColumnColor,
+                    Width = 80 },
+                new DataGridViewNumericUpDownColumn() {
+                    Name = "datacolFontsize",
+                    HeaderText = Language.ColumnFontsize,
+                    ValueType = typeof(System.Int32),
+                    Minimum = 1,
+                    Maximum = 127,
+                    Width = 50,
+                    DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight } },
+                new DataGridViewTextBoxColumn() {
+                    Name = "datacolState",
+                    HeaderText = "",
+                    Width = 24, ReadOnly = true },
+                new DataGridViewTextBoxColumn() {
+                    Name = "datacolText",
+                    HeaderText = Language.ColumnText,
+                    Width = 320 },
+                new DataGridViewTextBoxColumn() {
+                    Name = "datacolMode",
+                    HeaderText = Language.ColumnMode,
+                    Width = 70 }
+            });
         }
 
         #endregion
@@ -38,25 +73,25 @@ namespace Tsanie.DmPoster {
             MessageBox.Show(this, message, title, buttons, icon);
         }
 
-        private ListViewItem CreateItemFromDanmaku(DanmakuBase danmaku) {
-            ListViewItem lvi = new ListViewItem(new string[] {
-                danmaku.PlayTime.ToTimeString(),
-                danmaku.Color.ToColorString(),
-                danmaku.Fontsize.ToString(),
-                "",
-                danmaku.Text,
-                danmaku.Mode.ToString()
+        private DataGridViewRow CreateRowFromDanmaku(DanmakuBase danmaku) {
+            DataGridViewRow row = new DataGridViewRow();
+            row.Cells.AddRange(new DataGridViewCell[] {
+                new DataGridViewTextBoxCell() { Value = danmaku.PlayTime },
+                new DataGridViewTextBoxCell() { Value = danmaku.Color },
+                new DataGridViewTextBoxCell() { Value = danmaku.Fontsize },
+                new DataGridViewTextBoxCell() { Value = "" },
+                new DataGridViewTextBoxCell() { Value = danmaku.Text },
+                new DataGridViewTextBoxCell() { Value = danmaku.Mode }
             });
-            lvi.SubItems[1].BackColor = danmaku.Color;
-            return lvi;
+            return row;
         }
 
-        private ListViewItem GetCacheItem(DanmakuBase danmaku) {
-            ListViewItem result;
-            if (_cacheItems.TryGetValue(danmaku, out result))
-                return result;
-            result = CreateItemFromDanmaku(danmaku);
-            return result;
+        private DataGridViewRow GetCacheRow(DanmakuBase danmaku) {
+            DataGridViewRow row;
+            if (_cacheRows.TryGetValue(danmaku, out row))
+                return row;
+            row = CreateRowFromDanmaku(danmaku);
+            return row;
         }
 
         #endregion
@@ -64,6 +99,11 @@ namespace Tsanie.DmPoster {
         private void Command_OnAction(object sender, EventArgs e) {
             string command = (sender as ToolStripItem).Tag as string;
             switch (command) {
+                case "Add":
+                    _listDanmakus.RemoveAt(1);
+                    gridDanmakus.RowCount = _listDanmakus.Count;
+                    gridDanmakus.Invalidate();
+                    break;
                 case "Exit":
                     this.Close();
                     Application.Exit();
@@ -76,13 +116,8 @@ namespace Tsanie.DmPoster {
 
         private void MainForm_Shown(object sender, EventArgs e) {
             // 设置 explorer 样式
-            VistaStuff.SetWindowTheme(this.listDanmakus.Handle, "explorer", null);
-            VistaStuff.SetWindowTheme(this.dataGridView1.Handle, "explorer", null);
+            Win7Stuff.SetWindowTheme(this.gridDanmakus.Handle, "explorer", null);
 
-            dataGridView1.Rows.Add("abc", "cc");
-            dataGridView1.Rows.Add("abcfcdsc", "cc"); dataGridView1.Rows.Add("abc", "csdfsdfc");
-            return;
-            listDanmakus.Enabled = false;
             System.Timers.Timer timer = new System.Timers.Timer(20);
             Random rand = new Random();
             timer.Elapsed += delegate {
@@ -90,7 +125,6 @@ namespace Tsanie.DmPoster {
                     timer.Stop();
                     timer.Dispose();
                     timer = null;
-                    this.SafeRun(delegate { listDanmakus.Enabled = true; });
                     return;
                 }
                 _listDanmakus.Add(new BiliDanmaku() {
@@ -100,13 +134,22 @@ namespace Tsanie.DmPoster {
                     PlayTime = 85.2f,
                     Text = "test"
                 });
-                this.SafeRun(delegate { listDanmakus.VirtualListSize = _listDanmakus.Count; });
+                this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
             };
             timer.Start();
         }
 
-        private void listDanmakus_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e) {
-            e.Item = GetCacheItem(_listDanmakus[e.ItemIndex]);
+        private void gridDanmakus_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
+            DataGridViewRow row = GetCacheRow(_listDanmakus[e.RowIndex]);
+            e.Value = row.Cells[e.ColumnIndex].Value;
+            if (e.ColumnIndex == 1) {
+                // Color
+                gridDanmakus[1, e.RowIndex].Style.BackColor = (Color)e.Value;
+            }
+        }
+
+        private void gridDanmakus_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
+
         }
     }
 }

@@ -13,5 +13,11 @@ namespace Tsanie.Utils {
         public static string PropertyNull { get { return "属性值不可为 null。"; } }
         public static string PropertyInvalidPlayTime { get { return "播放时间属性值无效。"; } }
         public static string PropertyInvalidFontsize { get { return "弹幕字号属性值无效。"; } }
+
+        public static string ColumnPlayTime { get { return "时间"; } }
+        public static string ColumnColor { get { return "颜色"; } }
+        public static string ColumnFontsize { get { return "字号"; } }
+        public static string ColumnText { get { return "弹幕内容"; } }
+        public static string ColumnMode { get { return "模式"; } }
     }
 }
