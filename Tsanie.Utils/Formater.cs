@@ -7,11 +7,9 @@ using System.Drawing;
 namespace Tsanie.Utils {
     public static class DanmakuFormater {
         public static string ToTimeString(this float playTime) {
-            int secondsInt = (int)Math.Floor(playTime);
-            int hour = secondsInt / 3600;
-            int minute = (secondsInt % 3600) / 60;
+            int minute = (int)Math.Floor(playTime) / 60;
             float seconds = playTime % 60.0f;
-            return string.Format("{0}:{1:D2}:{2:00.#}", hour, minute, seconds);
+            return string.Format("{0:D2}:{1:00.#}", minute, seconds);
         }
 
         public static string ToColorString(this Color color) {
