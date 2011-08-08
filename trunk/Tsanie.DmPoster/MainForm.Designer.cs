@@ -86,6 +86,7 @@
             this.toolButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolButtonSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolButtonPost = new System.Windows.Forms.ToolStripSplitButton();
             this.toolButtonStop = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolButtonSelect = new System.Windows.Forms.ToolStripButton();
@@ -95,7 +96,6 @@
             this.toolTextVid = new System.Windows.Forms.ToolStripTextBox();
             this.toolButtonDownload = new System.Windows.Forms.ToolStripButton();
             this.toolButtonUpload = new System.Windows.Forms.ToolStripButton();
-            this.toolButtonPost = new System.Windows.Forms.ToolStripSplitButton();
             this.menuStrip.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -139,7 +139,7 @@
             // 
             this.menuOperationLogin.Image = global::Tsanie.DmPoster.Properties.Resources.login;
             this.menuOperationLogin.Name = "menuOperationLogin";
-            this.menuOperationLogin.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationLogin.Size = new System.Drawing.Size(126, 22);
             this.menuOperationLogin.Tag = "Login";
             this.menuOperationLogin.Text = "登录(&L)";
             this.menuOperationLogin.Click += new System.EventHandler(this.Command_OnAction);
@@ -153,7 +153,7 @@
             // 
             this.menuOperationOpen.Image = global::Tsanie.DmPoster.Properties.Resources.open;
             this.menuOperationOpen.Name = "menuOperationOpen";
-            this.menuOperationOpen.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationOpen.Size = new System.Drawing.Size(126, 22);
             this.menuOperationOpen.Tag = "Open";
             this.menuOperationOpen.Text = "打开(&O)";
             this.menuOperationOpen.Click += new System.EventHandler(this.Command_OnAction);
@@ -162,7 +162,7 @@
             // 
             this.menuOperationSave.Image = global::Tsanie.DmPoster.Properties.Resources.save;
             this.menuOperationSave.Name = "menuOperationSave";
-            this.menuOperationSave.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationSave.Size = new System.Drawing.Size(126, 22);
             this.menuOperationSave.Tag = "Save";
             this.menuOperationSave.Text = "保存(&S)";
             this.menuOperationSave.Click += new System.EventHandler(this.Command_OnAction);
@@ -170,7 +170,7 @@
             // menuOperationSaveAs
             // 
             this.menuOperationSaveAs.Name = "menuOperationSaveAs";
-            this.menuOperationSaveAs.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationSaveAs.Size = new System.Drawing.Size(126, 22);
             this.menuOperationSaveAs.Tag = "SaveAs";
             this.menuOperationSaveAs.Text = "另存为(&A)";
             this.menuOperationSaveAs.Click += new System.EventHandler(this.Command_OnAction);
@@ -184,7 +184,7 @@
             // 
             this.menuOperationDownload.Image = global::Tsanie.DmPoster.Properties.Resources.download;
             this.menuOperationDownload.Name = "menuOperationDownload";
-            this.menuOperationDownload.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationDownload.Size = new System.Drawing.Size(126, 22);
             this.menuOperationDownload.Tag = "Download";
             this.menuOperationDownload.Text = "下载(&D)";
             this.menuOperationDownload.Click += new System.EventHandler(this.Command_OnAction);
@@ -193,7 +193,7 @@
             // 
             this.menuOperationUpload.Image = global::Tsanie.DmPoster.Properties.Resources.upload;
             this.menuOperationUpload.Name = "menuOperationUpload";
-            this.menuOperationUpload.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationUpload.Size = new System.Drawing.Size(126, 22);
             this.menuOperationUpload.Tag = "Upload";
             this.menuOperationUpload.Text = "上传(&U)";
             this.menuOperationUpload.Click += new System.EventHandler(this.Command_OnAction);
@@ -206,7 +206,7 @@
             // menuOperationExit
             // 
             this.menuOperationExit.Name = "menuOperationExit";
-            this.menuOperationExit.Size = new System.Drawing.Size(152, 22);
+            this.menuOperationExit.Size = new System.Drawing.Size(126, 22);
             this.menuOperationExit.Tag = "Exit";
             this.menuOperationExit.Text = "退出(&X)";
             this.menuOperationExit.Click += new System.EventHandler(this.Command_OnAction);
@@ -234,7 +234,7 @@
             // 
             this.menuEditAdd.Image = global::Tsanie.DmPoster.Properties.Resources.newComment;
             this.menuEditAdd.Name = "menuEditAdd";
-            this.menuEditAdd.Size = new System.Drawing.Size(152, 22);
+            this.menuEditAdd.Size = new System.Drawing.Size(115, 22);
             this.menuEditAdd.Tag = "Add";
             this.menuEditAdd.Text = "添加(&A)";
             this.menuEditAdd.Click += new System.EventHandler(this.Command_OnAction);
@@ -242,7 +242,7 @@
             // menuEditInsert
             // 
             this.menuEditInsert.Name = "menuEditInsert";
-            this.menuEditInsert.Size = new System.Drawing.Size(152, 22);
+            this.menuEditInsert.Size = new System.Drawing.Size(115, 22);
             this.menuEditInsert.Tag = "Insert";
             this.menuEditInsert.Text = "插入(&I)";
             this.menuEditInsert.Click += new System.EventHandler(this.Command_OnAction);
@@ -255,7 +255,7 @@
             // menuEditEdit
             // 
             this.menuEditEdit.Name = "menuEditEdit";
-            this.menuEditEdit.Size = new System.Drawing.Size(152, 22);
+            this.menuEditEdit.Size = new System.Drawing.Size(115, 22);
             this.menuEditEdit.Tag = "Edit";
             this.menuEditEdit.Text = "编辑(&E)";
             this.menuEditEdit.Click += new System.EventHandler(this.Command_OnAction);
@@ -263,7 +263,7 @@
             // menuEditCutting
             // 
             this.menuEditCutting.Name = "menuEditCutting";
-            this.menuEditCutting.Size = new System.Drawing.Size(152, 22);
+            this.menuEditCutting.Size = new System.Drawing.Size(115, 22);
             this.menuEditCutting.Tag = "Cutting";
             this.menuEditCutting.Text = "切割(&T)";
             this.menuEditCutting.Click += new System.EventHandler(this.Command_OnAction);
@@ -271,7 +271,7 @@
             // menuEditDelete
             // 
             this.menuEditDelete.Name = "menuEditDelete";
-            this.menuEditDelete.Size = new System.Drawing.Size(152, 22);
+            this.menuEditDelete.Size = new System.Drawing.Size(115, 22);
             this.menuEditDelete.Tag = "Delete";
             this.menuEditDelete.Text = "删除(&D)";
             this.menuEditDelete.Click += new System.EventHandler(this.Command_OnAction);
@@ -284,7 +284,7 @@
             // menuEditCopy
             // 
             this.menuEditCopy.Name = "menuEditCopy";
-            this.menuEditCopy.Size = new System.Drawing.Size(152, 22);
+            this.menuEditCopy.Size = new System.Drawing.Size(115, 22);
             this.menuEditCopy.Tag = "Copy";
             this.menuEditCopy.Text = "复制(&C)";
             this.menuEditCopy.Click += new System.EventHandler(this.Command_OnAction);
@@ -292,7 +292,7 @@
             // menuEditPaste
             // 
             this.menuEditPaste.Name = "menuEditPaste";
-            this.menuEditPaste.Size = new System.Drawing.Size(152, 22);
+            this.menuEditPaste.Size = new System.Drawing.Size(115, 22);
             this.menuEditPaste.Tag = "Paste";
             this.menuEditPaste.Text = "粘贴(&P)";
             this.menuEditPaste.Click += new System.EventHandler(this.Command_OnAction);
@@ -306,7 +306,7 @@
             // 
             this.menuEditMoveUp.Image = global::Tsanie.DmPoster.Properties.Resources.up;
             this.menuEditMoveUp.Name = "menuEditMoveUp";
-            this.menuEditMoveUp.Size = new System.Drawing.Size(152, 22);
+            this.menuEditMoveUp.Size = new System.Drawing.Size(115, 22);
             this.menuEditMoveUp.Tag = "MoveUp";
             this.menuEditMoveUp.Text = "上移(&U)";
             this.menuEditMoveUp.Click += new System.EventHandler(this.Command_OnAction);
@@ -315,7 +315,7 @@
             // 
             this.menuEditMoveDown.Image = global::Tsanie.DmPoster.Properties.Resources.down;
             this.menuEditMoveDown.Name = "menuEditMoveDown";
-            this.menuEditMoveDown.Size = new System.Drawing.Size(152, 22);
+            this.menuEditMoveDown.Size = new System.Drawing.Size(115, 22);
             this.menuEditMoveDown.Tag = "MoveDown";
             this.menuEditMoveDown.Text = "下移(&O)";
             this.menuEditMoveDown.Click += new System.EventHandler(this.Command_OnAction);
@@ -378,7 +378,7 @@
             // menuMultipleColorConstant
             // 
             this.menuMultipleColorConstant.Name = "menuMultipleColorConstant";
-            this.menuMultipleColorConstant.Size = new System.Drawing.Size(152, 22);
+            this.menuMultipleColorConstant.Size = new System.Drawing.Size(131, 22);
             this.menuMultipleColorConstant.Tag = "ColorConstant";
             this.menuMultipleColorConstant.Text = "修改到...";
             this.menuMultipleColorConstant.Click += new System.EventHandler(this.Command_OnAction);
@@ -386,7 +386,7 @@
             // menuMultipleColorGradient
             // 
             this.menuMultipleColorGradient.Name = "menuMultipleColorGradient";
-            this.menuMultipleColorGradient.Size = new System.Drawing.Size(152, 22);
+            this.menuMultipleColorGradient.Size = new System.Drawing.Size(131, 22);
             this.menuMultipleColorGradient.Tag = "ColorGradient";
             this.menuMultipleColorGradient.Text = "渐变修改...";
             this.menuMultipleColorGradient.Click += new System.EventHandler(this.Command_OnAction);
@@ -404,7 +404,7 @@
             // menuMultiplePlayTimeConstant
             // 
             this.menuMultiplePlayTimeConstant.Name = "menuMultiplePlayTimeConstant";
-            this.menuMultiplePlayTimeConstant.Size = new System.Drawing.Size(152, 22);
+            this.menuMultiplePlayTimeConstant.Size = new System.Drawing.Size(119, 22);
             this.menuMultiplePlayTimeConstant.Tag = "PlayTimeConstant";
             this.menuMultiplePlayTimeConstant.Text = "修改到...";
             this.menuMultiplePlayTimeConstant.Click += new System.EventHandler(this.Command_OnAction);
@@ -412,7 +412,7 @@
             // menuMultiplePlayTimeIncrease
             // 
             this.menuMultiplePlayTimeIncrease.Name = "menuMultiplePlayTimeIncrease";
-            this.menuMultiplePlayTimeIncrease.Size = new System.Drawing.Size(152, 22);
+            this.menuMultiplePlayTimeIncrease.Size = new System.Drawing.Size(119, 22);
             this.menuMultiplePlayTimeIncrease.Tag = "PlayTimeIncrease";
             this.menuMultiplePlayTimeIncrease.Text = "增量...";
             this.menuMultiplePlayTimeIncrease.Click += new System.EventHandler(this.Command_OnAction);
@@ -450,7 +450,7 @@
             // menuToolsOption
             // 
             this.menuToolsOption.Name = "menuToolsOption";
-            this.menuToolsOption.Size = new System.Drawing.Size(152, 22);
+            this.menuToolsOption.Size = new System.Drawing.Size(149, 22);
             this.menuToolsOption.Tag = "Option";
             this.menuToolsOption.Text = "选项(&O)";
             this.menuToolsOption.Click += new System.EventHandler(this.Command_OnAction);
@@ -464,7 +464,7 @@
             // 
             this.menuToolsPlayer.Image = global::Tsanie.DmPoster.Properties.Resources.player;
             this.menuToolsPlayer.Name = "menuToolsPlayer";
-            this.menuToolsPlayer.Size = new System.Drawing.Size(152, 22);
+            this.menuToolsPlayer.Size = new System.Drawing.Size(149, 22);
             this.menuToolsPlayer.Tag = "Player";
             this.menuToolsPlayer.Text = "打开播放器(&P)";
             this.menuToolsPlayer.Click += new System.EventHandler(this.Command_OnAction);
@@ -481,7 +481,7 @@
             // 
             this.menuHelpAbout.Image = global::Tsanie.DmPoster.Properties.Resources.help;
             this.menuHelpAbout.Name = "menuHelpAbout";
-            this.menuHelpAbout.Size = new System.Drawing.Size(152, 22);
+            this.menuHelpAbout.Size = new System.Drawing.Size(114, 22);
             this.menuHelpAbout.Tag = "About";
             this.menuHelpAbout.Text = "关于(&A)";
             this.menuHelpAbout.Click += new System.EventHandler(this.Command_OnAction);
@@ -562,12 +562,16 @@
             this.columnMessage,
             this.columnMode});
             this.listDanmakus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listDanmakus.FullRowSelect = true;
+            this.listDanmakus.HideSelection = false;
             this.listDanmakus.Location = new System.Drawing.Point(0, 0);
             this.listDanmakus.Name = "listDanmakus";
             this.listDanmakus.Size = new System.Drawing.Size(522, 225);
             this.listDanmakus.TabIndex = 0;
             this.listDanmakus.UseCompatibleStateImageBehavior = false;
             this.listDanmakus.View = System.Windows.Forms.View.Details;
+            this.listDanmakus.VirtualMode = true;
+            this.listDanmakus.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listDanmakus_RetrieveVirtualItem);
             // 
             // columnPlayTime
             // 
@@ -617,7 +621,7 @@
             this.toolButtonUpload});
             this.toolStrip.Location = new System.Drawing.Point(3, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(426, 25);
+            this.toolStrip.Size = new System.Drawing.Size(395, 25);
             this.toolStrip.TabIndex = 0;
             // 
             // toolButtonNew
@@ -654,6 +658,16 @@
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolButtonPost
+            // 
+            this.toolButtonPost.Image = global::Tsanie.DmPoster.Properties.Resources.post;
+            this.toolButtonPost.Name = "toolButtonPost";
+            this.toolButtonPost.Size = new System.Drawing.Size(63, 22);
+            this.toolButtonPost.Tag = "Post";
+            this.toolButtonPost.Text = "发送";
+            this.toolButtonPost.ToolTipText = "发送弹幕";
+            this.toolButtonPost.ButtonClick += new System.EventHandler(this.Command_OnAction);
             // 
             // toolButtonStop
             // 
@@ -725,16 +739,6 @@
             this.toolButtonUpload.Tag = "Upload";
             this.toolButtonUpload.Text = "上传xml弹幕";
             this.toolButtonUpload.Click += new System.EventHandler(this.Command_OnAction);
-            // 
-            // toolButtonPost
-            // 
-            this.toolButtonPost.Image = global::Tsanie.DmPoster.Properties.Resources.post;
-            this.toolButtonPost.Name = "toolButtonPost";
-            this.toolButtonPost.Size = new System.Drawing.Size(63, 22);
-            this.toolButtonPost.Tag = "Post";
-            this.toolButtonPost.Text = "发送";
-            this.toolButtonPost.ToolTipText = "发送弹幕";
-            this.toolButtonPost.ButtonClick += new System.EventHandler(this.Command_OnAction);
             // 
             // MainForm
             // 
