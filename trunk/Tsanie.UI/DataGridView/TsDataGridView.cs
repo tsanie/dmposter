@@ -8,8 +8,8 @@ namespace Tsanie.UI {
     public class TsDataGridView : DataGridView {
         public TsDataGridView()
             : base() {
-            //this.SetStyle(ControlStyles.AllPaintingInWmPaint |
-            //    ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer, true);
         }
     }
 }

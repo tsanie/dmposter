@@ -42,20 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataGridViewNumericUpDownCell.cs" />
-    <Compile Include="DataGridViewNumericUpDownColumn.cs" />
-    <Compile Include="DataGridViewNumericUpDownEditingControl.cs">
+    <Compile Include="DataGridView\DataGridViewNumericUpDownCell.cs" />
+    <Compile Include="DataGridView\DataGridViewNumericUpDownColumn.cs" />
+    <Compile Include="DataGridView\DataGridViewNumericUpDownEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="ProgressTaskbar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TsDataGridViewColorCell.cs" />
-    <Compile Include="TsDataGridView.cs">
+    <Compile Include="DataGridView\TsDataGridViewColorCell.cs" />
+    <Compile Include="DataGridView\TsDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TsDataGridViewColorColumn.cs" />
-    <Compile Include="TsDataGridViewColorEditingControl.cs">
+    <Compile Include="DataGridView\TsDataGridViewColorColumn.cs" />
+    <Compile Include="DataGridView\TsDataGridViewColorEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Win7Stuff.cs" />

@@ -37,31 +37,39 @@ namespace Tsanie.DmPoster {
                     Increment = 0.1M,
                     Maximum = 2147483647,
                     Width = 50,
+                    MinimumWidth = 44,
                     Frozen = true },
                 new TsDataGridViewColorColumn() {
                     Name = "datacolColor",
                     HeaderText = Language.ColumnColor,
-                    Width = 80 },
+                    Width = 74,
+                    MinimumWidth = 64},
                 new DataGridViewNumericUpDownColumn() {
                     Name = "datacolFontsize",
                     HeaderText = Language.ColumnFontsize,
                     ValueType = typeof(System.Int32),
                     Minimum = 1,
                     Maximum = 127,
-                    Width = 50,
+                    Width = 44,
+                    MinimumWidth = 36,
                     DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight } },
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolState",
                     HeaderText = "",
-                    Width = 24, ReadOnly = true },
+                    Width = 24,
+                    MinimumWidth = 20,
+                    ReadOnly = true },
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolText",
                     HeaderText = Language.ColumnText,
-                    Width = 320 },
+                    Width = 320,
+                    MinimumWidth = 62},
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolMode",
                     HeaderText = Language.ColumnMode,
-                    Width = 70 }
+                    Width = 120,
+                    MinimumWidth = 120,
+                    ReadOnly = true}
             });
         }
 
@@ -116,12 +124,12 @@ namespace Tsanie.DmPoster {
 
         private void MainForm_Shown(object sender, EventArgs e) {
             // 设置 explorer 样式
-            Win7Stuff.SetWindowTheme(this.gridDanmakus.Handle, "explorer", null);
+            Win7Stuff.SetWindowTheme(this.menuStrip.Handle, "explorer", null);
 
             System.Timers.Timer timer = new System.Timers.Timer(20);
             Random rand = new Random();
             timer.Elapsed += delegate {
-                if (_listDanmakus.Count > 50) {
+                if (_listDanmakus.Count > 20) {
                     timer.Stop();
                     timer.Dispose();
                     timer = null;
