@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BiliDanmaku.cs" />
     <Compile Include="DanmakuBase.cs" />
     <Compile Include="DanmakuMode.cs" />
     <Compile Include="DanmakuExceptions.cs" />

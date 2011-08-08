@@ -31,17 +31,17 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取弹幕ID
         /// </summary>
-        public int DmID { get { return _dmid; } }
+        public virtual int DmID { get { return _dmid; } }
 
         /// <summary>
         /// 获取弹幕发送人ID
         /// </summary>
-        public string UsID { get { return _usid; } }
+        public virtual string UsID { get { return _usid; } }
 
         /// <summary>
         /// 获取或设置弹幕模式
         /// </summary>
-        public DanmakuMode Mode {
+        public virtual DanmakuMode Mode {
             get { return _mode; }
             set { _mode = value; }
         }
@@ -49,12 +49,12 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取弹幕创建日期
         /// </summary>
-        public DateTime Date { get { return _date; } }
+        public virtual DateTime Date { get { return _date; } }
 
         /// <summary>
         /// 获取或设置弹幕播放时间
         /// </summary>
-        public float PlayTime {
+        public virtual float PlayTime {
             get { return _playTime; }
             set {
                 if (value < 0)
@@ -66,7 +66,7 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取或设置弹幕字号
         /// </summary>
-        public int Fontsize {
+        public virtual int Fontsize {
             get { return _fontsize; }
             set {
                 if (value < 1 || value > 127)
@@ -78,7 +78,7 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取或设置弹幕字体颜色
         /// </summary>
-        public Color Color {
+        public virtual Color Color {
             get { return _color; }
             set { _color = value; }
         }
@@ -86,7 +86,7 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取或设置弹幕文本
         /// </summary>
-        public string Text {
+        public virtual string Text {
             get { return _text; }
             set {
                 if (value == null)
