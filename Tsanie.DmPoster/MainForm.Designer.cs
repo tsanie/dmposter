@@ -112,7 +112,7 @@
             this.menuHelp});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(522, 24);
+            this.menuStrip.Size = new System.Drawing.Size(522, 26);
             this.menuStrip.TabIndex = 0;
             // 
             // menuOperation
@@ -129,14 +129,14 @@
             this.toolStripSeparator3,
             this.menuOperationExit});
             this.menuOperation.Name = "menuOperation";
-            this.menuOperation.Size = new System.Drawing.Size(60, 20);
+            this.menuOperation.Size = new System.Drawing.Size(63, 22);
             this.menuOperation.Text = "操作(&O)";
             // 
             // menuOperationLogin
             // 
             this.menuOperationLogin.Image = global::Tsanie.DmPoster.Properties.Resources.login;
             this.menuOperationLogin.Name = "menuOperationLogin";
-            this.menuOperationLogin.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationLogin.Size = new System.Drawing.Size(130, 22);
             this.menuOperationLogin.Tag = "Login";
             this.menuOperationLogin.Text = "登录(&L)";
             this.menuOperationLogin.Click += new System.EventHandler(this.Command_OnAction);
@@ -144,13 +144,13 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(123, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(127, 6);
             // 
             // menuOperationOpen
             // 
             this.menuOperationOpen.Image = global::Tsanie.DmPoster.Properties.Resources.open;
             this.menuOperationOpen.Name = "menuOperationOpen";
-            this.menuOperationOpen.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationOpen.Size = new System.Drawing.Size(130, 22);
             this.menuOperationOpen.Tag = "Open";
             this.menuOperationOpen.Text = "打开(&O)";
             this.menuOperationOpen.Click += new System.EventHandler(this.Command_OnAction);
@@ -159,7 +159,7 @@
             // 
             this.menuOperationSave.Image = global::Tsanie.DmPoster.Properties.Resources.save;
             this.menuOperationSave.Name = "menuOperationSave";
-            this.menuOperationSave.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationSave.Size = new System.Drawing.Size(130, 22);
             this.menuOperationSave.Tag = "Save";
             this.menuOperationSave.Text = "保存(&S)";
             this.menuOperationSave.Click += new System.EventHandler(this.Command_OnAction);
@@ -167,7 +167,7 @@
             // menuOperationSaveAs
             // 
             this.menuOperationSaveAs.Name = "menuOperationSaveAs";
-            this.menuOperationSaveAs.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationSaveAs.Size = new System.Drawing.Size(130, 22);
             this.menuOperationSaveAs.Tag = "SaveAs";
             this.menuOperationSaveAs.Text = "另存为(&A)";
             this.menuOperationSaveAs.Click += new System.EventHandler(this.Command_OnAction);
@@ -175,13 +175,13 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(123, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(127, 6);
             // 
             // menuOperationDownload
             // 
             this.menuOperationDownload.Image = global::Tsanie.DmPoster.Properties.Resources.download;
             this.menuOperationDownload.Name = "menuOperationDownload";
-            this.menuOperationDownload.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationDownload.Size = new System.Drawing.Size(130, 22);
             this.menuOperationDownload.Tag = "Download";
             this.menuOperationDownload.Text = "下载(&D)";
             this.menuOperationDownload.Click += new System.EventHandler(this.Command_OnAction);
@@ -190,7 +190,7 @@
             // 
             this.menuOperationUpload.Image = global::Tsanie.DmPoster.Properties.Resources.upload;
             this.menuOperationUpload.Name = "menuOperationUpload";
-            this.menuOperationUpload.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationUpload.Size = new System.Drawing.Size(130, 22);
             this.menuOperationUpload.Tag = "Upload";
             this.menuOperationUpload.Text = "上传(&U)";
             this.menuOperationUpload.Click += new System.EventHandler(this.Command_OnAction);
@@ -198,12 +198,12 @@
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(123, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
             // 
             // menuOperationExit
             // 
             this.menuOperationExit.Name = "menuOperationExit";
-            this.menuOperationExit.Size = new System.Drawing.Size(126, 22);
+            this.menuOperationExit.Size = new System.Drawing.Size(130, 22);
             this.menuOperationExit.Tag = "Exit";
             this.menuOperationExit.Text = "退出(&X)";
             this.menuOperationExit.Click += new System.EventHandler(this.Command_OnAction);
@@ -224,14 +224,14 @@
             this.menuEditMoveUp,
             this.menuEditMoveDown});
             this.menuEdit.Name = "menuEdit";
-            this.menuEdit.Size = new System.Drawing.Size(57, 20);
+            this.menuEdit.Size = new System.Drawing.Size(61, 22);
             this.menuEdit.Text = "编辑(&E)";
             // 
             // menuEditAdd
             // 
             this.menuEditAdd.Image = global::Tsanie.DmPoster.Properties.Resources.newComment;
             this.menuEditAdd.Name = "menuEditAdd";
-            this.menuEditAdd.Size = new System.Drawing.Size(115, 22);
+            this.menuEditAdd.Size = new System.Drawing.Size(119, 22);
             this.menuEditAdd.Tag = "Add";
             this.menuEditAdd.Text = "添加(&A)";
             this.menuEditAdd.Click += new System.EventHandler(this.Command_OnAction);
@@ -239,7 +239,7 @@
             // menuEditInsert
             // 
             this.menuEditInsert.Name = "menuEditInsert";
-            this.menuEditInsert.Size = new System.Drawing.Size(115, 22);
+            this.menuEditInsert.Size = new System.Drawing.Size(119, 22);
             this.menuEditInsert.Tag = "Insert";
             this.menuEditInsert.Text = "插入(&I)";
             this.menuEditInsert.Click += new System.EventHandler(this.Command_OnAction);
@@ -247,12 +247,12 @@
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(116, 6);
             // 
             // menuEditEdit
             // 
             this.menuEditEdit.Name = "menuEditEdit";
-            this.menuEditEdit.Size = new System.Drawing.Size(115, 22);
+            this.menuEditEdit.Size = new System.Drawing.Size(119, 22);
             this.menuEditEdit.Tag = "Edit";
             this.menuEditEdit.Text = "编辑(&E)";
             this.menuEditEdit.Click += new System.EventHandler(this.Command_OnAction);
@@ -260,7 +260,7 @@
             // menuEditCutting
             // 
             this.menuEditCutting.Name = "menuEditCutting";
-            this.menuEditCutting.Size = new System.Drawing.Size(115, 22);
+            this.menuEditCutting.Size = new System.Drawing.Size(119, 22);
             this.menuEditCutting.Tag = "Cutting";
             this.menuEditCutting.Text = "切割(&T)";
             this.menuEditCutting.Click += new System.EventHandler(this.Command_OnAction);
@@ -268,7 +268,7 @@
             // menuEditDelete
             // 
             this.menuEditDelete.Name = "menuEditDelete";
-            this.menuEditDelete.Size = new System.Drawing.Size(115, 22);
+            this.menuEditDelete.Size = new System.Drawing.Size(119, 22);
             this.menuEditDelete.Tag = "Delete";
             this.menuEditDelete.Text = "删除(&D)";
             this.menuEditDelete.Click += new System.EventHandler(this.Command_OnAction);
@@ -276,12 +276,12 @@
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(116, 6);
             // 
             // menuEditCopy
             // 
             this.menuEditCopy.Name = "menuEditCopy";
-            this.menuEditCopy.Size = new System.Drawing.Size(115, 22);
+            this.menuEditCopy.Size = new System.Drawing.Size(119, 22);
             this.menuEditCopy.Tag = "Copy";
             this.menuEditCopy.Text = "复制(&C)";
             this.menuEditCopy.Click += new System.EventHandler(this.Command_OnAction);
@@ -289,7 +289,7 @@
             // menuEditPaste
             // 
             this.menuEditPaste.Name = "menuEditPaste";
-            this.menuEditPaste.Size = new System.Drawing.Size(115, 22);
+            this.menuEditPaste.Size = new System.Drawing.Size(119, 22);
             this.menuEditPaste.Tag = "Paste";
             this.menuEditPaste.Text = "粘贴(&P)";
             this.menuEditPaste.Click += new System.EventHandler(this.Command_OnAction);
@@ -297,13 +297,13 @@
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(116, 6);
             // 
             // menuEditMoveUp
             // 
             this.menuEditMoveUp.Image = global::Tsanie.DmPoster.Properties.Resources.up;
             this.menuEditMoveUp.Name = "menuEditMoveUp";
-            this.menuEditMoveUp.Size = new System.Drawing.Size(115, 22);
+            this.menuEditMoveUp.Size = new System.Drawing.Size(119, 22);
             this.menuEditMoveUp.Tag = "MoveUp";
             this.menuEditMoveUp.Text = "上移(&U)";
             this.menuEditMoveUp.Click += new System.EventHandler(this.Command_OnAction);
@@ -312,7 +312,7 @@
             // 
             this.menuEditMoveDown.Image = global::Tsanie.DmPoster.Properties.Resources.down;
             this.menuEditMoveDown.Name = "menuEditMoveDown";
-            this.menuEditMoveDown.Size = new System.Drawing.Size(115, 22);
+            this.menuEditMoveDown.Size = new System.Drawing.Size(119, 22);
             this.menuEditMoveDown.Tag = "MoveDown";
             this.menuEditMoveDown.Text = "下移(&O)";
             this.menuEditMoveDown.Click += new System.EventHandler(this.Command_OnAction);
@@ -330,13 +330,13 @@
             this.toolStripSeparator8,
             this.menuMultipleMode7});
             this.menuMultiple.Name = "menuMultiple";
-            this.menuMultiple.Size = new System.Drawing.Size(62, 20);
+            this.menuMultiple.Size = new System.Drawing.Size(64, 22);
             this.menuMultiple.Text = "批量(&M)";
             // 
             // menuMultipleInsertBefore
             // 
             this.menuMultipleInsertBefore.Name = "menuMultipleInsertBefore";
-            this.menuMultipleInsertBefore.Size = new System.Drawing.Size(162, 22);
+            this.menuMultipleInsertBefore.Size = new System.Drawing.Size(166, 22);
             this.menuMultipleInsertBefore.Tag = "InsertBefore";
             this.menuMultipleInsertBefore.Text = "在弹幕前插入(&I)";
             this.menuMultipleInsertBefore.Click += new System.EventHandler(this.Command_OnAction);
@@ -344,7 +344,7 @@
             // menuMultipleAppendAfter
             // 
             this.menuMultipleAppendAfter.Name = "menuMultipleAppendAfter";
-            this.menuMultipleAppendAfter.Size = new System.Drawing.Size(162, 22);
+            this.menuMultipleAppendAfter.Size = new System.Drawing.Size(166, 22);
             this.menuMultipleAppendAfter.Tag = "AppendAfter";
             this.menuMultipleAppendAfter.Text = "在弹幕后添加(&A)";
             this.menuMultipleAppendAfter.Click += new System.EventHandler(this.Command_OnAction);
@@ -352,12 +352,12 @@
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(163, 6);
             // 
             // menuMultipleFontsize
             // 
             this.menuMultipleFontsize.Name = "menuMultipleFontsize";
-            this.menuMultipleFontsize.Size = new System.Drawing.Size(162, 22);
+            this.menuMultipleFontsize.Size = new System.Drawing.Size(166, 22);
             this.menuMultipleFontsize.Tag = "Fontsize";
             this.menuMultipleFontsize.Text = "字体大小(&S)";
             this.menuMultipleFontsize.Click += new System.EventHandler(this.Command_OnAction);
@@ -368,14 +368,14 @@
             this.menuMultipleColorConstant,
             this.menuMultipleColorGradient});
             this.menuMultipleColor.Name = "menuMultipleColor";
-            this.menuMultipleColor.Size = new System.Drawing.Size(162, 22);
+            this.menuMultipleColor.Size = new System.Drawing.Size(166, 22);
             this.menuMultipleColor.Tag = "Color";
             this.menuMultipleColor.Text = "颜色(&C)";
             // 
             // menuMultipleColorConstant
             // 
             this.menuMultipleColorConstant.Name = "menuMultipleColorConstant";
-            this.menuMultipleColorConstant.Size = new System.Drawing.Size(131, 22);
+            this.menuMultipleColorConstant.Size = new System.Drawing.Size(136, 22);
             this.menuMultipleColorConstant.Tag = "ColorConstant";
             this.menuMultipleColorConstant.Text = "修改到...";
             this.menuMultipleColorConstant.Click += new System.EventHandler(this.Command_OnAction);
@@ -383,7 +383,7 @@
             // menuMultipleColorGradient
             // 
             this.menuMultipleColorGradient.Name = "menuMultipleColorGradient";
-            this.menuMultipleColorGradient.Size = new System.Drawing.Size(131, 22);
+            this.menuMultipleColorGradient.Size = new System.Drawing.Size(136, 22);
             this.menuMultipleColorGradient.Tag = "ColorGradient";
             this.menuMultipleColorGradient.Text = "渐变修改...";
             this.menuMultipleColorGradient.Click += new System.EventHandler(this.Command_OnAction);
@@ -394,14 +394,14 @@
             this.menuMultiplePlayTimeConstant,
             this.menuMultiplePlayTimeIncrease});
             this.menuMultiplePlayTime.Name = "menuMultiplePlayTime";
-            this.menuMultiplePlayTime.Size = new System.Drawing.Size(162, 22);
+            this.menuMultiplePlayTime.Size = new System.Drawing.Size(166, 22);
             this.menuMultiplePlayTime.Tag = "PlayTime";
             this.menuMultiplePlayTime.Text = "出现时间(&T)";
             // 
             // menuMultiplePlayTimeConstant
             // 
             this.menuMultiplePlayTimeConstant.Name = "menuMultiplePlayTimeConstant";
-            this.menuMultiplePlayTimeConstant.Size = new System.Drawing.Size(119, 22);
+            this.menuMultiplePlayTimeConstant.Size = new System.Drawing.Size(124, 22);
             this.menuMultiplePlayTimeConstant.Tag = "PlayTimeConstant";
             this.menuMultiplePlayTimeConstant.Text = "修改到...";
             this.menuMultiplePlayTimeConstant.Click += new System.EventHandler(this.Command_OnAction);
@@ -409,7 +409,7 @@
             // menuMultiplePlayTimeIncrease
             // 
             this.menuMultiplePlayTimeIncrease.Name = "menuMultiplePlayTimeIncrease";
-            this.menuMultiplePlayTimeIncrease.Size = new System.Drawing.Size(119, 22);
+            this.menuMultiplePlayTimeIncrease.Size = new System.Drawing.Size(124, 22);
             this.menuMultiplePlayTimeIncrease.Tag = "PlayTimeIncrease";
             this.menuMultiplePlayTimeIncrease.Text = "增量...";
             this.menuMultiplePlayTimeIncrease.Click += new System.EventHandler(this.Command_OnAction);
@@ -417,7 +417,7 @@
             // menuMultipleMode
             // 
             this.menuMultipleMode.Name = "menuMultipleMode";
-            this.menuMultipleMode.Size = new System.Drawing.Size(162, 22);
+            this.menuMultipleMode.Size = new System.Drawing.Size(166, 22);
             this.menuMultipleMode.Tag = "Mode";
             this.menuMultipleMode.Text = "弹幕模式(&M)";
             this.menuMultipleMode.Click += new System.EventHandler(this.Command_OnAction);
@@ -425,12 +425,12 @@
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(163, 6);
             // 
             // menuMultipleMode7
             // 
             this.menuMultipleMode7.Name = "menuMultipleMode7";
-            this.menuMultipleMode7.Size = new System.Drawing.Size(162, 22);
+            this.menuMultipleMode7.Size = new System.Drawing.Size(166, 22);
             this.menuMultipleMode7.Tag = "Mode7";
             this.menuMultipleMode7.Text = "Mode7弹幕(&7)";
             // 
@@ -441,13 +441,13 @@
             this.toolStripSeparator9,
             this.menuToolsPlayer});
             this.menuTools.Name = "menuTools";
-            this.menuTools.Size = new System.Drawing.Size(58, 20);
+            this.menuTools.Size = new System.Drawing.Size(62, 22);
             this.menuTools.Text = "工具(&T)";
             // 
             // menuToolsOption
             // 
             this.menuToolsOption.Name = "menuToolsOption";
-            this.menuToolsOption.Size = new System.Drawing.Size(149, 22);
+            this.menuToolsOption.Size = new System.Drawing.Size(153, 22);
             this.menuToolsOption.Tag = "Option";
             this.menuToolsOption.Text = "选项(&O)";
             this.menuToolsOption.Click += new System.EventHandler(this.Command_OnAction);
@@ -455,13 +455,13 @@
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(146, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(150, 6);
             // 
             // menuToolsPlayer
             // 
             this.menuToolsPlayer.Image = global::Tsanie.DmPoster.Properties.Resources.player;
             this.menuToolsPlayer.Name = "menuToolsPlayer";
-            this.menuToolsPlayer.Size = new System.Drawing.Size(149, 22);
+            this.menuToolsPlayer.Size = new System.Drawing.Size(153, 22);
             this.menuToolsPlayer.Tag = "Player";
             this.menuToolsPlayer.Text = "打开播放器(&P)";
             this.menuToolsPlayer.Click += new System.EventHandler(this.Command_OnAction);
@@ -471,14 +471,14 @@
             this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuHelpAbout});
             this.menuHelp.Name = "menuHelp";
-            this.menuHelp.Size = new System.Drawing.Size(60, 20);
+            this.menuHelp.Size = new System.Drawing.Size(63, 22);
             this.menuHelp.Text = "帮助(&H)";
             // 
             // menuHelpAbout
             // 
             this.menuHelpAbout.Image = global::Tsanie.DmPoster.Properties.Resources.help;
             this.menuHelpAbout.Name = "menuHelpAbout";
-            this.menuHelpAbout.Size = new System.Drawing.Size(114, 22);
+            this.menuHelpAbout.Size = new System.Drawing.Size(118, 22);
             this.menuHelpAbout.Tag = "About";
             this.menuHelpAbout.Text = "关于(&A)";
             this.menuHelpAbout.Click += new System.EventHandler(this.Command_OnAction);
@@ -493,11 +493,11 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.gridDanmakus);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(522, 225);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(522, 223);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer1.Location = new System.Drawing.Point(0, 24);
+            this.toolStripContainer1.Location = new System.Drawing.Point(0, 26);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(522, 273);
+            this.toolStripContainer1.Size = new System.Drawing.Size(522, 271);
             this.toolStripContainer1.TabIndex = 1;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -571,7 +571,7 @@
             this.gridDanmakus.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDanmakus.RowTemplate.Height = 21;
             this.gridDanmakus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDanmakus.Size = new System.Drawing.Size(522, 225);
+            this.gridDanmakus.Size = new System.Drawing.Size(522, 223);
             this.gridDanmakus.TabIndex = 1;
             this.gridDanmakus.VirtualMode = true;
             this.gridDanmakus.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridDanmakus_CellValueNeeded);
@@ -597,7 +597,7 @@
             this.toolButtonUpload});
             this.toolStrip.Location = new System.Drawing.Point(3, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(395, 25);
+            this.toolStrip.Size = new System.Drawing.Size(401, 25);
             this.toolStrip.TabIndex = 0;
             // 
             // toolButtonNew
@@ -639,7 +639,7 @@
             // 
             this.toolButtonPost.Image = global::Tsanie.DmPoster.Properties.Resources.post;
             this.toolButtonPost.Name = "toolButtonPost";
-            this.toolButtonPost.Size = new System.Drawing.Size(63, 22);
+            this.toolButtonPost.Size = new System.Drawing.Size(64, 22);
             this.toolButtonPost.Tag = "Post";
             this.toolButtonPost.Text = "发送";
             this.toolButtonPost.ToolTipText = "发送弹幕";
@@ -688,7 +688,7 @@
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(46, 22);
+            this.toolStripLabel1.Size = new System.Drawing.Size(51, 22);
             this.toolStripLabel1.Text = "Av/Vid:";
             // 
             // toolTextVid

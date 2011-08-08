@@ -5,18 +5,17 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace Tsanie.UI
-{
+namespace Tsanie.UI {
     /// <summary>
     /// Custom column type dedicated to the DataGridViewNumericUpDownCell cell type.
     /// </summary>
-    public class DataGridViewNumericUpDownColumn : DataGridViewColumn
-    {
+    public class DataGridViewNumericUpDownColumn : DataGridViewColumn {
         /// <summary>
         /// Constructor for the DataGridViewNumericUpDownColumn class.
         /// </summary>
-        public DataGridViewNumericUpDownColumn() : base(new DataGridViewNumericUpDownCell())
-        {
+        public DataGridViewNumericUpDownColumn()
+            : base(new DataGridViewNumericUpDownCell()) {
+            this.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         /// <summary>
@@ -26,17 +25,13 @@ namespace Tsanie.UI
             Browsable(false),
             DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
-        public override DataGridViewCell CellTemplate
-        {
-            get
-            {
+        public override DataGridViewCell CellTemplate {
+            get {
                 return base.CellTemplate;
             }
-            set
-            {
+            set {
                 DataGridViewNumericUpDownCell dataGridViewNumericUpDownCell = value as DataGridViewNumericUpDownCell;
-                if (value != null && dataGridViewNumericUpDownCell == null)
-                {
+                if (value != null && dataGridViewNumericUpDownCell == null) {
                     throw new InvalidCastException("Value provided for CellTemplate must be of type DataGridViewNumericUpDownElements.DataGridViewNumericUpDownCell or derive from it.");
                 }
                 base.CellTemplate = value;
@@ -51,37 +46,29 @@ namespace Tsanie.UI
             DefaultValue(DataGridViewNumericUpDownCell.DATAGRIDVIEWNUMERICUPDOWNCELL_defaultDecimalPlaces),
             Description("Indicates the number of decimal places to display.")
         ]
-        public int DecimalPlaces
-        {
-            get
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+        public int DecimalPlaces {
+            get {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 return this.NumericUpDownCellTemplate.DecimalPlaces;
             }
-            set
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+            set {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 // Update the template cell so that subsequent cloned cells use the new value.
                 this.NumericUpDownCellTemplate.DecimalPlaces = value;
-                if (this.DataGridView != null)
-                {
+                if (this.DataGridView != null) {
                     // Update all the existing DataGridViewNumericUpDownCell cells in the column accordingly.
                     DataGridViewRowCollection dataGridViewRows = this.DataGridView.Rows;
                     int rowCount = dataGridViewRows.Count;
-                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
-                    {
+                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                         // Be careful not to unshare rows unnecessarily. 
                         // This could have severe performance repercussions.
                         DataGridViewRow dataGridViewRow = dataGridViewRows.SharedRow(rowIndex);
                         DataGridViewNumericUpDownCell dataGridViewCell = dataGridViewRow.Cells[this.Index] as DataGridViewNumericUpDownCell;
-                        if (dataGridViewCell != null)
-                        {
+                        if (dataGridViewCell != null) {
                             // Call the internal SetDecimalPlaces method instead of the property to avoid invalidation 
                             // of each cell. The whole column is invalidated later in a single operation for better performance.
                             dataGridViewCell.SetDecimalPlaces(rowIndex, value);
@@ -100,33 +87,25 @@ namespace Tsanie.UI
             Category("Data"),
             Description("Indicates the amount to increment or decrement on each button click.")
         ]
-        public Decimal Increment
-        {
-            get
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+        public Decimal Increment {
+            get {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 return this.NumericUpDownCellTemplate.Increment;
             }
-            set
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+            set {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 this.NumericUpDownCellTemplate.Increment = value;
-                if (this.DataGridView != null)
-                {
+                if (this.DataGridView != null) {
                     DataGridViewRowCollection dataGridViewRows = this.DataGridView.Rows;
                     int rowCount = dataGridViewRows.Count;
-                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
-                    {
+                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                         DataGridViewRow dataGridViewRow = dataGridViewRows.SharedRow(rowIndex);
                         DataGridViewNumericUpDownCell dataGridViewCell = dataGridViewRow.Cells[this.Index] as DataGridViewNumericUpDownCell;
-                        if (dataGridViewCell != null)
-                        {
+                        if (dataGridViewCell != null) {
                             dataGridViewCell.SetIncrement(rowIndex, value);
                         }
                     }
@@ -135,8 +114,7 @@ namespace Tsanie.UI
         }
 
         /// Indicates whether the Increment property should be persisted.
-        private bool ShouldSerializeIncrement()
-        {
+        private bool ShouldSerializeIncrement() {
             return !this.Increment.Equals(DataGridViewNumericUpDownCell.DATAGRIDVIEWNUMERICUPDOWNCELL_defaultIncrement);
         }
 
@@ -148,33 +126,25 @@ namespace Tsanie.UI
             Description("Indicates the maximum value for the numeric up-down cells."),
             RefreshProperties(RefreshProperties.All)
         ]
-        public Decimal Maximum
-        {
-            get
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+        public Decimal Maximum {
+            get {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 return this.NumericUpDownCellTemplate.Maximum;
             }
-            set
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+            set {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 this.NumericUpDownCellTemplate.Maximum = value;
-                if (this.DataGridView != null)
-                {
+                if (this.DataGridView != null) {
                     DataGridViewRowCollection dataGridViewRows = this.DataGridView.Rows;
                     int rowCount = dataGridViewRows.Count;
-                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
-                    {
+                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                         DataGridViewRow dataGridViewRow = dataGridViewRows.SharedRow(rowIndex);
                         DataGridViewNumericUpDownCell dataGridViewCell = dataGridViewRow.Cells[this.Index] as DataGridViewNumericUpDownCell;
-                        if (dataGridViewCell != null)
-                        {
+                        if (dataGridViewCell != null) {
                             dataGridViewCell.SetMaximum(rowIndex, value);
                         }
                     }
@@ -187,8 +157,7 @@ namespace Tsanie.UI
         }
 
         /// Indicates whether the Maximum property should be persisted.
-        private bool ShouldSerializeMaximum()
-        {
+        private bool ShouldSerializeMaximum() {
             return !this.Maximum.Equals(DataGridViewNumericUpDownCell.DATAGRIDVIEWNUMERICUPDOWNCELL_defaultMaximum);
         }
 
@@ -200,33 +169,25 @@ namespace Tsanie.UI
             Description("Indicates the minimum value for the numeric up-down cells."),
             RefreshProperties(RefreshProperties.All)
         ]
-        public Decimal Minimum
-        {
-            get
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+        public Decimal Minimum {
+            get {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 return this.NumericUpDownCellTemplate.Minimum;
             }
-            set
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+            set {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 this.NumericUpDownCellTemplate.Minimum = value;
-                if (this.DataGridView != null)
-                {
+                if (this.DataGridView != null) {
                     DataGridViewRowCollection dataGridViewRows = this.DataGridView.Rows;
                     int rowCount = dataGridViewRows.Count;
-                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
-                    {
+                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                         DataGridViewRow dataGridViewRow = dataGridViewRows.SharedRow(rowIndex);
                         DataGridViewNumericUpDownCell dataGridViewCell = dataGridViewRow.Cells[this.Index] as DataGridViewNumericUpDownCell;
-                        if (dataGridViewCell != null)
-                        {
+                        if (dataGridViewCell != null) {
                             dataGridViewCell.SetMinimum(rowIndex, value);
                         }
                     }
@@ -239,8 +200,7 @@ namespace Tsanie.UI
         }
 
         /// Indicates whether the Maximum property should be persisted.
-        private bool ShouldSerializeMinimum()
-        {
+        private bool ShouldSerializeMinimum() {
             return !this.Minimum.Equals(DataGridViewNumericUpDownCell.DATAGRIDVIEWNUMERICUPDOWNCELL_defaultMinimum);
         }
 
@@ -252,33 +212,25 @@ namespace Tsanie.UI
             DefaultValue(DataGridViewNumericUpDownCell.DATAGRIDVIEWNUMERICUPDOWNCELL_defaultThousandsSeparator),
             Description("Indicates whether the thousands separator will be inserted between every three decimal digits.")
         ]
-        public bool ThousandsSeparator
-        {
-            get
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+        public bool ThousandsSeparator {
+            get {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 return this.NumericUpDownCellTemplate.ThousandsSeparator;
             }
-            set
-            {
-                if (this.NumericUpDownCellTemplate == null)
-                {
+            set {
+                if (this.NumericUpDownCellTemplate == null) {
                     throw new InvalidOperationException("Operation cannot be completed because this DataGridViewColumn does not have a CellTemplate.");
                 }
                 this.NumericUpDownCellTemplate.ThousandsSeparator = value;
-                if (this.DataGridView != null)
-                {
+                if (this.DataGridView != null) {
                     DataGridViewRowCollection dataGridViewRows = this.DataGridView.Rows;
                     int rowCount = dataGridViewRows.Count;
-                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
-                    {
+                    for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                         DataGridViewRow dataGridViewRow = dataGridViewRows.SharedRow(rowIndex);
                         DataGridViewNumericUpDownCell dataGridViewCell = dataGridViewRow.Cells[this.Index] as DataGridViewNumericUpDownCell;
-                        if (dataGridViewCell != null)
-                        {
+                        if (dataGridViewCell != null) {
                             dataGridViewCell.SetThousandsSeparator(rowIndex, value);
                         }
                     }
@@ -293,10 +245,8 @@ namespace Tsanie.UI
         /// <summary>
         /// Small utility function that returns the template cell as a DataGridViewNumericUpDownCell
         /// </summary>
-        private DataGridViewNumericUpDownCell NumericUpDownCellTemplate
-        {
-            get
-            {
+        private DataGridViewNumericUpDownCell NumericUpDownCellTemplate {
+            get {
                 return (DataGridViewNumericUpDownCell)this.CellTemplate;
             }
         }
@@ -304,8 +254,7 @@ namespace Tsanie.UI
         /// <summary>
         /// Returns a standard compact string representation of the column.
         /// </summary>
-        public override string ToString()
-        {
+        public override string ToString() {
             StringBuilder sb = new StringBuilder(100);
             sb.Append("DataGridViewNumericUpDownColumn { Name=");
             sb.Append(this.Name);

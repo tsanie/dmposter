@@ -15,7 +15,11 @@ namespace Tsanie.DmPoster {
         public static readonly string Title;
 
         static Config() {
-            Config.Title = string.Format("DmPoster {0}.{1}.{2}", Program.Version.Major, Program.Version.Minor, Program.Version.Build);
+            Config.Title = string.Format("DmPoster {0}.{1}.{2}.{3}",
+                Program.Version.Major,
+                Program.Version.Minor,
+                Program.Version.Build,
+                Program.Version.Revision);
         }
 
     }

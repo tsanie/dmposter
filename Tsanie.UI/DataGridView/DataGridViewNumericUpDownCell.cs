@@ -437,6 +437,7 @@ namespace Tsanie.UI {
             return numericUpDownEditingControl != null && rowIndex == ((IDataGridViewEditingControl)numericUpDownEditingControl).EditingControlRowIndex;
         }
 
+        /*
         /// <summary>
         /// Custom paints the cell. The base implementation of the DataGridViewTextBoxCell type is called first,
         /// dropping the icon error and content foreground parts. Those two parts are painted by this custom implementation.
@@ -444,95 +445,96 @@ namespace Tsanie.UI {
         /// an easy solution for painting controls but it's not necessarily the most performant. An alternative would be to paint
         /// the NumericUpDown control piece by piece (text and up/down buttons).
         /// </summary>
-        //protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState,
-        //                              object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle,
-        //                              DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-        //    if (this.DataGridView == null) {
-        //        return;
-        //    }
+        protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex,
+                                      DataGridViewElementStates cellState, object value,
+                                      object formattedValue, string errorText, DataGridViewCellStyle cellStyle,
+                                      DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
+            if (this.DataGridView == null) {
+                return;
+            }
 
-        //    // First paint the borders and background of the cell.
-        //    base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle,
-        //               paintParts & ~(DataGridViewPaintParts.ErrorIcon | DataGridViewPaintParts.ContentForeground));
+            // First paint the borders and background of the cell.
+            base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle,
+                       paintParts & ~(DataGridViewPaintParts.ErrorIcon | DataGridViewPaintParts.ContentForeground));
 
-            //Point ptCurrentCell = this.DataGridView.CurrentCellAddress;
-            //bool cellCurrent = ptCurrentCell.X == this.ColumnIndex && ptCurrentCell.Y == rowIndex;
-            //bool cellEdited = cellCurrent && this.DataGridView.EditingControl != null;
+            Point ptCurrentCell = this.DataGridView.CurrentCellAddress;
+            bool cellCurrent = ptCurrentCell.X == this.ColumnIndex && ptCurrentCell.Y == rowIndex;
+            bool cellEdited = cellCurrent && this.DataGridView.EditingControl != null;
 
             // If the cell is in editing mode, there is nothing else to paint
-            //if (!cellEdited) {
-            //    if (PartPainted(paintParts, DataGridViewPaintParts.ContentForeground)) {
-            //        // Paint a NumericUpDown control
-            //        // Take the borders into account
-            //        Rectangle borderWidths = BorderWidths(advancedBorderStyle);
-            //        Rectangle valBounds = cellBounds;
-            //        valBounds.Offset(borderWidths.X, borderWidths.Y);
-            //        valBounds.Width -= borderWidths.Right;
-            //        valBounds.Height -= borderWidths.Bottom;
-            //        // Also take the padding into account
-            //        if (cellStyle.Padding != Padding.Empty) {
-            //            if (this.DataGridView.RightToLeft == RightToLeft.Yes) {
-            //                valBounds.Offset(cellStyle.Padding.Right, cellStyle.Padding.Top);
-            //            } else {
-            //                valBounds.Offset(cellStyle.Padding.Left, cellStyle.Padding.Top);
-            //            }
-            //            valBounds.Width -= cellStyle.Padding.Horizontal;
-            //            valBounds.Height -= cellStyle.Padding.Vertical;
-            //        }
-            //        // Determine the NumericUpDown control location
-            //        valBounds = GetAdjustedEditingControlBounds(valBounds, cellStyle);
+            if (!cellEdited) {
+                if (PartPainted(paintParts, DataGridViewPaintParts.ContentForeground)) {
+                    // Paint a NumericUpDown control
+                    // Take the borders into account
+                    Rectangle borderWidths = BorderWidths(advancedBorderStyle);
+                    Rectangle valBounds = cellBounds;
+                    valBounds.Offset(borderWidths.X, borderWidths.Y);
+                    valBounds.Width -= borderWidths.Right;
+                    valBounds.Height -= borderWidths.Bottom;
+                    // Also take the padding into account
+                    if (cellStyle.Padding != Padding.Empty) {
+                        if (this.DataGridView.RightToLeft == RightToLeft.Yes) {
+                            valBounds.Offset(cellStyle.Padding.Right, cellStyle.Padding.Top);
+                        } else {
+                            valBounds.Offset(cellStyle.Padding.Left, cellStyle.Padding.Top);
+                        }
+                        valBounds.Width -= cellStyle.Padding.Horizontal;
+                        valBounds.Height -= cellStyle.Padding.Vertical;
+                    }
+                    // Determine the NumericUpDown control location
+                    valBounds = GetAdjustedEditingControlBounds(valBounds, cellStyle);
 
-            //        bool cellSelected = (cellState & DataGridViewElementStates.Selected) != 0;
+                    bool cellSelected = (cellState & DataGridViewElementStates.Selected) != 0;
 
-            //        if (renderingBitmap.Width < valBounds.Width ||
-            //            renderingBitmap.Height < valBounds.Height) {
-            //            // The static bitmap is too small, a bigger one needs to be allocated.
-            //            renderingBitmap.Dispose();
-            //            renderingBitmap = new Bitmap(valBounds.Width, valBounds.Height);
-            //        }
-            //        // Make sure the NumericUpDown control is parented to a visible control
-            //        if (paintingNumericUpDown.Parent == null || !paintingNumericUpDown.Parent.Visible) {
-            //            paintingNumericUpDown.Parent = this.DataGridView;
-            //        }
-            //        // Set all the relevant properties
-            //        paintingNumericUpDown.TextAlign = DataGridViewNumericUpDownCell.TranslateAlignment(cellStyle.Alignment);
-            //        paintingNumericUpDown.DecimalPlaces = this.DecimalPlaces;
-            //        paintingNumericUpDown.ThousandsSeparator = this.ThousandsSeparator;
-            //        paintingNumericUpDown.Font = cellStyle.Font;
-            //        paintingNumericUpDown.Width = valBounds.Width;
-            //        paintingNumericUpDown.Height = valBounds.Height;
-            //        paintingNumericUpDown.RightToLeft = this.DataGridView.RightToLeft;
-            //        paintingNumericUpDown.Location = new Point(0, -paintingNumericUpDown.Height - 100);
-            //        paintingNumericUpDown.Text = formattedValue as string;
+                    if (renderingBitmap.Width < valBounds.Width ||
+                        renderingBitmap.Height < valBounds.Height) {
+                        // The static bitmap is too small, a bigger one needs to be allocated.
+                        renderingBitmap.Dispose();
+                        renderingBitmap = new Bitmap(valBounds.Width, valBounds.Height);
+                    }
+                    // Make sure the NumericUpDown control is parented to a visible control
+                    if (paintingNumericUpDown.Parent == null || !paintingNumericUpDown.Parent.Visible) {
+                        paintingNumericUpDown.Parent = this.DataGridView;
+                    }
+                    // Set all the relevant properties
+                    paintingNumericUpDown.TextAlign = DataGridViewNumericUpDownCell.TranslateAlignment(cellStyle.Alignment);
+                    paintingNumericUpDown.DecimalPlaces = this.DecimalPlaces;
+                    paintingNumericUpDown.ThousandsSeparator = this.ThousandsSeparator;
+                    paintingNumericUpDown.Font = cellStyle.Font;
+                    paintingNumericUpDown.Width = valBounds.Width;
+                    paintingNumericUpDown.Height = valBounds.Height;
+                    paintingNumericUpDown.RightToLeft = this.DataGridView.RightToLeft;
+                    paintingNumericUpDown.Location = new Point(0, -paintingNumericUpDown.Height - 100);
+                    paintingNumericUpDown.Text = formattedValue as string;
 
-            //        Color backColor;
-            //        if (PartPainted(paintParts, DataGridViewPaintParts.SelectionBackground) && cellSelected) {
-            //            backColor = cellStyle.SelectionBackColor;
-            //        } else {
-            //            backColor = cellStyle.BackColor;
-            //        }
-            //        if (PartPainted(paintParts, DataGridViewPaintParts.Background)) {
-            //            if (backColor.A < 255) {
-            //                // The NumericUpDown control does not support transparent back colors
-            //                backColor = Color.FromArgb(255, backColor);
-            //            }
-            //            paintingNumericUpDown.BackColor = backColor;
-            //        }
-            //        // Finally paint the NumericUpDown control
-            //        Rectangle srcRect = new Rectangle(0, 0, valBounds.Width, valBounds.Height);
-            //        if (srcRect.Width > 0 && srcRect.Height > 0) {
-            //            paintingNumericUpDown.DrawToBitmap(renderingBitmap, srcRect);
-            //            graphics.DrawImage(renderingBitmap, new Rectangle(valBounds.Location, valBounds.Size),
-            //                               srcRect, GraphicsUnit.Pixel);
-            //        }
-            //    }
-            //    if (PartPainted(paintParts, DataGridViewPaintParts.ErrorIcon)) {
-            //        // Paint the potential error icon on top of the NumericUpDown control
-            //        base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText,
-            //                   cellStyle, advancedBorderStyle, DataGridViewPaintParts.ErrorIcon);
-            //    }
-            //}
-        //}
+                    Color backColor;
+                    if (PartPainted(paintParts, DataGridViewPaintParts.SelectionBackground) && cellSelected) {
+                        backColor = cellStyle.SelectionBackColor;
+                    } else {
+                        backColor = cellStyle.BackColor;
+                    }
+                    if (PartPainted(paintParts, DataGridViewPaintParts.Background)) {
+                        if (backColor.A < 255) {
+                            // The NumericUpDown control does not support transparent back colors
+                            backColor = Color.FromArgb(255, backColor);
+                        }
+                        paintingNumericUpDown.BackColor = backColor;
+                    }
+                    // Finally paint the NumericUpDown control
+                    Rectangle srcRect = new Rectangle(0, 0, valBounds.Width, valBounds.Height);
+                    if (srcRect.Width > 0 && srcRect.Height > 0) {
+                        paintingNumericUpDown.DrawToBitmap(renderingBitmap, srcRect);
+                        graphics.DrawImage(renderingBitmap, new Rectangle(valBounds.Location, valBounds.Size),
+                                           srcRect, GraphicsUnit.Pixel);
+                    }
+                }
+                if (PartPainted(paintParts, DataGridViewPaintParts.ErrorIcon)) {
+                    // Paint the potential error icon on top of the NumericUpDown control
+                    base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText,
+                               cellStyle, advancedBorderStyle, DataGridViewPaintParts.ErrorIcon);
+                }
+            }
+        }
 
         /// <summary>
         /// Little utility function called by the Paint function to see if a particular part needs to be painted. 
@@ -540,6 +542,7 @@ namespace Tsanie.UI {
         private static bool PartPainted(DataGridViewPaintParts paintParts, DataGridViewPaintParts paintPart) {
             return (paintParts & paintPart) != 0;
         }
+        //*/
 
         /// <summary>
         /// Custom implementation of the PositionEditingControl method called by the DataGridView control when it
