@@ -8,7 +8,7 @@ namespace Tsanie.UI {
     /// <summary>
     /// Vista界面工具类
     /// </summary>
-    public class VistaStuff {
+    public class Win7Stuff {
         /// <value>
         /// Returns true on Windows Vista or newer operating systems; otherwise, false.
         /// </value>
