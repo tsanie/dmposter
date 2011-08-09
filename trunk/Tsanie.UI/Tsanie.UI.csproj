@@ -47,6 +47,11 @@
     <Compile Include="DataGridView\DataGridViewNumericUpDownEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Resource\Lang.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Lang.resx</DependentUpon>
+    </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="ProgressTaskbar.cs" />
@@ -70,6 +75,14 @@
       <Name>Tsanie.Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\Lang.ja-JP.resx" />
+    <EmbeddedResource Include="Resource\Lang.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Lang.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
