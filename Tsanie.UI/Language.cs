@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Globalization;
+using System.Resources;
+using System.Reflection;
 
 namespace Tsanie.UI {
 
@@ -34,12 +36,23 @@ namespace Tsanie.UI {
     /// UI 语言类
     /// </summary>
     public class Language {
-        private static readonly CultureInfo _CultureInfo = new System.Globalization.CultureInfo("zh-CN");
+        private static readonly CultureInfo _defaultCulture = new System.Globalization.CultureInfo("zh-CN");
 
-        public static string FontName { get { return "Segoe UI"; } }
-        public static float Fontsize { get { return 9f; } }
-        public static byte GdiCharset { get { return (byte)GdiCharSet.GB2312_CHARSET; } }
-        public static CultureInfo CultureInfo { get { return _CultureInfo; } }
+        private static ResourceManager _resource;
+        private static CultureInfo _culture = _defaultCulture;
+
+        static Language() {
+            _resource = new ResourceManager("Tsanie.UI.Resource.Lang", Assembly.GetExecutingAssembly());
+        }
+
+        public static string FontName { get { return _resource.GetString("FontName", _culture); } }
+        public static string WidthFontName { get { return _resource.GetString("WidthFontName", _culture); } }
+        public static byte GdiCharset { get { return byte.Parse(_resource.GetString("GdiCharSet", _culture)); } }
+
+        public static CultureInfo CultureInfo {
+            get { return _culture; }
+            set { _culture = value; }
+        }
 
         public static string Untitled { get { return "未命名"; } }
         public static string Property { get { return "属性"; } }
@@ -53,5 +66,9 @@ namespace Tsanie.UI {
         public static string ColumnFontsize { get { return "字号"; } }
         public static string ColumnText { get { return "弹幕内容"; } }
         public static string ColumnMode { get { return "模式"; } }
+
+        public static string GetMenuText(string name) {
+            return _resource.GetString(name, _culture);
+        }
     }
 }

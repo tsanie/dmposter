@@ -32,13 +32,7 @@ namespace Tsanie.DmPoster {
 
         public MainForm() {
             InitializeComponent();
-            this.Font = Program.UIFont;
-            this.menuStrip.Font = Program.UIFont;
-            this.toolStrip.Font = Program.UIFont;
-            this.statusStrip.Font = Program.UIFont;
-            this.gridDanmakus.DefaultCellStyle.Font = Program.UIFont;
             this.Icon = Tsanie.DmPoster.Properties.Resources.AppIcon;
-            this.Text = Language.Untitled + " - " + Config.Title;
             // DataGridView 列初始化
             this.gridDanmakus.Columns.AddRange(new DataGridViewColumn[] {
                 new DataGridViewNumericUpDownColumn() {
@@ -89,6 +83,25 @@ namespace Tsanie.DmPoster {
 
         #region - 私有方法 -
 
+        private void LoadUIText() {
+            this.Font = Program.UIFont;
+            this.menuStrip.Font = Program.UIFont;
+            this.toolStrip.Font = Program.UIFont;
+            this.statusStrip.Font = Program.UIFont;
+            this.gridDanmakus.DefaultCellStyle.Font = Program.WidthFont;
+
+            this.Text = Language.Untitled + " - " + Config.Title;
+            foreach (ToolStripMenuItem item in menuStrip.Items) {
+                EnumMenuItem(item);
+            }
+        }
+        private void EnumMenuItem(ToolStripMenuItem item) {
+            item.Text = Language.GetMenuText(item.Name);
+            foreach (ToolStripItem it in item.DropDownItems)
+                if (it is ToolStripMenuItem)
+                    EnumMenuItem((ToolStripMenuItem)it);
+        }
+
         private void ShowMessage(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon) {
             MessageBox.Show(this, message, title, buttons, icon);
         }
@@ -106,7 +119,7 @@ namespace Tsanie.DmPoster {
                     }
                 }
                 this.gridDanmakus.Enabled = enabled;
-                this.statusStrip.Enabled = enabled;
+                //this.statusStrip.Enabled = enabled;
                 if (userMessage != null)
                     statusAccount.Text = userMessage;
                 if (message != null)
@@ -115,6 +128,8 @@ namespace Tsanie.DmPoster {
         }
         private void SetProgressState(TBPFLAG flag) {
             Program.Taskbar.SetProgressState(this, flag);
+            // 修正位置
+            statusMessage.Spring = false;
             switch (flag) {
                 case TBPFLAG.TBPF_INDETERMINATE:
                     statusProgressBar.Visible = true;
@@ -130,8 +145,7 @@ namespace Tsanie.DmPoster {
                     statusProgressBar.Style = ProgressBarStyle.Blocks;
                     break;
             }
-            // 修正位置
-            statusMessage.Spring = false;
+            statusMessage.Width = 1;
             statusMessage.Spring = true;
         }
         private void SetProgressValue(int completed, int total) {
@@ -254,26 +268,32 @@ namespace Tsanie.DmPoster {
         }
 
         private void DownloadDanmaku(string avOrVid, Action<int> callback, Action<Exception> exCallback) {
+            Action refresher = delegate {
+                this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
+            };
+            // timer
+            System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
+            timer.Elapsed += (sender, e) => { refresher(); };
             try {
                 if (string.IsNullOrWhiteSpace(avOrVid))
                     throw new Exception("未输入Av或者Vid号！");
 
-                int count = 0;
                 Action<RequestState> stateCallback = (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
                         throw new Exception("下载弹幕返回不成功！" +
                             state.Response.StatusCode + ": " + state.Response.StatusDescription);
-
-                    // timer
-                    System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
-                    timer.Elapsed += (sender, e) => {
-
-                    };
+                    this.SafeRun(delegate {
+                        SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
+                        gridDanmakus.RowCount = 0;
+                        _listDanmakus.Clear();
+                    });
+                    timer.Start();
                     // 读取压缩流
                     using (StreamReader reader = new StreamReader(new DeflateStream(state.StreamResponse, CompressionMode.Decompress))) {
                         StringBuilder builder = new StringBuilder(0x40);
                         Regex regex = new Regex("<d p=\"([^\"]+?)\">([^<]+?)</d>");
                         string line;
+                        int count = 0;
                         while ((line = reader.ReadLine()) != null) {
                             builder.AppendLine(line);
                             if (line.EndsWith("</d>")) {
@@ -301,6 +321,9 @@ namespace Tsanie.DmPoster {
                             }
                         }
                         reader.Dispose();
+                        timer.Close();
+                        refresher();
+                        this.SafeRun(delegate { SetProgressState(TBPFLAG.TBPF_NOPROGRESS); });
                         if (callback != null)
                             callback(count);
                     }
@@ -313,13 +336,28 @@ namespace Tsanie.DmPoster {
                     DownloadDanmakuFromVid(avOrVid, stateCallback, exCallback);
                 }
             } catch (Exception e) {
+                timer.Close();
+                refresher();
+                this.SafeRun(delegate { SetProgressState(TBPFLAG.TBPF_NOPROGRESS); });
                 exCallback.SafeInvoke(e);
             }
         }
         private void GetVidFromAv(string av, Action<string> callback, Action<Exception> exCallback) {
+            EnabledUI(false, null, "正在获取 av: " + av + " 的 vid...", delegate {
+                if (_thread != null && _thread.ThreadState == ThreadState.Running)
+                    _thread.Abort();
+                EnabledUI(true, null, "中断获取 vid。", null);
+            });
+            gridDanmakus.Enabled = true;
             throw new Exception("还木有实现此功能！");
         }
         private void DownloadDanmakuFromVid(string vid, Action<RequestState> stateCallback, Action<Exception> exCallback) {
+            EnabledUI(false, null, "正在通过 vid: " + vid + " 下载弹幕...", delegate {
+                if (_thread != null && _thread.ThreadState == ThreadState.Running)
+                    _thread.Abort();
+                EnabledUI(true, null, "中断下载弹幕。", null);
+            });
+            gridDanmakus.Enabled = true;
             _thread = HttpHelper.BeginConnect(Config.HttpHost + "/dm," + vid,
                 (request) => {
                     request.Referer = Config.PlayerPath;
@@ -327,6 +365,8 @@ namespace Tsanie.DmPoster {
         }
 
         #endregion
+
+        #region - 事件 -
 
         private void Command_OnAction(object sender, EventArgs e) {
             string command = (sender as ToolStripItem).Tag as string;
@@ -339,12 +379,6 @@ namespace Tsanie.DmPoster {
                     }
                     break;
                 case "Download":
-                    EnabledUI(false, null, null, delegate {
-                        if (_thread != null && _thread.ThreadState == ThreadState.Running)
-                            _thread.Abort();
-                        EnabledUI(true, null, "中断下载弹幕...", null);
-                    });
-                    gridDanmakus.Enabled = true;
                     DownloadDanmaku(toolTextVid.Text, (count) => {
                         EnabledUI(true, null, string.Format("下载成功！一共 {0} 条弹幕。", count), null);
                     }, (ex) => {
@@ -363,6 +397,9 @@ namespace Tsanie.DmPoster {
         }
 
         private void MainForm_Shown(object sender, EventArgs e) {
+            // 界面文字
+            LoadUIText();
+            // 登录
             CheckLogin();
         }
 
@@ -374,9 +411,10 @@ namespace Tsanie.DmPoster {
                 gridDanmakus[1, e.RowIndex].Style.BackColor = (Color)e.Value;
             }
         }
-
         private void gridDanmakus_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
 
         }
+
+        #endregion
     }
 }
