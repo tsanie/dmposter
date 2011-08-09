@@ -31,12 +31,18 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取弹幕ID
         /// </summary>
-        public virtual int DmID { get { return _dmid; } }
+        public virtual int DmID {
+            get { return _dmid; }
+            set { _dmid = value; }
+        }
 
         /// <summary>
         /// 获取弹幕发送人ID
         /// </summary>
-        public virtual string UsID { get { return _usid; } }
+        public virtual string UsID {
+            get { return _usid; }
+            set { _usid = value; }
+        }
 
         /// <summary>
         /// 获取或设置弹幕模式
@@ -49,7 +55,10 @@ namespace Tsanie.DmPoster.Danmaku {
         /// <summary>
         /// 获取弹幕创建日期
         /// </summary>
-        public virtual DateTime Date { get { return _date; } }
+        public virtual DateTime Date {
+            get { return _date; }
+            set { _date = value; }
+        }
 
         /// <summary>
         /// 获取或设置弹幕播放时间

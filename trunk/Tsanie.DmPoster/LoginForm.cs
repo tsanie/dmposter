@@ -24,8 +24,15 @@ namespace Tsanie.DmPoster {
         }
 
         private void Loading(bool enabled) {
-            buttonLogin.Enabled = !enabled;
-            pictureLoading.Visible = enabled;
+            this.SafeRun(delegate {
+                buttonLogin.Enabled = !enabled;
+                pictureLoading.Visible = enabled;
+            });
+            if (this.Owner != null) {
+                this.Owner.SafeRun(delegate {
+                    Program.Taskbar.SetProgressState(this.Owner, enabled ? TBPFLAG.TBPF_INDETERMINATE : TBPFLAG.TBPF_NOPROGRESS);
+                });
+            }
         }
 
         private void GetValidCode() {
@@ -48,12 +55,10 @@ namespace Tsanie.DmPoster {
                         _session = _session.Substring(0, index + 1);
                     pictureValidCode.Image = Image.FromStream(state.StreamResponse);
                     state.StreamResponse.Dispose();
-                    this.SafeRun(delegate { Loading(false); });
+                    Loading(false);
                 }, (ex) => {
-                    this.SafeRun(delegate {
-                        this.ShowExceptionMessage(ex, "验证码");
-                        Loading(false);
-                    });
+                    this.SafeRun(delegate { this.ShowExceptionMessage(ex, "验证码"); });
+                    Loading(false);
                 });
         }
 
@@ -138,6 +143,7 @@ namespace Tsanie.DmPoster {
                                 Config.SetValue("Cookies", builder);
                             else
                                 Config.Cookies = builder.ToString();
+                            Loading(false);
                             this.SafeRun(delegate {
                                 this.DialogResult = System.Windows.Forms.DialogResult.OK;
                                 this.Close();
