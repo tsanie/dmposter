@@ -25,6 +25,11 @@ namespace Tsanie.DmPoster {
 
         public MainForm() {
             InitializeComponent();
+            this.Font = Program.UIFont;
+            this.menuStrip.Font = Program.UIFont;
+            this.toolStrip.Font = Program.UIFont;
+            this.statusStrip.Font = Program.UIFont;
+            this.gridDanmakus.DefaultCellStyle.Font = Program.UIFont;
             this.Icon = Tsanie.DmPoster.Properties.Resources.AppIcon;
             this.Text = Language.Untitled + " - " + Config.Title;
             // DataGridView 列初始化
