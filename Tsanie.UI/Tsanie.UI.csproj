@@ -59,6 +59,9 @@
     <Compile Include="DataGridView\TsDataGridViewColorEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TsToolStripButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Win7Stuff.cs" />
   </ItemGroup>
   <ItemGroup>

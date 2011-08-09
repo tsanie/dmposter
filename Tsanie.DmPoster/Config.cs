@@ -10,6 +10,7 @@ using Tsanie.Utils;
 using Tsanie.Network;
 
 namespace Tsanie.DmPoster {
+
     /// <summary>
     /// 配置类
     /// </summary>

@@ -24,7 +24,7 @@ namespace Tsanie.UI {
         /// <param name="window">在其上显示对话框的窗口</param>
         /// <param name="ex">异常对象</param>
         /// <param name="title">标题</param>
-        public static void ShowExceptionMessage(this IWin32Window window, Exception ex, string title) {
+        public static void ShowExceptionMessage(this Form window, Exception ex, string title) {
             ShowExceptionMessage(window, ex, title, true);
         }
 
@@ -35,12 +35,14 @@ namespace Tsanie.UI {
         /// <param name="ex">异常对象</param>
         /// <param name="title">标题</param>
         /// <param name="stackTrace">是否显示堆栈调试</param>
-        public static void ShowExceptionMessage(this IWin32Window window, Exception ex, string title, bool stackTrace) {
-            MessageBox.Show(window, ex.Message + (!stackTrace ? "" :
-                    "\n\nStackTrace:\n" + ex.StackTrace),
-                string.IsNullOrEmpty(title) ? ex.GetType().FullName :
-                    (stackTrace ? title + " (" + ex.GetType().FullName + ")" : title),
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        public static void ShowExceptionMessage(this Form window, Exception ex, string title, bool stackTrace) {
+            window.SafeRun(delegate {
+                MessageBox.Show(window, ex.Message + (!stackTrace ? "" :
+                        "\n\nStackTrace:\n" + ex.StackTrace),
+                    string.IsNullOrEmpty(title) ? ex.GetType().FullName :
+                        (stackTrace ? title + " (" + ex.GetType().FullName + ")" : title),
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            });
         }
 
         /// <summary>
