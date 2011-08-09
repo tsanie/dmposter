@@ -37,7 +37,7 @@ namespace Tsanie.UI {
         /// <param name="pszSubAppName"></param>
         /// <param name="pszSubIdList"></param>
         /// <returns></returns>
-        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+        [DllImport("uxtheme.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         public extern static int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
 
     }

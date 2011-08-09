@@ -6,11 +6,14 @@ using System.Net;
 using System.Threading;
 using Tsanie.Utils;
 using System.IO;
+using System.Reflection;
 
 namespace Tsanie.Network {
     public class HttpHelper {
         private static int _timeout = 10000;  // default to 10 秒
-        private static string _userAgent = "";
+        private static string _userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Safari/534.12 Tsanie/" +
+            Assembly.GetExecutingAssembly().GetName().Version.Major + "." +
+            Assembly.GetExecutingAssembly().GetName().Version.Minor;
 
         public static int Timeout {
             get { return _timeout; }
