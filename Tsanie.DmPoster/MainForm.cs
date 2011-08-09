@@ -14,6 +14,7 @@ using Tsanie.DmPoster.Models;
 using Tsanie.Network;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.IO.Compression;
 
 namespace Tsanie.DmPoster {
     public partial class MainForm : Form {
@@ -23,7 +24,6 @@ namespace Tsanie.DmPoster {
         private List<DanmakuBase> _listDanmakus = new List<DanmakuBase>();
         private Dictionary<DanmakuBase, DataGridViewRow> _cacheRows = new Dictionary<DanmakuBase, DataGridViewRow>();
         private UserModel _user = UserModel.Guest;
-        private ITaskbarList3 _taskbar = null;
         private Thread _thread = null;
 
         #endregion
@@ -83,9 +83,6 @@ namespace Tsanie.DmPoster {
                     MinimumWidth = 120,
                     ReadOnly = true}
             });
-            // Win7 超级任务栏
-            if (Win7Stuff.IsWin7)
-                _taskbar = (ITaskbarList3)new ProgressTaskbar();
         }
 
         #endregion
@@ -115,6 +112,37 @@ namespace Tsanie.DmPoster {
                 if (message != null)
                     statusMessage.Text = message;
             });
+        }
+        private void SetProgressState(TBPFLAG flag) {
+            Program.Taskbar.SetProgressState(this, flag);
+            switch (flag) {
+                case TBPFLAG.TBPF_INDETERMINATE:
+                    statusProgressBar.Visible = true;
+                    statusProgressBar.Style = ProgressBarStyle.Marquee;
+                    break;
+                case TBPFLAG.TBPF_NOPROGRESS:
+                    statusProgressBar.Visible = false;
+                    break;
+                case TBPFLAG.TBPF_ERROR:
+                case TBPFLAG.TBPF_NORMAL:
+                case TBPFLAG.TBPF_PAUSED:
+                    statusProgressBar.Visible = true;
+                    statusProgressBar.Style = ProgressBarStyle.Blocks;
+                    break;
+            }
+            // 修正位置
+            statusMessage.Spring = false;
+            statusMessage.Spring = true;
+        }
+        private void SetProgressValue(int completed, int total) {
+            if (completed < 0)
+                completed = 0;
+            if (completed > total)
+                completed = total;
+            Program.Taskbar.SetProgressValue(this, completed, total);
+            if (statusProgressBar.Maximum != total)
+                statusProgressBar.Maximum = total;
+            statusProgressBar.Value = completed;
         }
 
         private DataGridViewRow CreateRowFromDanmaku(DanmakuBase danmaku) {
@@ -225,38 +253,56 @@ namespace Tsanie.DmPoster {
             }
         }
 
-        private void DownloadDanmaku(string avOrVid, Action<Exception> exCallback) {
-            if (string.IsNullOrWhiteSpace(avOrVid)) {
-                ShowMessage("请输入Av或者Vid号！", "下载弹幕", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+        private void DownloadDanmaku(string avOrVid, Action<int> callback, Action<Exception> exCallback) {
             try {
+                if (string.IsNullOrWhiteSpace(avOrVid))
+                    throw new Exception("未输入Av或者Vid号！");
+
+                int count = 0;
                 Action<RequestState> stateCallback = (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
                         throw new Exception("下载弹幕返回不成功！" +
                             state.Response.StatusCode + ": " + state.Response.StatusDescription);
-                    using (StreamReader reader = new StreamReader(state.StreamResponse)) {
+
+                    // timer
+                    System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
+                    timer.Elapsed += (sender, e) => {
+
+                    };
+                    // 读取压缩流
+                    using (StreamReader reader = new StreamReader(new DeflateStream(state.StreamResponse, CompressionMode.Decompress))) {
                         StringBuilder builder = new StringBuilder(0x40);
+                        Regex regex = new Regex("<d p=\"([^\"]+?)\">([^<]+?)</d>");
                         string line;
                         while ((line = reader.ReadLine()) != null) {
                             builder.AppendLine(line);
+                            if (line.EndsWith("</d>")) {
+                                foreach (Match match in regex.Matches(builder.ToString())) {
+                                    string property = match.Groups[1].Value;
+                                    string text = match.Groups[2].Value;
+                                    // 读取属性
+                                    string[] vals = property.Split(',');
+                                    this.SafeRun(delegate {
+                                        _listDanmakus.Add(new BiliDanmaku() {
+                                            PlayTime = float.Parse(vals[0]),
+                                            Mode = (DanmakuMode)int.Parse(vals[1]),
+                                            Fontsize = int.Parse(vals[2]),
+                                            Color = Color.FromArgb(int.Parse(vals[3]) | -16777216),
+                                            Date = long.Parse(vals[4]).ParseDateTime(),
+                                            Pool = int.Parse(vals[5]),
+                                            UsID = vals[6],
+                                            DmID = int.Parse(vals[7]),
+                                            Text = text
+                                        });
+                                        count++;
+                                    });
+                                }
+                                builder.Clear();
+                            }
                         }
                         reader.Dispose();
-                        Regex regex = new Regex("<d p=\"([^\"]+?)\">([^<]+?)</d>");
-                        foreach (Match match in regex.Matches(builder.ToString())) {
-                            string property = match.Groups[1].Value;
-                            string text = match.Groups[2].Value;
-                            // 读取属性
-                            string[] vals = property.Split(',');
-                            _listDanmakus.Add(new BiliDanmaku() {
-                                PlayTime = float.Parse(vals[0]),
-                                Mode = (DanmakuMode)int.Parse(vals[1]),
-                                Fontsize = int.Parse(vals[2]),
-                                Color = Color.FromArgb(int.Parse(vals[3]) | -16777216),
-                                // 话说vals[4]是啥？
-                                
-                            });
-                        }
+                        if (callback != null)
+                            callback(count);
                     }
                 };
                 if (avOrVid.StartsWith("av")) {
@@ -298,8 +344,12 @@ namespace Tsanie.DmPoster {
                             _thread.Abort();
                         EnabledUI(true, null, "中断下载弹幕...", null);
                     });
-                    DownloadDanmaku(toolTextVid.Text, (ex) => {
+                    gridDanmakus.Enabled = true;
+                    DownloadDanmaku(toolTextVid.Text, (count) => {
+                        EnabledUI(true, null, string.Format("下载成功！一共 {0} 条弹幕。", count), null);
+                    }, (ex) => {
                         this.ShowExceptionMessage(ex, "下载弹幕");
+                        EnabledUI(true, null, "下载中断...", null);
                     });
                     break;
                 case "Exit":

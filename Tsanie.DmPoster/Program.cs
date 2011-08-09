@@ -6,15 +6,21 @@ using System.Reflection;
 using System.Drawing;
 using Tsanie.UI;
 using Tsanie.Utils;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace Tsanie.DmPoster {
     static class Program {
         public static readonly Version Version;
         public static readonly Font UIFont;
+        public static readonly ITaskbarList3 Taskbar;
 
         static Program() {
             Version = Assembly.GetExecutingAssembly().GetName().Version;
             UIFont = new Font(Language.FontName, Language.Fontsize, FontStyle.Regular, GraphicsUnit.Point, Language.GdiCharset);
+            // Win7 超级任务栏
+            if (Win7Stuff.IsWin7)
+                Taskbar = (ITaskbarList3)new ProgressTaskbar();
         }
 
         /// <summary>

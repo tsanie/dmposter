@@ -56,6 +56,12 @@ namespace Tsanie.UI {
                 return;
             taskbar.SetProgressState(window.Handle, flag);
         }
+
+        public static void SetProgressValue(this ITaskbarList3 taskbar, IWin32Window window, int completed, int total) {
+            if (taskbar == null)
+                return;
+            taskbar.SetProgressValue(window.Handle, (ulong)completed, (ulong)total);
+        }
     }
 
 

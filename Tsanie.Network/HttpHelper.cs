@@ -7,6 +7,7 @@ using System.Threading;
 using Tsanie.Utils;
 using System.IO;
 using System.Reflection;
+using Tsanie.UI;
 
 namespace Tsanie.Network {
     public class HttpHelper {

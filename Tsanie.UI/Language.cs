@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 
 namespace Tsanie.UI {
 
@@ -33,15 +34,19 @@ namespace Tsanie.UI {
     /// UI 语言类
     /// </summary>
     public class Language {
+        private static readonly CultureInfo _CultureInfo = new System.Globalization.CultureInfo("zh-CN");
+
         public static string FontName { get { return "Segoe UI"; } }
         public static float Fontsize { get { return 9f; } }
         public static byte GdiCharset { get { return (byte)GdiCharSet.GB2312_CHARSET; } }
+        public static CultureInfo CultureInfo { get { return _CultureInfo; } }
 
         public static string Untitled { get { return "未命名"; } }
         public static string Property { get { return "属性"; } }
         public static string PropertyNull { get { return "属性值不可为 null。"; } }
         public static string PropertyInvalidPlayTime { get { return "播放时间属性值无效。"; } }
         public static string PropertyInvalidFontsize { get { return "弹幕字号属性值无效。"; } }
+        public static string PropertyInvalidPool { get { return "弹幕池属性值无效。"; } }
 
         public static string ColumnPlayTime { get { return "时间"; } }
         public static string ColumnColor { get { return "颜色"; } }
