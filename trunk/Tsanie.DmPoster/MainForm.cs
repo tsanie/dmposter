@@ -10,6 +10,10 @@ using Tsanie.DmPoster.Danmaku;
 using Tsanie.Utils;
 using Tsanie.UI;
 using System.Threading;
+using Tsanie.DmPoster.Models;
+using Tsanie.Network;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Tsanie.DmPoster {
     public partial class MainForm : Form {
@@ -18,6 +22,9 @@ namespace Tsanie.DmPoster {
 
         private List<DanmakuBase> _listDanmakus = new List<DanmakuBase>();
         private Dictionary<DanmakuBase, DataGridViewRow> _cacheRows = new Dictionary<DanmakuBase, DataGridViewRow>();
+        private UserModel _user = UserModel.Guest;
+        private ITaskbarList3 _taskbar = null;
+        private Thread _thread = null;
 
         #endregion
 
@@ -76,6 +83,9 @@ namespace Tsanie.DmPoster {
                     MinimumWidth = 120,
                     ReadOnly = true}
             });
+            // Win7 超级任务栏
+            if (Win7Stuff.IsWin7)
+                _taskbar = (ITaskbarList3)new ProgressTaskbar();
         }
 
         #endregion
@@ -107,15 +117,113 @@ namespace Tsanie.DmPoster {
             return row;
         }
 
+        private void CheckLogin() {
+            if (!string.IsNullOrEmpty(Config.Cookies)) {
+                EnabledUI(false, "检查..", "正在访问", delegate {
+                    if (_thread != null && _thread.ThreadState == ThreadState.Running)
+                        _thread.Abort();
+                    EnabledUI(true, "游客", "中断检查...", null);
+                });
+                // 登录 dad.php 检查权限
+                _thread = HttpHelper.BeginConnect(Config.HttpHost + "/dad.php?r=" + Utility.Rnd.NextDouble(),
+                    (request) => {
+                        request.Headers["Cookie"] = Config.Cookies;
+                    }, (state) => {
+                        if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
+                            throw new Exception("检查身份返回不成功！");
+                        StringBuilder result = new StringBuilder(0x40);
+                        using (StreamReader reader = new StreamReader(state.StreamResponse)) {
+                            string line;
+                            while ((line = reader.ReadLine()) != null) {
+                                result.Append(line);
+                            }
+                            reader.Dispose();
+                        }
+                        UserModel user = new UserModel() { Login = false };
+                        Regex reg = new Regex("<([a-zA-Z^>]+)>([^<]+)</([a-zA-Z^>]+)>", RegexOptions.Singleline);
+                        foreach (Match match in reg.Matches(result.ToString())) {
+                            string key = match.Groups[1].Value;
+                            string value = match.Groups[2].Value;
+                            switch (key) {
+                                case "login":
+                                    user.Login = bool.Parse(value); break;
+                                case "name":
+                                    user.Name = value; break;
+                                case "user":
+                                    user.User = int.Parse(value); break;
+                                case "scores":
+                                    user.Scores = int.Parse(value); break;
+                                case "money":
+                                    user.Money = int.Parse(value); break;
+                                case "pwd":
+                                    user.Pwd = value; break;
+                                case "isadmin":
+                                    user.IsAdmin = bool.Parse(value); break;
+                                case "permission":
+                                    string[] ps = value.Split(',');
+                                    Level[] levels = new Level[ps.Length];
+                                    for (int i = 0; i < ps.Length; i++)
+                                        levels[i] = (Level)int.Parse(ps[i]);
+                                    user.Permission = levels;
+                                    break;
+                                case "level":
+                                    user.Level = value; break;
+                                case "shot":
+                                    user.Shot = bool.Parse(value); break;
+                                case "acceptaccel":
+                                    user.AcceptAccel = bool.Parse(value); break;
+                                case "server":
+                                    user.Server = value; break;
+                            }
+                        }
+                        if (user.Login) {
+                            _user = user;
+                            this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.logined; });
+                            EnabledUI(true, _user.Name + " (" + _user.Level + ")", "就绪", null);
+                        } else {
+                            this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.guest; });
+                            EnabledUI(true, _user.Name, "就绪", null);
+                        }
+                    }, (ex) => {
+                        this.ShowExceptionMessage(ex, "检查身份");
+                        EnabledUI(true, _user.Name, "检查身份失败。", null);
+                    });
+            } else {
+                EnabledUI(true, _user.Name, "就绪", null);
+            }
+        }
+
+        private void EnabledUI(bool enabled, string userMessage, string message, Action action) {
+            this.SafeRun(delegate {
+                this.menuStrip.Enabled = enabled;
+                foreach (ToolStripItem item in this.toolStrip.Items) {
+                    if (item == toolButtonStop) {
+                        toolButtonStop.ClickHandler = action;
+                        toolButtonStop.Enabled = !enabled;
+                    } else {
+                        item.Enabled = enabled;
+                    }
+                }
+                this.gridDanmakus.Enabled = enabled;
+                this.statusStrip.Enabled = enabled;
+                if (userMessage != null)
+                    statusAccount.Text = userMessage;
+                if (message != null)
+                    statusMessage.Text = message;
+            });
+        }
+
         #endregion
 
         private void Command_OnAction(object sender, EventArgs e) {
             string command = (sender as ToolStripItem).Tag as string;
             switch (command) {
-                case "Add":
-                    _listDanmakus.RemoveAt(1);
-                    gridDanmakus.RowCount = _listDanmakus.Count;
-                    gridDanmakus.Invalidate();
+                case "Login":
+                    LoginForm login = new LoginForm();
+                    DialogResult result = login.ShowDialog(this);
+                    if (result == System.Windows.Forms.DialogResult.OK) {
+                        CheckLogin();
+                    }
                     break;
                 case "Exit":
                     this.Close();
@@ -128,6 +236,9 @@ namespace Tsanie.DmPoster {
         }
 
         private void MainForm_Shown(object sender, EventArgs e) {
+            CheckLogin();
+            return;
+
             // 设置 explorer 样式
             Win7Stuff.SetWindowTheme(this.menuStrip.Handle, "explorer", null);
 

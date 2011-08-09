@@ -82,7 +82,7 @@
             this.toolButtonSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.toolButtonPost = new System.Windows.Forms.ToolStripSplitButton();
-            this.toolButtonStop = new System.Windows.Forms.ToolStripButton();
+            this.toolButtonStop = new Tsanie.UI.TsToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolButtonSelect = new System.Windows.Forms.ToolStripButton();
             this.toolButtonPlayer = new System.Windows.Forms.ToolStripButton();
@@ -111,7 +111,7 @@
             this.menuHelp});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(522, 24);
+            this.menuStrip.Size = new System.Drawing.Size(547, 24);
             this.menuStrip.TabIndex = 0;
             // 
             // menuOperation
@@ -492,11 +492,11 @@
             // toolStripContainer.ContentPanel
             // 
             this.toolStripContainer.ContentPanel.Controls.Add(this.gridDanmakus);
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(522, 225);
+            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(547, 241);
             this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer.Location = new System.Drawing.Point(0, 24);
             this.toolStripContainer.Name = "toolStripContainer";
-            this.toolStripContainer.Size = new System.Drawing.Size(522, 273);
+            this.toolStripContainer.Size = new System.Drawing.Size(547, 289);
             this.toolStripContainer.TabIndex = 1;
             this.toolStripContainer.Text = "toolStripContainer1";
             // 
@@ -514,7 +514,7 @@
             this.statusProgressBar});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(522, 23);
+            this.statusStrip.Size = new System.Drawing.Size(547, 23);
             this.statusStrip.TabIndex = 0;
             // 
             // statusAccountIcon
@@ -526,25 +526,23 @@
             // 
             // statusAccount
             // 
-            this.statusAccount.AutoSize = false;
             this.statusAccount.Name = "statusAccount";
-            this.statusAccount.Size = new System.Drawing.Size(80, 18);
-            this.statusAccount.Text = "游客";
+            this.statusAccount.Padding = new System.Windows.Forms.Padding(0, 0, 6, 0);
+            this.statusAccount.Size = new System.Drawing.Size(6, 18);
             this.statusAccount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // statusMessage
             // 
             this.statusMessage.AutoSize = false;
             this.statusMessage.Name = "statusMessage";
-            this.statusMessage.Size = new System.Drawing.Size(409, 18);
+            this.statusMessage.Size = new System.Drawing.Size(386, 18);
             this.statusMessage.Spring = true;
-            this.statusMessage.Text = "就绪";
             this.statusMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // statusProgressBar
             // 
             this.statusProgressBar.Name = "statusProgressBar";
-            this.statusProgressBar.Size = new System.Drawing.Size(130, 17);
+            this.statusProgressBar.Size = new System.Drawing.Size(120, 17);
             this.statusProgressBar.Visible = false;
             // 
             // gridDanmakus
@@ -568,7 +566,7 @@
             this.gridDanmakus.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.gridDanmakus.RowTemplate.Height = 21;
             this.gridDanmakus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDanmakus.Size = new System.Drawing.Size(522, 225);
+            this.gridDanmakus.Size = new System.Drawing.Size(547, 241);
             this.gridDanmakus.TabIndex = 1;
             this.gridDanmakus.VirtualMode = true;
             this.gridDanmakus.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridDanmakus_CellValueNeeded);
@@ -644,12 +642,13 @@
             // 
             // toolButtonStop
             // 
+            this.toolButtonStop.ClickHandler = null;
             this.toolButtonStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolButtonStop.Image = global::Tsanie.DmPoster.Properties.Resources.stop;
             this.toolButtonStop.Name = "toolButtonStop";
             this.toolButtonStop.Size = new System.Drawing.Size(23, 22);
             this.toolButtonStop.Tag = "Stop";
-            this.toolButtonStop.Text = "终止发送弹幕";
+            this.toolButtonStop.Text = "终止";
             this.toolButtonStop.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator11
@@ -715,7 +714,7 @@
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(522, 297);
+            this.ClientSize = new System.Drawing.Size(547, 313);
             this.Controls.Add(this.toolStripContainer);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
@@ -794,7 +793,7 @@
         private System.Windows.Forms.ToolStripButton toolButtonOpen;
         private System.Windows.Forms.ToolStripButton toolButtonSave;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripButton toolButtonStop;
+        private Tsanie.UI.TsToolStripButton toolButtonStop;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripButton toolButtonSelect;
         private System.Windows.Forms.ToolStripButton toolButtonPlayer;

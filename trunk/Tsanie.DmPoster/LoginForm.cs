@@ -14,7 +14,6 @@ using System.IO;
 
 namespace Tsanie.DmPoster {
     public partial class LoginForm : Form {
-        private ITaskbarList3 _taskbar = null;
         private string _session = null;
         private Thread _thread = null;
 
@@ -22,15 +21,11 @@ namespace Tsanie.DmPoster {
             InitializeComponent();
             this.Font = Program.UIFont;
             toolTip.SetToolTip(pictureValidCode, "点我重新获取");
-            // Win7 超级任务栏
-            if (Win7Stuff.IsWin7)
-                _taskbar = (ITaskbarList3)new ProgressTaskbar();
         }
 
         private void Loading(bool enabled) {
             buttonLogin.Enabled = !enabled;
             pictureLoading.Visible = enabled;
-            _taskbar.SetProgressState(this, enabled ? TBPFLAG.TBPF_INDETERMINATE : TBPFLAG.TBPF_NOPROGRESS);
         }
 
         private void GetValidCode() {
@@ -137,8 +132,14 @@ namespace Tsanie.DmPoster {
                             }
                         }
                         if (builder.Length > 0) {
-                            Config.Cookies = builder.ToString();
-                            this.SafeRun(delegate { this.Close(); });
+                            if (checkAutoLogin.Checked)
+                                Config.SetValue("Cookies", builder);
+                            else
+                                Config.Cookies = builder.ToString();
+                            this.SafeRun(delegate {
+                                this.DialogResult = System.Windows.Forms.DialogResult.OK;
+                                this.Close();
+                            });
                             return;
                         }
                     }
