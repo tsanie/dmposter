@@ -57,4 +57,18 @@ namespace Tsanie.UI {
             taskbar.SetProgressState(window.Handle, flag);
         }
     }
+
+
+    public static class ObjectExtension {
+
+        /// <summary>
+        /// 异常回调安全执行
+        /// </summary>
+        /// <param name="exCallback">需要回调的异常</param>
+        /// <param name="e">异常实例</param>
+        public static void SafeInvoke(this Action<Exception> exCallback, Exception e) {
+            if (exCallback != null)
+                exCallback(e);
+        }
+    }
 }

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Drawing;
 using Tsanie.UI;
+using Tsanie.Utils;
 
 namespace Tsanie.DmPoster {
     static class Program {

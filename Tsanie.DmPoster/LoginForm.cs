@@ -36,7 +36,8 @@ namespace Tsanie.DmPoster {
                     request.Referer = Config.HttpHost + "/member/";
                 }, (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK) {
-                        throw new Exception("获取验证码返回不成功！");
+                        throw new Exception("获取验证码返回不成功！" +
+                            state.Response.StatusCode + ": " + state.Response.StatusDescription);
                     }
                     _session = state.Response.Headers["Set-Cookie"];
                     if (string.IsNullOrEmpty(_session)) {
@@ -116,7 +117,8 @@ namespace Tsanie.DmPoster {
                     }
                 }, (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK) {
-                        throw new Exception("登录返回不成功！");
+                        throw new Exception("登录返回不成功！" +
+                            state.Response.StatusCode + ": " + state.Response.StatusDescription);
                     }
                     string cookie = state.Response.Headers["Set-Cookie"];
                     if (!string.IsNullOrEmpty(cookie)) {
