@@ -25,4 +25,15 @@ namespace Tsanie.Utils {
             return Color.FromArgb(int.Parse(str) | -16777216);
         }
     }
+
+    public static class DateTimeFormater {
+        public static readonly long Ticks_1970_1_1 = 621355968000000000L;
+        public static long ToMilliseconds(this DateTime dt) {
+            return (dt.ToUniversalTime().Ticks - Ticks_1970_1_1) / 10000000;
+        }
+        public static DateTime ParseDateTime(this long milliseconds) {
+            long ticks = milliseconds * 10000000 + Ticks_1970_1_1;
+            return new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
+        }
+    }
 }

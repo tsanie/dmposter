@@ -95,104 +95,6 @@ namespace Tsanie.DmPoster {
         private void ShowMessage(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon) {
             MessageBox.Show(this, message, title, buttons, icon);
         }
-
-        private DataGridViewRow CreateRowFromDanmaku(DanmakuBase danmaku) {
-            DataGridViewRow row = new DataGridViewRow();
-            row.Cells.AddRange(new DataGridViewCell[] {
-                new DataGridViewTextBoxCell() { Value = danmaku.PlayTime },
-                new DataGridViewTextBoxCell() { Value = danmaku.Color },
-                new DataGridViewTextBoxCell() { Value = danmaku.Fontsize },
-                new DataGridViewTextBoxCell() { Value = "" },
-                new DataGridViewTextBoxCell() { Value = danmaku.Text },
-                new DataGridViewTextBoxCell() { Value = danmaku.Mode }
-            });
-            return row;
-        }
-
-        private DataGridViewRow GetCacheRow(DanmakuBase danmaku) {
-            DataGridViewRow row;
-            if (_cacheRows.TryGetValue(danmaku, out row))
-                return row;
-            row = CreateRowFromDanmaku(danmaku);
-            return row;
-        }
-
-        private void CheckLogin() {
-            if (!string.IsNullOrEmpty(Config.Cookies)) {
-                EnabledUI(false, "检查..", "正在访问", delegate {
-                    if (_thread != null && _thread.ThreadState == ThreadState.Running)
-                        _thread.Abort();
-                    EnabledUI(true, "游客", "中断检查...", null);
-                });
-                // 登录 dad.php 检查权限
-                _thread = HttpHelper.BeginConnect(Config.HttpHost + "/dad.php?r=" + Utility.Rnd.NextDouble(),
-                    (request) => {
-                        request.Headers["Cookie"] = Config.Cookies;
-                    }, (state) => {
-                        if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
-                            throw new Exception("检查身份返回不成功！");
-                        StringBuilder result = new StringBuilder(0x40);
-                        using (StreamReader reader = new StreamReader(state.StreamResponse)) {
-                            string line;
-                            while ((line = reader.ReadLine()) != null) {
-                                result.Append(line);
-                            }
-                            reader.Dispose();
-                        }
-                        UserModel user = new UserModel() { Login = false };
-                        Regex reg = new Regex("<([a-zA-Z^>]+)>([^<]+)</([a-zA-Z^>]+)>", RegexOptions.Singleline);
-                        foreach (Match match in reg.Matches(result.ToString())) {
-                            string key = match.Groups[1].Value;
-                            string value = match.Groups[2].Value;
-                            switch (key) {
-                                case "login":
-                                    user.Login = bool.Parse(value); break;
-                                case "name":
-                                    user.Name = value; break;
-                                case "user":
-                                    user.User = int.Parse(value); break;
-                                case "scores":
-                                    user.Scores = int.Parse(value); break;
-                                case "money":
-                                    user.Money = int.Parse(value); break;
-                                case "pwd":
-                                    user.Pwd = value; break;
-                                case "isadmin":
-                                    user.IsAdmin = bool.Parse(value); break;
-                                case "permission":
-                                    string[] ps = value.Split(',');
-                                    Level[] levels = new Level[ps.Length];
-                                    for (int i = 0; i < ps.Length; i++)
-                                        levels[i] = (Level)int.Parse(ps[i]);
-                                    user.Permission = levels;
-                                    break;
-                                case "level":
-                                    user.Level = value; break;
-                                case "shot":
-                                    user.Shot = bool.Parse(value); break;
-                                case "acceptaccel":
-                                    user.AcceptAccel = bool.Parse(value); break;
-                                case "server":
-                                    user.Server = value; break;
-                            }
-                        }
-                        if (user.Login) {
-                            _user = user;
-                            this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.logined; });
-                            EnabledUI(true, _user.Name + " (" + _user.Level + ")", "就绪", null);
-                        } else {
-                            this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.guest; });
-                            EnabledUI(true, _user.Name, "就绪", null);
-                        }
-                    }, (ex) => {
-                        this.ShowExceptionMessage(ex, "检查身份");
-                        EnabledUI(true, _user.Name, "检查身份失败。", null);
-                    });
-            } else {
-                EnabledUI(true, _user.Name, "就绪", null);
-            }
-        }
-
         private void EnabledUI(bool enabled, string userMessage, string message, Action action) {
             this.SafeRun(delegate {
                 this.menuStrip.Enabled = enabled;
@@ -215,27 +117,167 @@ namespace Tsanie.DmPoster {
             });
         }
 
+        private DataGridViewRow CreateRowFromDanmaku(DanmakuBase danmaku) {
+            DataGridViewRow row = new DataGridViewRow();
+            row.Cells.AddRange(new DataGridViewCell[] {
+                new DataGridViewTextBoxCell() { Value = danmaku.PlayTime },
+                new DataGridViewTextBoxCell() { Value = danmaku.Color },
+                new DataGridViewTextBoxCell() { Value = danmaku.Fontsize },
+                new DataGridViewTextBoxCell() { Value = "" },
+                new DataGridViewTextBoxCell() { Value = danmaku.Text },
+                new DataGridViewTextBoxCell() { Value = danmaku.Mode }
+            });
+            return row;
+        }
+        private DataGridViewRow GetCacheRow(DanmakuBase danmaku) {
+            DataGridViewRow row;
+            if (_cacheRows.TryGetValue(danmaku, out row))
+                return row;
+            row = CreateRowFromDanmaku(danmaku);
+            return row;
+        }
+
+        private void CheckLogin() {
+            if (!string.IsNullOrEmpty(Config.Cookies)) {
+                EnabledUI(false, "检查..", "正在访问", delegate {
+                    if (_thread != null && _thread.ThreadState == ThreadState.Running)
+                        _thread.Abort();
+                    EnabledUI(true, "游客", "中断检查...", null);
+                });
+                // 登录 dad.php 检查权限
+                _thread = HttpHelper.BeginConnect(Config.HttpHost + "/dad.php?r=" + Utility.Rnd.NextDouble(),
+                    (request) => {
+                        request.Headers["Cookie"] = Config.Cookies;
+                    }, (state) => {
+                        if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
+                            throw new Exception("检查身份返回不成功！" +
+                                state.Response.StatusCode + ": " + state.Response.StatusDescription);
+                        StringBuilder result = new StringBuilder(0x40);
+                        using (StreamReader reader = new StreamReader(state.StreamResponse)) {
+                            string line;
+                            while ((line = reader.ReadLine()) != null) {
+                                result.Append(line);
+                            }
+                            reader.Dispose();
+                        }
+                        UserModel user = new UserModel() { Login = false };
+                        Regex reg = new Regex("<([a-zA-Z^>]+)>([^<]+)</([a-zA-Z^>]+)>", RegexOptions.Singleline);
+                        foreach (Match match in reg.Matches(result.ToString())) {
+                            string key = match.Groups[1].Value;
+                            string value = match.Groups[2].Value;
+                            switch (key) {
+                                case "login":
+                                    user.Login = bool.Parse(value);
+                                    break;
+                                case "name":
+                                    user.Name = value;
+                                    break;
+                                case "user":
+                                    user.User = int.Parse(value);
+                                    break;
+                                case "scores":
+                                    user.Scores = int.Parse(value);
+                                    break;
+                                case "money":
+                                    user.Money = int.Parse(value);
+                                    break;
+                                case "pwd":
+                                    user.Pwd = value;
+                                    break;
+                                case "isadmin":
+                                    user.IsAdmin = bool.Parse(value);
+                                    break;
+                                case "permission":
+                                    string[] ps = value.Split(',');
+                                    Level[] levels = new Level[ps.Length];
+                                    for (int i = 0; i < ps.Length; i++)
+                                        levels[i] = (Level)int.Parse(ps[i]);
+                                    user.Permission = levels;
+                                    break;
+                                case "level":
+                                    user.Level = value;
+                                    break;
+                                case "shot":
+                                    user.Shot = bool.Parse(value);
+                                    break;
+                                case "acceptaccel":
+                                    user.AcceptAccel = bool.Parse(value);
+                                    break;
+                                case "server":
+                                    user.Server = value;
+                                    break;
+                            }
+                        }
+                        if (user.Login) {
+                            _user = user;
+                            this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.logined; });
+                            EnabledUI(true, _user.Name + " (" + _user.Level + ")", "就绪", null);
+                        } else {
+                            this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.guest; });
+                            EnabledUI(true, _user.Name, "就绪", null);
+                        }
+                    }, (ex) => {
+                        this.ShowExceptionMessage(ex, "检查身份");
+                        EnabledUI(true, _user.Name, "检查身份失败。", null);
+                    });
+            } else {
+                EnabledUI(true, _user.Name, "就绪", null);
+            }
+        }
+
         private void DownloadDanmaku(string avOrVid, Action<Exception> exCallback) {
             if (string.IsNullOrWhiteSpace(avOrVid)) {
                 ShowMessage("请输入Av或者Vid号！", "下载弹幕", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            Action<RequestState> stateCallback = (state) => {
-                //TODO: 
-            };
-            if (avOrVid.StartsWith("av")) {
-                // 输入的是Av号
-                GetVidFromAv(avOrVid, (vid) => DownloadDanmakuFromVid(vid, stateCallback, exCallback), exCallback);
-            } else {
-                // Vid
-                DownloadDanmakuFromVid(avOrVid, stateCallback, exCallback);
+            try {
+                Action<RequestState> stateCallback = (state) => {
+                    if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
+                        throw new Exception("下载弹幕返回不成功！" +
+                            state.Response.StatusCode + ": " + state.Response.StatusDescription);
+                    using (StreamReader reader = new StreamReader(state.StreamResponse)) {
+                        StringBuilder builder = new StringBuilder(0x40);
+                        string line;
+                        while ((line = reader.ReadLine()) != null) {
+                            builder.AppendLine(line);
+                        }
+                        reader.Dispose();
+                        Regex regex = new Regex("<d p=\"([^\"]+?)\">([^<]+?)</d>");
+                        foreach (Match match in regex.Matches(builder.ToString())) {
+                            string property = match.Groups[1].Value;
+                            string text = match.Groups[2].Value;
+                            // 读取属性
+                            string[] vals = property.Split(',');
+                            _listDanmakus.Add(new BiliDanmaku() {
+                                PlayTime = float.Parse(vals[0]),
+                                Mode = (DanmakuMode)int.Parse(vals[1]),
+                                Fontsize = int.Parse(vals[2]),
+                                Color = Color.FromArgb(int.Parse(vals[3]) | -16777216),
+                                // 话说vals[4]是啥？
+                                
+                            });
+                        }
+                    }
+                };
+                if (avOrVid.StartsWith("av")) {
+                    // 输入的是Av号
+                    GetVidFromAv(avOrVid, (vid) => DownloadDanmakuFromVid(vid, stateCallback, exCallback), exCallback);
+                } else {
+                    // Vid
+                    DownloadDanmakuFromVid(avOrVid, stateCallback, exCallback);
+                }
+            } catch (Exception e) {
+                exCallback.SafeInvoke(e);
             }
         }
         private void GetVidFromAv(string av, Action<string> callback, Action<Exception> exCallback) {
             throw new Exception("还木有实现此功能！");
         }
         private void DownloadDanmakuFromVid(string vid, Action<RequestState> stateCallback, Action<Exception> exCallback) {
-
+            _thread = HttpHelper.BeginConnect(Config.HttpHost + "/dm," + vid,
+                (request) => {
+                    request.Referer = Config.PlayerPath;
+                }, stateCallback, exCallback);
         }
 
         #endregion

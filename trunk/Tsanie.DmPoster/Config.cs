@@ -33,6 +33,7 @@ namespace Tsanie.DmPoster {
                 Application.ExecutablePath.LastIndexOf('\\'));
             Config.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Safari/534.12 DmPoster/"
                 + Program.Version.Major + "." + Program.Version.Minor;
+            Config.PlayerPath = "http://static.loli.my/play.swf";
 
             if (!File.Exists(Config.AppPath + Config.ConfigFile)) {
                 CreateConfig();
@@ -104,6 +105,7 @@ namespace Tsanie.DmPoster {
 
 
         public static string UserAgent { get; set; }
+        public static string PlayerPath { get; set; }
 
         private static string _HttpHost = "http://www.bilibili.tv";
         public static string HttpHost {
