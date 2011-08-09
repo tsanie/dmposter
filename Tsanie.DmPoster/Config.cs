@@ -98,6 +98,7 @@ namespace Tsanie.DmPoster {
             writer.WriteEndElement();
             writer.Flush();
             writer.Close();
+            writer = null;
         }
 
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tsanie.Utils;
+using Tsanie.UI;
 
 namespace Tsanie.DmPoster.Danmaku {
     /// <summary>

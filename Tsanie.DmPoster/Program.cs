@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Drawing;
-using Tsanie.Utils;
+using Tsanie.UI;
 
 namespace Tsanie.DmPoster {
     static class Program {
@@ -23,8 +23,7 @@ namespace Tsanie.DmPoster {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainForm());
-            Application.Run(new LoginForm());
+            Application.Run(new MainForm());
         }
     }
 }

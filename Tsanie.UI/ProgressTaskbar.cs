@@ -44,7 +44,7 @@ namespace Tsanie.UI {
     [ComImportAttribute()]
     public class ProgressTaskbar { }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
     public struct THUMBBUTTON {
         [MarshalAs(UnmanagedType.U4)]
         public THBMASK dwMask;
