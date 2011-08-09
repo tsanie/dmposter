@@ -104,6 +104,7 @@ namespace Tsanie.DmPoster {
 
 
         public static string UserAgent { get; set; }
+
         private static string _HttpHost = "http://www.bilibili.tv";
         public static string HttpHost {
             get { return _HttpHost; }

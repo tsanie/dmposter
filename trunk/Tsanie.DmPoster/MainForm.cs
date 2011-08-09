@@ -198,7 +198,9 @@ namespace Tsanie.DmPoster {
                 this.menuStrip.Enabled = enabled;
                 foreach (ToolStripItem item in this.toolStrip.Items) {
                     if (item == toolButtonStop) {
-                        toolButtonStop.ClickHandler = action;
+                        if (action != null) {
+                            toolButtonStop.ClickHandler = action;
+                        }
                         toolButtonStop.Enabled = !enabled;
                     } else {
                         item.Enabled = enabled;
@@ -213,6 +215,29 @@ namespace Tsanie.DmPoster {
             });
         }
 
+        private void DownloadDanmaku(string avOrVid, Action<Exception> exCallback) {
+            if (string.IsNullOrWhiteSpace(avOrVid)) {
+                ShowMessage("请输入Av或者Vid号！", "下载弹幕", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            Action<RequestState> stateCallback = (state) => {
+                //TODO: 
+            };
+            if (avOrVid.StartsWith("av")) {
+                // 输入的是Av号
+                GetVidFromAv(avOrVid, (vid) => DownloadDanmakuFromVid(vid, stateCallback, exCallback), exCallback);
+            } else {
+                // Vid
+                DownloadDanmakuFromVid(avOrVid, stateCallback, exCallback);
+            }
+        }
+        private void GetVidFromAv(string av, Action<string> callback, Action<Exception> exCallback) {
+            throw new Exception("还木有实现此功能！");
+        }
+        private void DownloadDanmakuFromVid(string vid, Action<RequestState> stateCallback, Action<Exception> exCallback) {
+
+        }
+
         #endregion
 
         private void Command_OnAction(object sender, EventArgs e) {
@@ -224,6 +249,16 @@ namespace Tsanie.DmPoster {
                     if (result == System.Windows.Forms.DialogResult.OK) {
                         CheckLogin();
                     }
+                    break;
+                case "Download":
+                    EnabledUI(false, null, null, delegate {
+                        if (_thread != null && _thread.ThreadState == ThreadState.Running)
+                            _thread.Abort();
+                        EnabledUI(true, null, "中断下载弹幕...", null);
+                    });
+                    DownloadDanmaku(toolTextVid.Text, (ex) => {
+                        this.ShowExceptionMessage(ex, "下载弹幕");
+                    });
                     break;
                 case "Exit":
                     this.Close();
@@ -237,30 +272,6 @@ namespace Tsanie.DmPoster {
 
         private void MainForm_Shown(object sender, EventArgs e) {
             CheckLogin();
-            return;
-
-            // 设置 explorer 样式
-            Win7Stuff.SetWindowTheme(this.menuStrip.Handle, "explorer", null);
-
-            System.Timers.Timer timer = new System.Timers.Timer(20);
-            Random rand = new Random();
-            timer.Elapsed += delegate {
-                if (_listDanmakus.Count > 20) {
-                    timer.Stop();
-                    timer.Dispose();
-                    timer = null;
-                    return;
-                }
-                _listDanmakus.Add(new BiliDanmaku() {
-                    Color = Color.FromArgb(-16777216 | rand.Next(16777216)),
-                    Fontsize = rand.Next(1, 127),
-                    Mode = DanmakuMode.That_beam_of_light,
-                    PlayTime = 85.2f,
-                    Text = "test"
-                });
-                this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
-            };
-            timer.Start();
         }
 
         private void gridDanmakus_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
