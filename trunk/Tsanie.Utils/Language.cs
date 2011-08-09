@@ -8,6 +8,10 @@ namespace Tsanie.Utils {
     /// UI 语言类
     /// </summary>
     public class Language {
+        public static string FontName { get { return "MS UI Gothic"; } }
+        public static float Fontsize { get { return 9f; } }
+        public static byte GdiCharset { get { return 134; } }
+
         public static string Untitled { get { return "未命名"; } }
         public static string Property { get { return "属性"; } }
         public static string PropertyNull { get { return "属性值不可为 null。"; } }
