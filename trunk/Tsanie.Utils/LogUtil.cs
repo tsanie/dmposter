@@ -32,6 +32,11 @@ namespace Tsanie.Utils {
             if (exFunc != null)
                 exFunc(ex);
         }
+        public static void Info(string message) {
+            if (_logWriter != null)
+                WriteInfo(message);
+        }
+
         private static void WriteError(Exception ex, int indent) {
             if (ex == null)
                 return;
@@ -40,12 +45,19 @@ namespace Tsanie.Utils {
                 _logWriter.Write(new string('─', indent));
             }
             _logWriter.WriteLine("--------------------------------------------------");
-            _logWriter.WriteLine("[{0}] - {1}: {2}", DateTime.Now.ToString("MM-dd HH:mm:ss"), ex.GetType().FullName, ex.Message);
+            _logWriter.WriteLine("[{0:MM-dd HH:mm:ss.ffff}] - {1}: {2}", DateTime.Now, ex.GetType().FullName, ex.Message);
             _logWriter.WriteLine("--------------------------------------------------");
             _logWriter.WriteLine(ex.StackTrace);
             _logWriter.WriteLine();
             _logWriter.Flush();
             WriteError(ex.InnerException, indent + 1);
+        }
+        private static void WriteInfo(string message) {
+            _logWriter.WriteLine("--------------------------------------------------");
+            _logWriter.WriteLine("[{0:MM-dd HH:mm:ss.ffff}] - {1}", DateTime.Now, message);
+            _logWriter.WriteLine("--------------------------------------------------");
+            _logWriter.WriteLine();
+            _logWriter.Flush();
         }
     }
 }

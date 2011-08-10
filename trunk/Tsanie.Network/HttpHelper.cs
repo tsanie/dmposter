@@ -28,10 +28,12 @@ namespace Tsanie.Network {
             set { _userAgent = value; }
         }
 
-        public static Thread BeginConnect(string url,
+        public static RequestState BeginConnect(string url,
             Action<HttpWebRequest> requestBefore,
             Action<RequestState> asyncCallback,
             Action<Exception> errCallback) {
+            // 请求状态对象
+            RequestState state = new RequestState() { Url = url };
             Thread result = new Thread(() => {
                 try {
                     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -42,7 +44,6 @@ namespace Tsanie.Network {
                     if (requestBefore != null) {
                         requestBefore(request);
                     }
-                    RequestState state = new RequestState();
                     state.Request = request;
                     // 开始异步请求
                     IAsyncResult ar = request.BeginGetResponse((iar) => {
@@ -57,6 +58,14 @@ namespace Tsanie.Network {
                             }
                             requestState.Response.Close();
                         } catch (Exception ex) {
+                            if (ex is WebException) {
+                                if (((WebException)ex).Status == WebExceptionStatus.RequestCanceled) {
+                                    LogUtil.Info(ex.Message);
+                                    if (errCallback != null)
+                                        errCallback(new CancelledException(state, ex.Message));
+                                    return;
+                                }
+                            }
                             LogUtil.Error(ex, errCallback);
                         }
                     }, state);
@@ -71,8 +80,12 @@ namespace Tsanie.Network {
                     LogUtil.Error(e, errCallback);
                 }
             }) { Name = "httpThread_" + url };
+            // 设置 UI CultureInfo
+            if (Language.Lang.CultureInfo != null) {
+                result.CurrentUICulture = Language.Lang.CultureInfo;
+            }
             result.Start();
-            return result;
+            return state;
         }
 
         private static void TimeoutCallback(object state, bool timeOuted) {
@@ -85,16 +98,20 @@ namespace Tsanie.Network {
     }
 
     public class RequestState {
-        const int BUFFER_SIZE = 1024;
+        public static readonly int BUFFER_SIZE = 1024;
+
         public byte[] Buffer { get; private set; }
+        public string Url { get; set; }
         public HttpWebRequest Request { get; set; }
         public HttpWebResponse Response { get; set; }
         public Stream StreamResponse { get; set; }
+        public bool Cancelled { get; set; }
         public RequestState() {
-            Buffer = new byte[BUFFER_SIZE];
+            Buffer = new byte[RequestState.BUFFER_SIZE];
             Request = null;
             Response = null;
             StreamResponse = null;
+            Cancelled = false;
         }
     }
 }
