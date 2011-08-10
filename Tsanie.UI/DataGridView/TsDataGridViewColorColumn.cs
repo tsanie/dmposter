@@ -9,7 +9,7 @@ namespace Tsanie.UI {
     public class TsDataGridViewColorColumn : DataGridViewColumn {
         public TsDataGridViewColorColumn()
             : base(new TsDataGridViewColorCell()) {
-            this.SortMode = DataGridViewColumnSortMode.Automatic;
+            this.SortMode = DataGridViewColumnSortMode.Programmatic;
         }
 
         public override DataGridViewCell CellTemplate {

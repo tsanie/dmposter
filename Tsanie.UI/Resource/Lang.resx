@@ -388,4 +388,22 @@
   <data name="WidthFontSize" xml:space="preserve">
     <value>8.75</value>
   </data>
+  <data name="DanmakuMode_BottomFixed" xml:space="preserve">
+    <value>底端固定</value>
+  </data>
+  <data name="DanmakuMode_Mode7" xml:space="preserve">
+    <value>定位</value>
+  </data>
+  <data name="DanmakuMode_ReverseScroll" xml:space="preserve">
+    <value>逆向滚动</value>
+  </data>
+  <data name="DanmakuMode_Scroll" xml:space="preserve">
+    <value>滚动</value>
+  </data>
+  <data name="DanmakuMode_That_beam_of_light" xml:space="preserve">
+    <value>那道光</value>
+  </data>
+  <data name="DanmakuMode_TopFixed" xml:space="preserve">
+    <value>顶端固定</value>
+  </data>
 </root>

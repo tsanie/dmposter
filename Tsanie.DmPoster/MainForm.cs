@@ -25,6 +25,7 @@ namespace Tsanie.DmPoster {
         private Dictionary<DanmakuBase, DataGridViewRow> _cacheRows = new Dictionary<DanmakuBase, DataGridViewRow>();
         private UserModel _user = null;
         private RequestState _state = null;
+        private DataGridViewColumn _lastOrderColumn = null;
 
         #endregion
 
@@ -467,12 +468,34 @@ namespace Tsanie.DmPoster {
             CheckLogin();
         }
 
+        private void gridDanmakus_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            DataGridViewColumn column = gridDanmakus.Columns[e.ColumnIndex];
+            if (_lastOrderColumn != column) {
+                if (_lastOrderColumn != null)
+                    _lastOrderColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+                column.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+
+                _lastOrderColumn = column;
+            } else {
+                // Asc/Desc更换
+                column.HeaderCell.SortGlyphDirection = (
+                    column.HeaderCell.SortGlyphDirection == SortOrder.Ascending ?
+                    SortOrder.Descending : SortOrder.Ascending
+                    );
+            }
+        }
         private void gridDanmakus_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             DataGridViewRow row = GetCacheRow(_listDanmakus[e.RowIndex]);
-            e.Value = row.Cells[e.ColumnIndex].Value;
-            if (e.ColumnIndex == 1) {
-                // Color
-                gridDanmakus[1, e.RowIndex].Style.BackColor = (Color)e.Value;
+            if (e.ColumnIndex == 5) {
+                // Mode
+                e.Value = Language.Lang["DanmakuMode_" + row.Cells[5].Value];
+            } else {
+                e.Value = row.Cells[e.ColumnIndex].Value;
+                if (e.ColumnIndex == 1) {
+                    // Color
+                    gridDanmakus[1, e.RowIndex].Style.BackColor = (Color)e.Value;
+
+                }
             }
         }
         private void gridDanmakus_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
@@ -480,5 +503,6 @@ namespace Tsanie.DmPoster {
         }
 
         #endregion
+
     }
 }
