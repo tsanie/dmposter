@@ -118,269 +118,269 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FontName" xml:space="preserve">
-    <value>SimSun</value>
+    <value>MS UI Gothic</value>
   </data>
   <data name="GdiCharSet" xml:space="preserve">
-    <value>134</value>
-    <comment>GB2312_CHARSET</comment>
+    <value>128</value>
+    <comment>SHIFTJIS_CHARSET</comment>
   </data>
   <data name="menuEdit" xml:space="preserve">
-    <value>编辑(&amp;E)</value>
+    <value>編集(&amp;E)</value>
   </data>
   <data name="menuEditAdd" xml:space="preserve">
-    <value>添加(&amp;A)</value>
+    <value>追加(&amp;A)</value>
   </data>
   <data name="menuEditCopy" xml:space="preserve">
-    <value>复制(&amp;C)</value>
+    <value>コピー(&amp;C)</value>
   </data>
   <data name="menuEditCutting" xml:space="preserve">
-    <value>切割(&amp;T)</value>
+    <value>切断(&amp;T)</value>
   </data>
   <data name="menuEditDelete" xml:space="preserve">
-    <value>删除弹幕(&amp;D)</value>
+    <value>弾幕削除(&amp;D)</value>
   </data>
   <data name="menuEditEdit" xml:space="preserve">
-    <value>编辑(&amp;E)</value>
+    <value>編集(&amp;E)</value>
   </data>
   <data name="menuEditInsert" xml:space="preserve">
-    <value>插入(&amp;I)</value>
+    <value>挿入します(&amp;I)</value>
   </data>
   <data name="menuEditMoveDown" xml:space="preserve">
-    <value>下移(&amp;O)</value>
+    <value>下に移動(&amp;O)</value>
   </data>
   <data name="menuEditMoveUp" xml:space="preserve">
-    <value>上移(&amp;U)</value>
+    <value>上に移動(&amp;U)</value>
   </data>
   <data name="menuEditPaste" xml:space="preserve">
-    <value>粘贴(&amp;P)</value>
+    <value>貼り(&amp;P)</value>
   </data>
   <data name="menuHelp" xml:space="preserve">
-    <value>帮助(&amp;H)</value>
+    <value>ヘルプ(&amp;H)</value>
   </data>
   <data name="menuHelpAbout" xml:space="preserve">
-    <value>关于(&amp;A)</value>
+    <value>概要(&amp;A)</value>
   </data>
   <data name="menuMultiple" xml:space="preserve">
-    <value>批量(&amp;M)</value>
+    <value>複数の(&amp;M)</value>
   </data>
   <data name="menuMultipleAppendAfter" xml:space="preserve">
-    <value>在弹幕后添加(&amp;A)</value>
+    <value>後に追加します(&amp;A)</value>
   </data>
   <data name="menuMultipleColor" xml:space="preserve">
-    <value>颜色(&amp;C)</value>
+    <value>カラー(&amp;C)</value>
   </data>
   <data name="menuMultipleColorConstant" xml:space="preserve">
-    <value>修改到...</value>
+    <value>定数に変更...</value>
   </data>
   <data name="menuMultipleColorGradient" xml:space="preserve">
-    <value>渐变修改...</value>
+    <value>グラデーション...</value>
   </data>
   <data name="menuMultipleFontsize" xml:space="preserve">
-    <value>字体大小(&amp;S)</value>
+    <value>フォントのサイズ(&amp;S)</value>
   </data>
   <data name="menuMultipleInsertBefore" xml:space="preserve">
-    <value>在弹幕前插入(&amp;I)</value>
+    <value>前に挿入(&amp;I)</value>
   </data>
   <data name="menuMultipleMode" xml:space="preserve">
-    <value>弹幕模式(&amp;M)</value>
+    <value>モード(&amp;M)</value>
   </data>
   <data name="menuMultipleMode7" xml:space="preserve">
-    <value>Mode7 弹幕(&amp;7)</value>
+    <value>モード 7(&amp;7)</value>
   </data>
   <data name="menuMultiplePlayTime" xml:space="preserve">
-    <value>出现时间(&amp;T)</value>
+    <value>時間を再生(&amp;T)</value>
   </data>
   <data name="menuMultiplePlayTimeConstant" xml:space="preserve">
-    <value>修改到...</value>
+    <value>定数に変更...</value>
   </data>
   <data name="menuMultiplePlayTimeIncrease" xml:space="preserve">
-    <value>增量...</value>
+    <value>段階的に増加する...</value>
   </data>
   <data name="menuOperation" xml:space="preserve">
-    <value>操作(&amp;O)</value>
+    <value>動作(&amp;O)</value>
   </data>
   <data name="menuOperationDownload" xml:space="preserve">
-    <value>下载(&amp;D)</value>
+    <value>ダウンロード(&amp;D)</value>
   </data>
   <data name="menuOperationExit" xml:space="preserve">
-    <value>退出(&amp;X)</value>
+    <value>終了(&amp;X)</value>
   </data>
   <data name="menuOperationLogin" xml:space="preserve">
-    <value>登录(&amp;L)</value>
+    <value>ログイン(&amp;L)</value>
   </data>
   <data name="menuOperationOpen" xml:space="preserve">
-    <value>打开(&amp;O)</value>
+    <value>開き(&amp;O)</value>
   </data>
   <data name="menuOperationSave" xml:space="preserve">
     <value>保存(&amp;S)</value>
   </data>
   <data name="menuOperationSaveAs" xml:space="preserve">
-    <value>另存为(&amp;A)...</value>
+    <value>名前を付けて保存(&amp;A)...</value>
   </data>
   <data name="menuOperationUpload" xml:space="preserve">
-    <value>上传(&amp;U)</value>
+    <value>アップロード(&amp;U)</value>
   </data>
   <data name="menuTools" xml:space="preserve">
-    <value>工具(&amp;T)</value>
+    <value>ツール(&amp;T)</value>
   </data>
   <data name="menuToolsOption" xml:space="preserve">
-    <value>选项(&amp;O)</value>
+    <value>オプション(&amp;O)</value>
   </data>
   <data name="menuToolsPlayer" xml:space="preserve">
-    <value>打开播放器(&amp;P)</value>
+    <value>オープンプレーヤー(&amp;P)</value>
   </data>
   <data name="WidthFontName" xml:space="preserve">
-    <value>NSimSun</value>
+    <value>MS Gothic</value>
   </data>
   <data name="AvVidEmpty" xml:space="preserve">
-    <value>Av号或者Vid为空！</value>
+    <value>AvやVidは空です！</value>
   </data>
   <data name="CheckLogin" xml:space="preserve">
-    <value>检查登录</value>
+    <value>ログインを確認して</value>
   </data>
   <data name="Communicating" xml:space="preserve">
-    <value>正在通信...</value>
+    <value>通信...</value>
   </data>
   <data name="datacolColor" xml:space="preserve">
-    <value>颜色</value>
+    <value>カラー</value>
   </data>
   <data name="datacolFontsize" xml:space="preserve">
-    <value>字号</value>
+    <value>サイズ</value>
   </data>
   <data name="datacolMode" xml:space="preserve">
-    <value>模式</value>
+    <value>モード</value>
   </data>
   <data name="datacolPlayTime" xml:space="preserve">
-    <value>时间</value>
+    <value>タイム</value>
   </data>
   <data name="datacolText" xml:space="preserve">
-    <value>弹幕内容</value>
+    <value>テキスト</value>
   </data>
   <data name="Done" xml:space="preserve">
-    <value>就绪。</value>
+    <value>レディ。</value>
   </data>
   <data name="DownloadDanmaku" xml:space="preserve">
-    <value>下载弹幕</value>
+    <value>弾幕をダウンロード</value>
   </data>
   <data name="DownloadDanmakuStatus" xml:space="preserve">
-    <value>正在通过 vid: {0} 下载弹幕...</value>
+    <value>Vid: {0} のダウンロードの弾幕を介して...</value>
   </data>
   <data name="DownloadDanmakuSucceed" xml:space="preserve">
-    <value>下载成功！一共 {0} 条弹幕。</value>
+    <value>ダウンロードが成功した！ {0} 弾幕の合計。</value>
   </data>
   <data name="Failed" xml:space="preserve">
-    <value>失败...</value>
+    <value>失敗...</value>
   </data>
   <data name="GetVidOfAv" xml:space="preserve">
-    <value>获取 Vid</value>
+    <value>Vid を取得</value>
   </data>
   <data name="GetVidOfAvStatus" xml:space="preserve">
-    <value>正在获取 av: {0} 的 vid...</value>
+    <value>Vid の av: {0} を取得することです...</value>
   </data>
   <data name="Guest" xml:space="preserve">
-    <value>游客</value>
+    <value>訪客</value>
   </data>
   <data name="Interrupt" xml:space="preserve">
-    <value>已中断。</value>
+    <value>操作は中断されています。</value>
   </data>
   <data name="Property" xml:space="preserve">
-    <value>属性</value>
+    <value>プロパティ</value>
   </data>
   <data name="PropertyInvalidFontsize" xml:space="preserve">
-    <value>弹幕字号属性值无效。</value>
+    <value>弾幕のサイズの属性値は無効です。</value>
   </data>
   <data name="PropertyInvalidPlayTime" xml:space="preserve">
-    <value>播放时间属性值无效。</value>
+    <value>プレイ時の属性値は無効です。</value>
   </data>
   <data name="PropertyInvalidPool" xml:space="preserve">
-    <value>弹幕池属性值无效。</value>
+    <value>弾幕のプールの属性値は無効です。</value>
   </data>
   <data name="PropertyNull" xml:space="preserve">
-    <value>属性值不可为 null。</value>
+    <value>属性の値をnullにすることはできません。</value>
   </data>
   <data name="StatusNotOK" xml:space="preserve">
-    <value>连接状态不成功</value>
+    <value>接続ステータスは成功ではない</value>
   </data>
   <data name="Succeed" xml:space="preserve">
-    <value>成功！</value>
+    <value>サクセス！</value>
   </data>
   <data name="toolButtonAdd" xml:space="preserve">
-    <value>添加新弹幕...</value>
+    <value>新しい弾幕を追加...</value>
   </data>
   <data name="toolButtonDownload" xml:space="preserve">
-    <value>下载弹幕</value>
+    <value>弾幕をダウンロード</value>
   </data>
   <data name="toolButtonOpen" xml:space="preserve">
-    <value>打开弹幕文件</value>
+    <value>ファイルの弾幕を開きます。</value>
   </data>
   <data name="toolButtonPlayer" xml:space="preserve">
-    <value>打开播放器</value>
+    <value>オープンプレーヤー</value>
   </data>
   <data name="toolButtonPost" xml:space="preserve">
-    <value>发送</value>
+    <value>送信</value>
   </data>
   <data name="toolButtonPost_ToolTipText" xml:space="preserve">
-    <value>发送弹幕</value>
+    <value>弾幕を送る</value>
   </data>
   <data name="toolButtonSave" xml:space="preserve">
-    <value>保存弹幕文件</value>
+    <value>ファイルの弾幕を保存</value>
   </data>
   <data name="toolButtonSelect" xml:space="preserve">
-    <value>选择发送人弹幕</value>
+    <value>送信者の弾幕を選択します。</value>
   </data>
   <data name="toolButtonStop" xml:space="preserve">
-    <value>终止</value>
+    <value>キャンセル</value>
   </data>
   <data name="toolButtonUpload" xml:space="preserve">
-    <value>上传xml弹幕</value>
+    <value>XMLの弾幕をアップロード</value>
   </data>
   <data name="Untitled" xml:space="preserve">
-    <value>未命名</value>
+    <value>無題</value>
   </data>
   <data name="buttonClose" xml:space="preserve">
-    <value>关闭(&amp;C)</value>
+    <value>閉じる(&amp;C)</value>
   </data>
   <data name="buttonLogin" xml:space="preserve">
-    <value>登录(&amp;L)</value>
+    <value>ログイン(&amp;L)</value>
   </data>
   <data name="checkAutoLogin" xml:space="preserve">
-    <value>自动登录</value>
+    <value>自動ログイン</value>
   </data>
   <data name="GetValidCode" xml:space="preserve">
-    <value>获取验证码</value>
+    <value>確認コードを取得する</value>
   </data>
   <data name="labelPassword" xml:space="preserve">
-    <value>密码:</value>
+    <value>パスワード:</value>
   </data>
   <data name="labelUser" xml:space="preserve">
-    <value>用户名:</value>
+    <value>ユーザー:</value>
   </data>
   <data name="labelValidCode" xml:space="preserve">
-    <value>验证码:</value>
+    <value>検証コード:</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>登录</value>
+    <value>ログイン</value>
   </data>
   <data name="pictureValidCode_ToolTipText" xml:space="preserve">
-    <value>点我重新获取验证码</value>
+    <value>私は、もう一度確認コードを取得</value>
   </data>
   <data name="textPassword" xml:space="preserve">
-    <value>密码</value>
+    <value>パスワード</value>
   </data>
   <data name="textUser" xml:space="preserve">
-    <value>用户名</value>
+    <value>ユーザー名</value>
   </data>
   <data name="textValidCode" xml:space="preserve">
-    <value>验证码</value>
+    <value>検証コード</value>
   </data>
   <data name="Unknown" xml:space="preserve">
-    <value>未知</value>
+    <value>不明の</value>
   </data>
   <data name="Event" xml:space="preserve">
-    <value>事件</value>
+    <value>イベント</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>未实现</value>
+    <value>未実現</value>
   </data>
   <data name="FontSize" xml:space="preserve">
     <value>9</value>

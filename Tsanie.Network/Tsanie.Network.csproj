@@ -40,8 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CancelledException.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestStateExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tsanie.UI\Tsanie.UI.csproj">

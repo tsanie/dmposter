@@ -11,11 +11,12 @@ using Tsanie.Utils;
 using Tsanie.UI;
 using System.Threading;
 using System.IO;
+using System.Net;
 
 namespace Tsanie.DmPoster {
     public partial class LoginForm : Form {
         private string _session = null;
-        private Thread _thread = null;
+        private RequestState _state = null;
 
         public LoginForm() {
             this.Font = Config.Instance.UIFont;
@@ -46,7 +47,7 @@ namespace Tsanie.DmPoster {
 
         private void GetValidCode() {
             Loading(true);
-            _thread = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/include/vdimgck.php?r=" + Utility.Rnd.NextDouble(),
+            _state = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/include/vdimgck.php?r=" + Utility.Rnd.NextDouble(),
                 (request) => {
                     request.Accept = "image/png,image/*;q=0.8,*/*;q=0.5";
                     request.Referer = Config.Instance.HttpHost + "/member/";
@@ -62,8 +63,23 @@ namespace Tsanie.DmPoster {
                     int index = _session.IndexOf(';');
                     if (index > 0)
                         _session = _session.Substring(0, index + 1);
-                    pictureValidCode.Image = Image.FromStream(state.StreamResponse);
-                    state.StreamResponse.Dispose();
+                    // Response 流读入内存
+                    using (Stream stream = state.StreamResponse) {
+                        MemoryStream ms = new MemoryStream();
+                        int count;
+                        bool flag = true;
+                        while ((count = stream.Read(state.Buffer, 0, RequestState.BUFFER_SIZE)) > 0) {
+                            if (state.IsCancelled()) {
+                                flag = false;
+                                break;
+                            }
+                            ms.Write(state.Buffer, 0, count);
+                        }
+                        if (flag)
+                            pictureValidCode.Image = Image.FromStream(ms);
+                        ms.Dispose();
+                        stream.Dispose();
+                    }
                     Loading(false);
                 }, (ex) => {
                     this.SafeRun(delegate { this.ShowExceptionMessage(ex, Language.Lang["GetValidCode"]); });
@@ -80,10 +96,8 @@ namespace Tsanie.DmPoster {
         }
 
         private void LoginForm_FormClosing(object sender, FormClosingEventArgs e) {
-            if (_thread != null && _thread.ThreadState == ThreadState.Running) {
-                _thread.Abort();
-                _thread = null;
-            }
+            _state.Cancel();
+            _state = null;
         }
 
         private void textValidCode_Enter(object sender, EventArgs e) {
@@ -118,7 +132,7 @@ namespace Tsanie.DmPoster {
                 "&pwd=" + password + "&vdcode=" + validcode + "&keeptime=2592000";
             byte[] bytes = Encoding.ASCII.GetBytes(data);
             Loading(true);
-            _thread = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/member/index_do.php",
+            _state = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/member/index_do.php",
                 (request) => {
                     request.Method = "POST";
                     request.Referer = Config.Instance.HttpHost + "/member/";
@@ -167,6 +181,8 @@ namespace Tsanie.DmPoster {
                     using (StreamReader reader = new StreamReader(state.StreamResponse)) {
                         string line;
                         while ((line = reader.ReadLine()) != null) {
+                            if (state.IsCancelled())
+                                break;
                             line = line.TrimStart();
                             if (line.StartsWith("document.write(\"")) {
                                 line = line.Substring(16);

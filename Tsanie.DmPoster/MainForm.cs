@@ -24,14 +24,13 @@ namespace Tsanie.DmPoster {
         private List<DanmakuBase> _listDanmakus = new List<DanmakuBase>();
         private Dictionary<DanmakuBase, DataGridViewRow> _cacheRows = new Dictionary<DanmakuBase, DataGridViewRow>();
         private UserModel _user = null;
-        private Thread _thread = null;
+        private RequestState _state = null;
 
         #endregion
 
         #region - 构造 -
 
         public MainForm() {
-            this.Font = Config.Instance.UIFont;
             InitializeComponent();
             this.Icon = Tsanie.DmPoster.Properties.Resources.AppIcon;
             // DataGridView 列初始化
@@ -75,47 +74,14 @@ namespace Tsanie.DmPoster {
                     ReadOnly = true}
             });
             #endregion
-            // 主要界面文字
-            this.menuStrip.Font = Config.Instance.UIFont;
-            this.toolStrip.Font = Config.Instance.UIFont;
-            this.toolTextVid.Font = Config.Instance.UIFont;
-            this.statusStrip.Font = Config.Instance.UIFont;
-            this.gridDanmakus.DefaultCellStyle.Font = Config.Instance.WidthFont;
-
-            this.Text = Language.Lang["Untitled"] + " - " + Config.Title;
-            foreach (ToolStripMenuItem item in menuStrip.Items) {
-                item.Text = Language.Lang[item.Name];
-            }
-            toolButtonPost.Text = Language.Lang["toolButtonPost"];
-            foreach (DataGridViewColumn column in gridDanmakus.Columns) {
-                if (column.Name != "datacolState")
-                    column.HeaderText = Language.Lang[column.Name];
-            }
+            // 文字
+            LoadMainUIText();
         }
 
         #endregion
 
         #region - 私有方法 -
 
-        /// <summary>
-        /// 装载深层 UI 文字
-        /// </summary>
-        private void LoadUIText() {
-            foreach (ToolStripMenuItem item in menuStrip.Items) {
-                EnumMenuItem(item);
-            }
-            foreach (ToolStripItem item in toolStrip.Items) {
-                if (item is ToolStripButton) {
-                    this.SafeRun(delegate {
-                        item.Text = Language.Lang[item.Name];
-                    });
-                } else if (item is ToolStripSplitButton) {
-                    this.SafeRun(delegate {
-                        item.ToolTipText = Language.Lang[item.Name + "_ToolTipText"];
-                    });
-                }
-            }
-        }
         private void EnumMenuItem(ToolStripMenuItem item) {
             foreach (ToolStripItem it in item.DropDownItems) {
                 if (it is ToolStripMenuItem) {
@@ -127,63 +93,6 @@ namespace Tsanie.DmPoster {
 
         private void ShowMessage(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon) {
             this.SafeRun(delegate { MessageBox.Show(this, message, title, buttons, icon); });
-        }
-        private void EnabledUI(bool enabled, string userMessage, string message, Action action) {
-            this.SafeRun(delegate {
-                this.menuStrip.Enabled = enabled;
-                foreach (ToolStripItem item in this.toolStrip.Items) {
-                    if (item == toolButtonStop) {
-                        if (action != null) {
-                            toolButtonStop.ClickHandler = action;
-                        }
-                        toolButtonStop.Enabled = !enabled;
-                    } else {
-                        item.Enabled = enabled;
-                    }
-                }
-                this.gridDanmakus.Enabled = enabled;
-                //this.statusStrip.Enabled = enabled;
-                if (userMessage != null)
-                    statusAccount.Text = userMessage;
-                if (message != null)
-                    statusMessage.Text = message;
-            });
-        }
-        private void SetProgressState(TBPFLAG flag) {
-            this.SafeRun(delegate {
-                Program.Taskbar.SetProgressState(this, flag);
-                // 修正位置
-                statusMessage.Spring = false;
-                switch (flag) {
-                    case TBPFLAG.TBPF_INDETERMINATE:
-                        statusProgressBar.Visible = true;
-                        statusProgressBar.Style = ProgressBarStyle.Marquee;
-                        break;
-                    case TBPFLAG.TBPF_NOPROGRESS:
-                        statusProgressBar.Visible = false;
-                        break;
-                    case TBPFLAG.TBPF_ERROR:
-                    case TBPFLAG.TBPF_NORMAL:
-                    case TBPFLAG.TBPF_PAUSED:
-                        statusProgressBar.Visible = true;
-                        statusProgressBar.Style = ProgressBarStyle.Blocks;
-                        break;
-                }
-                statusMessage.Width = 1;
-                statusMessage.Spring = true;
-            });
-        }
-        private void SetProgressValue(int completed, int total) {
-            if (completed < 0)
-                completed = 0;
-            if (completed > total)
-                completed = total;
-            this.SafeRun(delegate {
-                Program.Taskbar.SetProgressValue(this, completed, total);
-                if (statusProgressBar.Maximum != total)
-                    statusProgressBar.Maximum = total;
-                statusProgressBar.Value = completed;
-            });
         }
 
         private DataGridViewRow CreateRowFromDanmaku(DanmakuBase danmaku) {
@@ -209,13 +118,12 @@ namespace Tsanie.DmPoster {
         private void CheckLogin() {
             if (!string.IsNullOrEmpty(Config.Instance.Cookies)) {
                 EnabledUI(false, Language.Lang["CheckLogin"], Language.Lang["Communicating"], delegate {
-                    if (_thread != null && _thread.ThreadState == ThreadState.Running)
-                        _thread.Abort();
-                    EnabledUI(true, Language.Lang["Guest"], Language.Lang["CheckLogin.Interrupt"], null);
+                    _state.Cancel();
+                    _state = null;
                 });
                 SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
                 // 登录 dad.php 检查权限
-                _thread = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/dad.php?r=" + Utility.Rnd.NextDouble(),
+                _state = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/dad.php?r=" + Utility.Rnd.NextDouble(),
                     (request) => {
                         request.Headers["Cookie"] = Config.Instance.Cookies;
                     }, (state) => {
@@ -224,6 +132,8 @@ namespace Tsanie.DmPoster {
                                 state.Response.StatusCode + ": " + state.Response.StatusDescription);
                         StringBuilder result = new StringBuilder(0x40);
                         using (StreamReader reader = new StreamReader(state.StreamResponse)) {
+                            if (state.IsCancelled())
+                                throw new CancelledException(state, "CheckLogin.Interrupt");
                             string line;
                             while ((line = reader.ReadLine()) != null) {
                                 result.Append(line);
@@ -291,8 +201,12 @@ namespace Tsanie.DmPoster {
                         }
                         SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                     }, (ex) => {
-                        this.ShowExceptionMessage(ex, Language.Lang["CheckLogin"]);
-                        EnabledUI(true, Language.Lang["Guest"], Language.Lang["CheckLogin.Failed"], null);
+                        if (ex is CancelledException) {
+                            EnabledUI(true, Language.Lang["Guest"], Language.Lang[((CancelledException)ex).Command], null);
+                        } else {
+                            this.ShowExceptionMessage(ex, Language.Lang["CheckLogin"]);
+                            EnabledUI(true, Language.Lang["Guest"], Language.Lang["CheckLogin.Failed"], null);
+                        }
                         SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                     });
             } else {
@@ -315,7 +229,6 @@ namespace Tsanie.DmPoster {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
                         throw new Exception(Language.Lang["DownloadDanmaku.StatusNotOK"] +
                             state.Response.StatusCode + ": " + state.Response.StatusDescription);
-                    SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
                     this.SafeRun(delegate { gridDanmakus.RowCount = 0; });
                     _listDanmakus.Clear();
                     timer.Start();
@@ -326,6 +239,12 @@ namespace Tsanie.DmPoster {
                         string line;
                         int count = 0;
                         while ((line = reader.ReadLine()) != null) {
+                            if (_state.IsCancelled()) {
+                                reader.Dispose();
+                                timer.Close();
+                                refresher();
+                                throw new CancelledException(state, "DownloadDanmaku.Interrupt");
+                            }
                             builder.AppendLine(line);
                             if (line.EndsWith("</d>")) {
                                 foreach (Match match in regex.Matches(builder.ToString())) {
@@ -352,7 +271,6 @@ namespace Tsanie.DmPoster {
                         reader.Dispose();
                         timer.Close();
                         refresher();
-                        SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         if (callback != null)
                             callback(count);
                     }
@@ -367,30 +285,131 @@ namespace Tsanie.DmPoster {
             } catch (Exception e) {
                 timer.Close();
                 refresher();
-                SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                 exCallback.SafeInvoke(e);
             }
         }
         private void GetVidFromAv(string av, Action<string> callback, Action<Exception> exCallback) {
             EnabledUI(false, null, string.Format(Language.Lang["GetVidOfAv"], av), delegate {
-                if (_thread != null && _thread.ThreadState == ThreadState.Running)
-                    _thread.Abort();
-                EnabledUI(true, null, Language.Lang["GetVidOfAv.Interrupt"], null);
+                _state.Cancel();
+                _state = null;
             });
-            gridDanmakus.Enabled = true;
-            throw new NotImplementedException(Language.Lang["GetVidOfAv"]);
+            throw new CancelledException(_state, "GetVidOfAv.Interrupt");
+            //throw new NotImplementedException(Language.Lang["GetVidOfAv"]);
         }
         private void DownloadDanmakuFromVid(string vid, Action<RequestState> stateCallback, Action<Exception> exCallback) {
             EnabledUI(false, null, string.Format(Language.Lang["DownloadDanmakuStatus"], vid), delegate {
-                if (_thread != null && _thread.ThreadState == ThreadState.Running)
-                    _thread.Abort();
-                EnabledUI(true, null, Language.Lang["DownloadDanmaku.Interrupt"], null);
+                _state.Cancel();
+                _state = null;
             });
-            gridDanmakus.Enabled = true;
-            _thread = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/dm," + vid,
+            _state = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/dm," + vid,
                 (request) => {
                     request.Referer = Config.PlayerPath;
                 }, stateCallback, exCallback);
+        }
+
+        #endregion
+
+        #region - 公共方法 -
+
+        /// <summary>
+        /// 装载主体 UI 文字
+        /// </summary>
+        public void LoadMainUIText() {
+            // 主要界面文字
+            this.Font = Config.Instance.UIFont;
+            this.menuStrip.Font = Config.Instance.UIFont;
+            this.toolStrip.Font = Config.Instance.UIFont;
+            this.toolTextVid.Font = Config.Instance.UIFont;
+            this.statusStrip.Font = Config.Instance.UIFont;
+            this.gridDanmakus.DefaultCellStyle.Font = Config.Instance.WidthFont;
+
+            this.Text = Language.Lang["Untitled"] + " - " + Config.Title;
+            foreach (ToolStripMenuItem item in menuStrip.Items) {
+                item.Text = Language.Lang[item.Name];
+            }
+            toolButtonPost.Text = Language.Lang["toolButtonPost"];
+            foreach (DataGridViewColumn column in gridDanmakus.Columns) {
+                if (column.Name != "datacolState")
+                    column.HeaderText = Language.Lang[column.Name];
+            }
+        }
+
+        /// <summary>
+        /// 装载深层 UI 文字
+        /// </summary>
+        public void LoadUIText() {
+            new Thread(delegate() {
+                foreach (ToolStripMenuItem item in menuStrip.Items) {
+                    EnumMenuItem(item);
+                }
+                foreach (ToolStripItem item in toolStrip.Items) {
+                    if (item is ToolStripButton) {
+                        this.SafeRun(delegate { item.Text = Language.Lang[item.Name]; });
+                    } else if (item is ToolStripSplitButton) {
+                        this.SafeRun(delegate {
+                            item.ToolTipText = Language.Lang[item.Name + "_ToolTipText"];
+                        });
+                    }
+                }
+            }) { Name = "threadLoadUIText" }.Start();
+        }
+
+        private void EnabledUI(bool enabled, string userMessage, string message, Action action) {
+            this.SafeRun(delegate {
+                this.menuStrip.Enabled = enabled;
+                foreach (ToolStripItem item in this.toolStrip.Items) {
+                    if (item == toolButtonStop) {
+                        if (action != null) {
+                            toolButtonStop.ClickHandler = action;
+                        }
+                        toolButtonStop.Enabled = !enabled;
+                    } else {
+                        item.Enabled = enabled;
+                    }
+                }
+                this.gridDanmakus.Enabled = enabled;
+                //this.statusStrip.Enabled = enabled;
+                if (userMessage != null)
+                    statusAccount.Text = userMessage;
+                if (message != null)
+                    statusMessage.Text = message;
+            });
+        }
+        private void SetProgressState(TBPFLAG flag) {
+            this.SafeRun(delegate {
+                Program.Taskbar.SetProgressState(this, flag);
+                // 修正位置
+                statusMessage.Spring = false;
+                switch (flag) {
+                    case TBPFLAG.TBPF_INDETERMINATE:
+                        statusProgressBar.Visible = true;
+                        statusProgressBar.Style = ProgressBarStyle.Marquee;
+                        break;
+                    case TBPFLAG.TBPF_NOPROGRESS:
+                        statusProgressBar.Visible = false;
+                        break;
+                    case TBPFLAG.TBPF_ERROR:
+                    case TBPFLAG.TBPF_NORMAL:
+                    case TBPFLAG.TBPF_PAUSED:
+                        statusProgressBar.Visible = true;
+                        statusProgressBar.Style = ProgressBarStyle.Blocks;
+                        break;
+                }
+                statusMessage.Width = 1;
+                statusMessage.Spring = true;
+            });
+        }
+        private void SetProgressValue(int completed, int total) {
+            if (completed < 0)
+                completed = 0;
+            if (completed > total)
+                completed = total;
+            this.SafeRun(delegate {
+                Program.Taskbar.SetProgressValue(this, completed, total);
+                if (statusProgressBar.Maximum != total)
+                    statusProgressBar.Maximum = total;
+                statusProgressBar.Value = completed;
+            });
         }
 
         #endregion
@@ -408,11 +427,18 @@ namespace Tsanie.DmPoster {
                     }
                     break;
                 case "Download":
+                    SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
                     DownloadDanmaku(toolTextVid.Text, (count) => {
+                        SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         EnabledUI(true, null, string.Format(Language.Lang["DownloadDanmakuSucceed"], count), null);
                     }, (ex) => {
-                        this.ShowExceptionMessage(ex, Language.Lang["DownloadDanmaku"]);
-                        EnabledUI(true, null, Language.Lang["DownloadDanmaku.Interrupt"], null);
+                        if (ex is CancelledException) {
+                            EnabledUI(true, null, Language.Lang[((CancelledException)ex).Command], null);
+                        } else {
+                            this.ShowExceptionMessage(ex, Language.Lang["DownloadDanmaku"]);
+                            EnabledUI(true, null, Language.Lang["DownloadDanmaku.Interrupt"], null);
+                        }
+                        SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                     });
                     break;
                 case "Exit":
@@ -427,10 +453,16 @@ namespace Tsanie.DmPoster {
         }
 
         private void MainForm_Shown(object sender, EventArgs e) {
+#if DEBUG
+            System.Timers.Timer timer = new System.Timers.Timer(1);
+            timer.Elapsed += (sen, ev) => { _state.WriteInfo(); };
+            timer.Start();
+            statusAccount.Click += (send, ev) => {
+                CheckLogin();
+            };
+#endif
             // 界面文字
-            new Thread(delegate() {
-                LoadUIText();
-            }) { Name = "threadLoadUIText" }.Start();
+            LoadUIText();
             // 登录
             CheckLogin();
         }
