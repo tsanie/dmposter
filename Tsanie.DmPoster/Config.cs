@@ -54,10 +54,6 @@ namespace Tsanie.DmPoster {
             HttpHelper.UserAgent = Config.UserAgent;
             Config.PlayerPath = "http://static.loli.my/play.swf";
             Config.Interval = 100;
-
-            if (!File.Exists(Config.AppPath + Config.ConfigFile)) {
-                CreateConfig(Config.Instance);
-            }
         }
         private static void CreateConfig(Config config) {
             XmlWriterSettings settings = new XmlWriterSettings();
@@ -87,6 +83,10 @@ namespace Tsanie.DmPoster {
         private readonly XmlDocument _config = null;
 
         public Config() {
+            if (!File.Exists(Config.AppPath + Config.ConfigFile)) {
+                Config.CreateConfig(this);
+            }
+
             this._config = new XmlDocument();
             this._config.Load(Config.AppPath + Config.ConfigFile);
             LoadConfig();

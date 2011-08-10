@@ -31,6 +31,7 @@ namespace Tsanie.DmPoster {
         #region - 构造 -
 
         public MainForm() {
+            this.Font = Config.Instance.UIFont;
             InitializeComponent();
             this.Icon = Tsanie.DmPoster.Properties.Resources.AppIcon;
             // DataGridView 列初始化
@@ -75,11 +76,12 @@ namespace Tsanie.DmPoster {
             });
             #endregion
             // 主要界面文字
-            this.Font = Config.Instance.UIFont;
             this.menuStrip.Font = Config.Instance.UIFont;
             this.toolStrip.Font = Config.Instance.UIFont;
+            this.toolTextVid.Font = Config.Instance.UIFont;
             this.statusStrip.Font = Config.Instance.UIFont;
             this.gridDanmakus.DefaultCellStyle.Font = Config.Instance.WidthFont;
+
             this.Text = Language.Lang["Untitled"] + " - " + Config.Title;
             foreach (ToolStripMenuItem item in menuStrip.Items) {
                 item.Text = Language.Lang[item.Name];

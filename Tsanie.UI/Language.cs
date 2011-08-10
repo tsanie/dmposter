@@ -36,8 +36,6 @@ namespace Tsanie.UI {
     /// UI 语言类
     /// </summary>
     public class Language {
-        private static readonly CultureInfo _defaultCulture = new System.Globalization.CultureInfo("zh-CN");
-
         private static Language _instance;
         static Language() {
             _instance = new Language();

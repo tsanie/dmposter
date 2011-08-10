@@ -18,12 +18,12 @@ namespace Tsanie.DmPoster {
         private Thread _thread = null;
 
         public LoginForm() {
+            this.Font = Config.Instance.UIFont;
             InitializeComponent();
             LoadUIText();
         }
 
         private void LoadUIText() {
-            this.Font = Config.Instance.UIFont;
             this.Text = Language.Lang["Login"];
             foreach (Control c in this.Controls) {
                 if (c is Label || c is Button || c is CheckBox)
