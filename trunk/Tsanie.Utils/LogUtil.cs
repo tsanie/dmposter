@@ -12,7 +12,7 @@ namespace Tsanie.Utils {
         public static string LogFile {
             get { return _logFile; }
             set {
-                if (value != null && File.Exists(value)) {
+                if (value != null) {
                     _logFile = value;
                     if (_logWriter != null)
                         _logWriter.Dispose();
@@ -50,7 +50,7 @@ namespace Tsanie.Utils {
             _logWriter.WriteLine(ex.StackTrace);
             _logWriter.WriteLine();
             _logWriter.Flush();
-            WriteError(ex.InnerException, indent + 1);
+            //WriteError(ex.InnerException, indent + 1);
         }
         private static void WriteInfo(string message) {
             _logWriter.WriteLine("--------------------------------------------------");

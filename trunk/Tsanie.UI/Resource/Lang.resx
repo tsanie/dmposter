@@ -118,11 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FontName" xml:space="preserve">
-    <value>SimSun</value>
-  </data>
-  <data name="GdiCharSet" xml:space="preserve">
-    <value>134</value>
-    <comment>GB2312_CHARSET</comment>
+    <value>Segoe UI</value>
   </data>
   <data name="menuEdit" xml:space="preserve">
     <value>编辑(&amp;E)</value>
@@ -405,5 +401,11 @@
   </data>
   <data name="DanmakuMode_TopFixed" xml:space="preserve">
     <value>顶端固定</value>
+  </data>
+  <data name="PropertyInvalidAvOrVid" xml:space="preserve">
+    <value>Av号或Vid号属性值不正确。</value>
+  </data>
+  <data name="FailedCreateDanmakus" xml:space="preserve">
+    <value>{0} 条弹幕因为属性错误无法创建，详情查看日志。</value>
   </data>
 </root>

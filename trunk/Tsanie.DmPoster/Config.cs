@@ -14,6 +14,13 @@ using Tsanie.UI;
 
 namespace Tsanie.DmPoster {
 
+    enum FileState {
+        Untitled,
+        Opened,
+        Changed,
+        Saved
+    }
+
     /// <summary>
     /// 配置类
     /// </summary>
@@ -95,14 +102,12 @@ namespace Tsanie.DmPoster {
                 Tsanie.UI.Language.Lang["FontName"],
                 float.Parse(Tsanie.UI.Language.Lang["FontSize"]),
                 FontStyle.Regular,
-                GraphicsUnit.Point,
-                byte.Parse(Tsanie.UI.Language.Lang["GdiCharSet"]));
+                GraphicsUnit.Point);
             this.WidthFont = new Font(
                 Tsanie.UI.Language.Lang["WidthFontName"],
                 float.Parse(Tsanie.UI.Language.Lang["WidthFontSize"]),
                 FontStyle.Regular,
-                GraphicsUnit.Point,
-                byte.Parse(Tsanie.UI.Language.Lang["GdiCharSet"]));
+                GraphicsUnit.Point);
         }
 
         public void SetValue(string key, object value) {
@@ -122,7 +127,6 @@ namespace Tsanie.DmPoster {
             }
             Save();
         }
-
         public string GetValue(string key) {
             XmlNode node = _config.SelectSingleNode("/configuration/" + key);
             if (node == null)
@@ -201,7 +205,7 @@ namespace Tsanie.DmPoster {
             set {
                 _LogError = value.ToString();
                 if (value) {
-                    LogUtil.LogFile = Config.AppPath + Config.ConfigFile;
+                    LogUtil.LogFile = Config.AppPath + Config.LogFile;
                 } else {
                     LogUtil.LogFile = null;
                 }

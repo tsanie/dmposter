@@ -159,10 +159,6 @@
   <data name="FontName" xml:space="preserve">
     <value>Segoe UI</value>
   </data>
-  <data name="GdiCharSet" xml:space="preserve">
-    <value>0</value>
-    <comment>ANSI_CHARSET</comment>
-  </data>
   <data name="GetVidOfAv" xml:space="preserve">
     <value>Get the Vid</value>
   </data>
@@ -405,5 +401,11 @@
   </data>
   <data name="DanmakuMode_TopFixed" xml:space="preserve">
     <value>Top Fixed</value>
+  </data>
+  <data name="PropertyInvalidAvOrVid" xml:space="preserve">
+    <value>Property of Av/Vid invalid.</value>
+  </data>
+  <data name="FailedCreateDanmakus" xml:space="preserve">
+    <value>{0}(s) danmakus are failed to created, please check the log file.</value>
   </data>
 </root>
