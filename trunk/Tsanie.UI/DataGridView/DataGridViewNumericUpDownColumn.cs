@@ -15,7 +15,7 @@ namespace Tsanie.UI {
         /// </summary>
         public DataGridViewNumericUpDownColumn()
             : base(new DataGridViewNumericUpDownCell()) {
-            this.SortMode = DataGridViewColumnSortMode.Automatic;
+            this.SortMode = DataGridViewColumnSortMode.Programmatic;
         }
 
         /// <summary>

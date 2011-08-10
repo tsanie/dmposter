@@ -388,4 +388,22 @@
   <data name="WidthFontSize" xml:space="preserve">
     <value>8</value>
   </data>
+  <data name="DanmakuMode_BottomFixed" xml:space="preserve">
+    <value>Bottom Fixed</value>
+  </data>
+  <data name="DanmakuMode_Mode7" xml:space="preserve">
+    <value>Mode 7</value>
+  </data>
+  <data name="DanmakuMode_ReverseScroll" xml:space="preserve">
+    <value>Reverse Scroll</value>
+  </data>
+  <data name="DanmakuMode_Scroll" xml:space="preserve">
+    <value>Scroll</value>
+  </data>
+  <data name="DanmakuMode_That_beam_of_light" xml:space="preserve">
+    <value>That beam of light</value>
+  </data>
+  <data name="DanmakuMode_TopFixed" xml:space="preserve">
+    <value>Top Fixed</value>
+  </data>
 </root>
