@@ -16,6 +16,10 @@ namespace Tsanie.Utils {
             return "#" + (color.ToArgb() & 0xffffff).ToString("X6");
         }
 
+        public static string ToRgbIntString(this Color color) {
+            return (color.ToArgb() & 0xffffff).ToString();
+        }
+
         public static Color ToColor(this string str) {
             if (str == null || str.Length == 0)
                 throw new NullReferenceException("ColorString");
