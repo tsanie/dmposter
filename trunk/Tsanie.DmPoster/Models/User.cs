@@ -5,14 +5,6 @@ using System.Text;
 
 namespace Tsanie.DmPoster.Models {
     class UserModel {
-        public static readonly UserModel Guest;
-
-        static UserModel() {
-            Guest = new UserModel() {
-                Name = "游客",
-                Level = "游客"
-            };
-        }
 
         public bool Login = false;
         public string Name = null;
@@ -24,7 +16,13 @@ namespace Tsanie.DmPoster.Models {
         public Level[] Permission = new Level[0];
         public string Level = null;
         public bool Shot = false;
+        public int ChatID = 0;
+        public int Aid = 0;
+        public int Pid = 0;
+        public bool AcceptGuest = false;
+        public string Duration = null;
         public bool AcceptAccel = false;
+        public bool Cache = false;
         public string Server = null;
     }
 

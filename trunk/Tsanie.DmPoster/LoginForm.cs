@@ -19,8 +19,17 @@ namespace Tsanie.DmPoster {
 
         public LoginForm() {
             InitializeComponent();
-            this.Font = Program.UIFont;
-            toolTip.SetToolTip(pictureValidCode, "点我重新获取");
+            LoadUIText();
+        }
+
+        private void LoadUIText() {
+            this.Font = Config.Instance.UIFont;
+            this.Text = Language.Lang["Login"];
+            foreach (Control c in this.Controls) {
+                if (c is Label || c is Button || c is CheckBox)
+                    c.Text = Language.Lang[c.Name];
+            }
+            toolTip.SetToolTip(pictureValidCode, Language.Lang["pictureValidCode_ToolTipText"]);
         }
 
         private void Loading(bool enabled) {
@@ -37,18 +46,18 @@ namespace Tsanie.DmPoster {
 
         private void GetValidCode() {
             Loading(true);
-            _thread = HttpHelper.BeginConnect(Config.HttpHost + "/include/vdimgck.php?r=" + Utility.Rnd.NextDouble(),
+            _thread = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/include/vdimgck.php?r=" + Utility.Rnd.NextDouble(),
                 (request) => {
                     request.Accept = "image/png,image/*;q=0.8,*/*;q=0.5";
-                    request.Referer = Config.HttpHost + "/member/";
+                    request.Referer = Config.Instance.HttpHost + "/member/";
                 }, (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK) {
-                        throw new Exception("获取验证码返回不成功！" +
+                        throw new Exception(Language.Lang["GetValidCode.StatusNotOK"] +
                             state.Response.StatusCode + ": " + state.Response.StatusDescription);
                     }
                     _session = state.Response.Headers["Set-Cookie"];
                     if (string.IsNullOrEmpty(_session)) {
-                        throw new Exception("获取验证码 session 失败！");
+                        throw new Exception(Language.Lang["GetValidCode. session .Failed"]);
                     }
                     int index = _session.IndexOf(';');
                     if (index > 0)
@@ -57,7 +66,7 @@ namespace Tsanie.DmPoster {
                     state.StreamResponse.Dispose();
                     Loading(false);
                 }, (ex) => {
-                    this.SafeRun(delegate { this.ShowExceptionMessage(ex, "验证码"); });
+                    this.SafeRun(delegate { this.ShowExceptionMessage(ex, Language.Lang["GetValidCode"]); });
                     Loading(false);
                 });
         }
@@ -85,17 +94,20 @@ namespace Tsanie.DmPoster {
 
         private void buttonLogin_Click(object sender, EventArgs e) {
             if (string.IsNullOrWhiteSpace(textUser.Text)) {
-                MessageBox.Show(this, "请输入用户名！", "登录", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, Language.Lang["textUser.PropertyNull"], Language.Lang["Login"],
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textUser.Focus();
                 return;
             }
             if (string.IsNullOrWhiteSpace(textPassword.Text)) {
-                MessageBox.Show(this, "请输入密码！", "登录", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, Language.Lang["textPassword.PropertyNull"], Language.Lang["Login"],
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textPassword.Focus();
                 return;
             }
             if (string.IsNullOrWhiteSpace(textValidCode.Text)) {
-                MessageBox.Show(this, "请输入验证码！", "登录", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, Language.Lang["textValidCode.PropertyNull"], Language.Lang["Login"],
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textValidCode.Focus();
                 return;
             }
@@ -106,12 +118,12 @@ namespace Tsanie.DmPoster {
                 "&pwd=" + password + "&vdcode=" + validcode + "&keeptime=2592000";
             byte[] bytes = Encoding.ASCII.GetBytes(data);
             Loading(true);
-            _thread = HttpHelper.BeginConnect(Config.HttpHost + "/member/index_do.php",
+            _thread = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/member/index_do.php",
                 (request) => {
                     request.Method = "POST";
-                    request.Referer = Config.HttpHost + "/member/";
+                    request.Referer = Config.Instance.HttpHost + "/member/";
                     request.Headers["Cache-Control"] = "max-age=0";
-                    request.Headers["Origin"] = Config.HttpHost;
+                    request.Headers["Origin"] = Config.Instance.HttpHost;
                     request.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
                     request.Headers["Cookie"] = _session;
                     request.ContentType = "application/x-www-form-urlencoded";
@@ -122,7 +134,7 @@ namespace Tsanie.DmPoster {
                     }
                 }, (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK) {
-                        throw new Exception("登录返回不成功！" +
+                        throw new Exception(Language.Lang["Login.StatusNotOK"] +
                             state.Response.StatusCode + ": " + state.Response.StatusDescription);
                     }
                     string cookie = state.Response.Headers["Set-Cookie"];
@@ -140,9 +152,9 @@ namespace Tsanie.DmPoster {
                         }
                         if (builder.Length > 0) {
                             if (checkAutoLogin.Checked)
-                                Config.SetValue("Cookies", builder);
+                                Config.Instance.SetValue("Cookies", builder);
                             else
-                                Config.Cookies = builder.ToString();
+                                Config.Instance.Cookies = builder.ToString();
                             Loading(false);
                             this.SafeRun(delegate {
                                 this.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -165,10 +177,10 @@ namespace Tsanie.DmPoster {
                         }
                         reader.Dispose();
                     }
-                    throw new Exception("未知，反正登录没成功！");
+                    throw new Exception(Language.Lang["Login.Failed.Unknown"]);
                 }, (ex) => {
                     this.SafeRun(delegate {
-                        this.ShowExceptionMessage(ex, "登录");
+                        this.ShowExceptionMessage(ex, Language.Lang["Login"]);
                         GetValidCode();
                     });
                 });

@@ -12,7 +12,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _pool; }
             set {
                 if (value < 0 || value > 2)
-                    throw new DanmakuPropertyException(Language.PropertyInvalidPool, "Pool");
+                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidPool"], "Pool");
                 _pool = value;
             }
         }

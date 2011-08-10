@@ -38,37 +38,49 @@ namespace Tsanie.UI {
     public class Language {
         private static readonly CultureInfo _defaultCulture = new System.Globalization.CultureInfo("zh-CN");
 
-        private static ResourceManager _resource;
-        private static CultureInfo _culture = _defaultCulture;
-
+        private static Language _instance;
         static Language() {
-            _resource = new ResourceManager("Tsanie.UI.Resource.Lang", Assembly.GetExecutingAssembly());
+            _instance = new Language();
         }
 
-        public static string FontName { get { return _resource.GetString("FontName", _culture); } }
-        public static string WidthFontName { get { return _resource.GetString("WidthFontName", _culture); } }
-        public static byte GdiCharset { get { return byte.Parse(_resource.GetString("GdiCharSet", _culture)); } }
+        public static Language Lang { get { return _instance; } }
 
-        public static CultureInfo CultureInfo {
+        private ResourceManager _resource;
+        private CultureInfo _culture;
+        private Dictionary<string, string> _resourceCache;
+        private object _syncObject = new object();
+
+        public Language() {
+            _resource = new ResourceManager("Tsanie.UI.Resource.Lang", Assembly.GetExecutingAssembly());
+            _resourceCache = new Dictionary<string, string>();
+            _culture = null;
+        }
+
+        internal void ClearCache() {
+            _resourceCache.Clear();
+        }
+
+        public string this[string key] {
+            get {
+                string val;
+                if (_resourceCache.TryGetValue(key, out val))
+                    return val;
+                StringBuilder builder = new StringBuilder(0x40);
+                foreach (string k in key.Split('.')) {
+                    val = _resource.GetString(k, _culture);
+                    builder.Append((val == null || val.Length <= 0) ? k : val);
+                }
+                val = builder.ToString();
+                lock (_syncObject) {
+                    _resourceCache.Add(key, val);
+                }
+                return val;
+            }
+        }
+
+        public CultureInfo CultureInfo {
             get { return _culture; }
             set { _culture = value; }
-        }
-
-        public static string Untitled { get { return "未命名"; } }
-        public static string Property { get { return "属性"; } }
-        public static string PropertyNull { get { return "属性值不可为 null。"; } }
-        public static string PropertyInvalidPlayTime { get { return "播放时间属性值无效。"; } }
-        public static string PropertyInvalidFontsize { get { return "弹幕字号属性值无效。"; } }
-        public static string PropertyInvalidPool { get { return "弹幕池属性值无效。"; } }
-
-        public static string ColumnPlayTime { get { return "时间"; } }
-        public static string ColumnColor { get { return "颜色"; } }
-        public static string ColumnFontsize { get { return "字号"; } }
-        public static string ColumnText { get { return "弹幕内容"; } }
-        public static string ColumnMode { get { return "模式"; } }
-
-        public static string GetMenuText(string name) {
-            return _resource.GetString(name, _culture);
         }
     }
 }
