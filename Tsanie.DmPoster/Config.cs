@@ -38,6 +38,8 @@ namespace Tsanie.DmPoster {
         public static readonly string PlayerPath;
         public static readonly double Interval;
 
+        public const string DateFormat = "yyyy-MM-dd HH:mm:ss";
+
         public static Config Instance {
             get {
                 if (_instance == null)

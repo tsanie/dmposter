@@ -15,6 +15,7 @@ using Tsanie.Network;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
+using System.Xml;
 
 namespace Tsanie.DmPoster {
     public partial class MainForm : Form {
@@ -91,7 +92,7 @@ namespace Tsanie.DmPoster {
             if (_fileName == null)
                 this.Text = Language.Lang["Untitled"];
             else
-                this.Text = _fileName;
+                this.Text = _fileName.Substring(_fileName.LastIndexOf('\\') + 1);
             if (fileState == FileState.Changed)
                 this.Text += "*";
             this.Text += " - " + Config.Title;
@@ -447,6 +448,63 @@ namespace Tsanie.DmPoster {
                 }, stateCallback, exCallback);
         }
 
+        private bool SaveFile() {
+            if (_fileName == null)
+                return SaveFileAs();
+            if (_fileState != FileState.Changed)
+                return false;
+            return SaveFilename(_fileName);
+        }
+        private bool SaveFileAs() {
+            if (_fileState != FileState.Changed)
+                return false;
+            // 新文件
+            SaveFileDialog dialog = new SaveFileDialog() {
+                DefaultExt = ".xml",
+                Filter = "弹幕文件 (*.xml)|*.xml|所有文件|*.*",
+                Title = "保存弹幕文件"
+            };
+            if (dialog.ShowDialog(this) != System.Windows.Forms.DialogResult.OK) {
+                dialog.Dispose();
+                return false;
+            }
+            _fileName = dialog.FileName;
+            dialog.Dispose();
+            return SaveFilename(_fileName);
+        }
+        private bool SaveFilename(string filename) {
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Encoding = Encoding.UTF8;
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(filename, settings);
+            writer.WriteStartElement("information");
+            foreach (DanmakuBase danmaku in _listDanmakus) {
+                writer.WriteStartElement("data");
+                // playTime
+                writer.WriteStartElement("playTime");
+                writer.WriteString(danmaku.PlayTime.ToString());
+                writer.WriteEndElement();
+                // message
+                writer.WriteStartElement("message");
+                writer.WriteAttributeString("fontsize", danmaku.Fontsize.ToString());
+                writer.WriteAttributeString("color", danmaku.Color.ToRgbIntString());
+                writer.WriteAttributeString("mode", ((int)danmaku.Mode).ToString());
+                writer.WriteString(Utility.UrlEncode(danmaku.Text));
+                writer.WriteEndElement();
+                // times
+                writer.WriteStartElement("times");
+                writer.WriteString(danmaku.Date.ToString(Config.DateFormat));
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+            writer.Flush();
+            writer.Close();
+            writer = null;
+            ChangeFileState(FileState.Saved);
+            return true;
+        }
+
         #endregion
 
         #region - 公共方法 -
@@ -532,6 +590,10 @@ namespace Tsanie.DmPoster {
                     break;
                     #endregion
                 case "Save":
+                    SaveFile();
+                    break;
+                case "SaveAs":
+                    SaveFileAs();
                     break;
                 case "Exit":
                     #region - 退出 -
