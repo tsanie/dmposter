@@ -499,7 +499,9 @@ namespace Tsanie.DmPoster {
             }
         }
         private void gridDanmakus_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
-
+            DanmakuBase danmaku = _listDanmakus[e.RowIndex];
+            DataGridViewRow row = GetCacheRow(danmaku);
+            // TODO:
         }
 
         #endregion
