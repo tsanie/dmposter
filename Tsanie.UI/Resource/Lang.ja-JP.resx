@@ -120,10 +120,6 @@
   <data name="FontName" xml:space="preserve">
     <value>MS UI Gothic</value>
   </data>
-  <data name="GdiCharSet" xml:space="preserve">
-    <value>128</value>
-    <comment>SHIFTJIS_CHARSET</comment>
-  </data>
   <data name="menuEdit" xml:space="preserve">
     <value>編集(&amp;E)</value>
   </data>
@@ -405,5 +401,11 @@
   </data>
   <data name="DanmakuMode_TopFixed" xml:space="preserve">
     <value>顶端固定</value>
+  </data>
+  <data name="PropertyInvalidAvOrVid" xml:space="preserve">
+    <value>Av号或Vid号属性值不正确。</value>
+  </data>
+  <data name="FailedCreateDanmakus" xml:space="preserve">
+    <value>{0} 条弹幕因为属性错误无法创建，详情查看日志。</value>
   </data>
 </root>

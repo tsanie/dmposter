@@ -26,7 +26,7 @@ namespace Tsanie.DmPoster.Danmaku {
 
         public override string Message {
             get {
-                return (_innerException == null ? base.Message : _innerException.Message);
+                return (string.IsNullOrEmpty(base.Message) && (_innerException != null) ? _innerException.Message : base.Message);
             }
         }
 

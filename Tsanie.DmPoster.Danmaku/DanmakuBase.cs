@@ -67,7 +67,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _playTime; }
             set {
                 if (value < 0)
-                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidPlayTime"], "PlayTime");
+                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidPlayTime"] + value, "PlayTime");
                 _playTime = value;
             }
         }
@@ -79,7 +79,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _fontsize; }
             set {
                 if (value < 1 || value > 127)
-                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidFontsize"], "Fontsize");
+                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidFontsize"] + value, "Fontsize");
                 _fontsize = value;
             }
         }
