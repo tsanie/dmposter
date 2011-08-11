@@ -511,6 +511,7 @@
             // 
             // gridDanmakus
             // 
+            this.gridDanmakus.AllowDrop = true;
             this.gridDanmakus.AllowUserToAddRows = false;
             this.gridDanmakus.AllowUserToDeleteRows = false;
             this.gridDanmakus.AllowUserToResizeRows = false;
@@ -536,6 +537,8 @@
             this.gridDanmakus.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridDanmakus_CellValueNeeded);
             this.gridDanmakus.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridDanmakus_CellValuePushed);
             this.gridDanmakus.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gridDanmakus_ColumnHeaderMouseClick);
+            this.gridDanmakus.DragDrop += new System.Windows.Forms.DragEventHandler(this.gridDanmakus_DragDrop);
+            this.gridDanmakus.DragEnter += new System.Windows.Forms.DragEventHandler(this.gridDanmakus_DragEnter);
             // 
             // toolStrip
             // 
@@ -557,7 +560,7 @@
             this.toolButtonUpload});
             this.toolStrip.Location = new System.Drawing.Point(3, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(395, 25);
+            this.toolStrip.Size = new System.Drawing.Size(364, 25);
             this.toolStrip.TabIndex = 0;
             // 
             // toolButtonAdd

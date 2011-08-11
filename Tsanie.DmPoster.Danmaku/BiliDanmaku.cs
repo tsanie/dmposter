@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tsanie.UI;
 using Tsanie.Utils;
 
 namespace Tsanie.DmPoster.Danmaku {
@@ -13,7 +12,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _pool; }
             set {
                 if (value < 0 || value > 2)
-                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidPool"] + value, "Pool");
+                    throw new DanmakuPropertyException("PropertyInvalid, " + value, "Pool");
                 _pool = value;
             }
         }

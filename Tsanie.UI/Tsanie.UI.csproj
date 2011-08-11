@@ -47,6 +47,11 @@
     <Compile Include="DataGridView\DataGridViewNumericUpDownEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DataGridView\TsDataGridViewModeCell.cs" />
+    <Compile Include="DataGridView\TsDataGridViewModeColumn.cs" />
+    <Compile Include="DataGridView\TsDataGridViewModeEditingControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="ProgressTaskbar.cs" />
@@ -65,6 +70,10 @@
     <Compile Include="Win7Stuff.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Tsanie.DmPoster.Danmaku\Tsanie.DmPoster.Danmaku.csproj">
+      <Project>{53C0939C-182E-4D20-B620-B78C5BA98ACE}</Project>
+      <Name>Tsanie.DmPoster.Danmaku</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tsanie.Utils\Tsanie.Utils.csproj">
       <Project>{0AD18C02-A19B-423F-8F71-A16C1D89D99B}</Project>
       <Name>Tsanie.Utils</Name>

@@ -59,6 +59,7 @@ namespace Tsanie.DmPoster {
                     Frozen = true },
                 new TsDataGridViewColorColumn() {
                     Name = "datacolColor",
+                    /* ValueType = typeof(System.Drawing.Color), */
                     Width = 74,
                     MinimumWidth = 64},
                 new DataGridViewNumericUpDownColumn() {
@@ -69,8 +70,13 @@ namespace Tsanie.DmPoster {
                     Width = 44,
                     MinimumWidth = 36,
                     DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight } },
+                new TsDataGridViewModeColumn(){
+                    Name = "datacolMode",
+                    Width = 120,
+                    MinimumWidth = 120 },
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolState",
+                    ValueType = typeof(System.String),
                     HeaderText = "",
                     Width = 24,
                     MinimumWidth = 20,
@@ -78,13 +84,14 @@ namespace Tsanie.DmPoster {
                     DefaultCellStyle = new DataGridViewCellStyle() { Font = new Font("Webdings", 9f) } },
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolText",
+                    ValueType = typeof(System.String),
                     Width = 1000,
-                    MinimumWidth = 62},
-                new DataGridViewTextBoxColumn() {
+                    MinimumWidth = 62}
+                /*new DataGridViewComboBoxColumn() {
                     Name = "datacolMode",
                     Width = 120,
                     MinimumWidth = 120,
-                    ReadOnly = true}
+                    ReadOnly = true}*/
             });
             #endregion
             // 文字
@@ -229,12 +236,30 @@ namespace Tsanie.DmPoster {
             DataGridViewRow row = new DataGridViewRow();
             row.Cells.AddRange(new DataGridViewCell[] {
                 new DataGridViewTextBoxCell() { Value = null },
-                new DataGridViewTextBoxCell() { Value = danmaku.PlayTime },
-                new DataGridViewTextBoxCell() { Value = danmaku.Color },
-                new DataGridViewTextBoxCell() { Value = danmaku.Fontsize },
-                new DataGridViewTextBoxCell() { Value = "" },
-                new DataGridViewTextBoxCell() { Value = danmaku.Text },
-                new DataGridViewTextBoxCell() { Value = danmaku.Mode }
+                new DataGridViewTextBoxCell() {
+                    Value = danmaku.PlayTime,
+                    ValueType = typeof(System.Single)
+                },
+                new DataGridViewTextBoxCell() {
+                    Value = danmaku.Color,
+                    ValueType = typeof(System.Drawing.Color)
+                },
+                new DataGridViewTextBoxCell() {
+                    Value = danmaku.Fontsize,
+                    ValueType = typeof(System.Int32)
+                },
+                new DataGridViewTextBoxCell() {
+                    Value = danmaku.Mode,
+                    ValueType = typeof(Tsanie.DmPoster.Danmaku.DanmakuMode)
+                },
+                new DataGridViewTextBoxCell() {
+                    Value = "",
+                    ValueType = typeof(System.String)
+                },
+                new DataGridViewTextBoxCell() {
+                    Value = danmaku.Text,
+                    ValueType = typeof(System.String)
+                }
             });
             return row;
         }
@@ -617,7 +642,25 @@ namespace Tsanie.DmPoster {
             return true;
         }
 
+        private DialogResult QuerySave() {
+            return MessageBox.Show(
+                    this,
+                    string.Format(Language.Lang["QuerySaveFile"], (_fileName == null ? Language.Lang["Untitled"] : _fileName.GetFilename())),
+                    Language.Lang["SaveFile"],
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
+        }
+
         private bool LoadFile() {
+            if (_fileState == FileState.Changed) {
+                // 询问保存
+                DialogResult dr = QuerySave();
+                if (dr == System.Windows.Forms.DialogResult.Cancel)
+                    return false;
+                else if (dr == System.Windows.Forms.DialogResult.Yes)
+                    if (!SaveFile())
+                        return false;
+            }
             OpenFileDialog dialog = new OpenFileDialog() {
                 Filter = "弹幕文件 (*.xml)|*.xml|所有文件|*.*",
                 Title = "打开弹幕文件"
@@ -803,12 +846,7 @@ namespace Tsanie.DmPoster {
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (_fileState == FileState.Changed) {
                 // 询问是否保存
-                DialogResult dr = MessageBox.Show(
-                    this,
-                    string.Format(Language.Lang["QuerySaveFile"], (_fileName == null ? Language.Lang["Untitled"] : _fileName.GetFilename())),
-                    Language.Lang["SaveFile"],
-                    MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Question);
+                DialogResult dr = QuerySave();
                 if (dr == System.Windows.Forms.DialogResult.Cancel)
                     e.Cancel = true;
                 else if (dr == System.Windows.Forms.DialogResult.Yes)
@@ -837,17 +875,15 @@ namespace Tsanie.DmPoster {
         }
         private void gridDanmakus_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             DataGridViewRow row = GetCacheRow(_listDanmakus[e.RowIndex]);
-            if (e.ColumnIndex == 6) {
-                // Mode
-                e.Value = Language.Lang["DanmakuMode_" + row.Cells[6].Value];
-            } else {
-                e.Value = row.Cells[e.ColumnIndex].Value;
-                if (e.ColumnIndex == 2) {
-                    // Color
-                    gridDanmakus[2, e.RowIndex].Style.BackColor = (Color)e.Value;
-
-                }
+            //if (e.ColumnIndex == 4) {
+            //    e.Value = row.Cells[4].Value.ToString();
+            //} else {
+            e.Value = row.Cells[e.ColumnIndex].Value;
+            if (e.ColumnIndex == 2) {
+                // Color
+                gridDanmakus[2, e.RowIndex].Style.BackColor = (Color)e.Value;
             }
+            //}
         }
         private void gridDanmakus_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
             DanmakuBase danmaku = _listDanmakus[e.RowIndex];
@@ -871,7 +907,7 @@ namespace Tsanie.DmPoster {
                         return;
                     danmaku.Fontsize = fontsize;
                     break;
-                case 5: // 文本
+                case 6: // 文本
                     string text = (string)(e.Value);
                     if (danmaku.Text == text)
                         return;
@@ -884,6 +920,18 @@ namespace Tsanie.DmPoster {
             row.Cells[e.ColumnIndex].Value = e.Value;
             ChangeFileState(FileState.Changed);
         }
+        private void gridDanmakus_DragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files.Length == 1 && files[0].ToLower().EndsWith(".xml"))
+                    e.Effect = DragDropEffects.Link;
+            }
+        }
+        private void gridDanmakus_DragDrop(object sender, DragEventArgs e) {
+            string file = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+            LoadFile(file);
+        }
+
         #endregion
 
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
-using Tsanie.UI;
 
 namespace Tsanie.DmPoster.Danmaku {
 
@@ -67,7 +66,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _playTime; }
             set {
                 if (value < 0)
-                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidPlayTime"] + value, "PlayTime");
+                    throw new DanmakuPropertyException("PropertyInvalid, " + value, "PlayTime");
                 _playTime = value;
             }
         }
@@ -79,7 +78,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _fontsize; }
             set {
                 if (value < 1 || value > 127)
-                    throw new DanmakuPropertyException(Language.Lang["PropertyInvalidFontsize"] + value, "Fontsize");
+                    throw new DanmakuPropertyException("PropertyInvalid, " + value, "Fontsize");
                 _fontsize = value;
             }
         }
@@ -99,7 +98,7 @@ namespace Tsanie.DmPoster.Danmaku {
             get { return _text; }
             set {
                 if (value == null)
-                    throw new DanmakuException(Language.Lang["PropertyNull"]);
+                    throw new DanmakuException("PropertyNull");
                 _text = value;
             }
         }

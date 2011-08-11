@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
+using Tsanie.DmPoster.Danmaku;
 
 namespace Tsanie.UI {
-    public class TsDataGridViewColorColumn : DataGridViewColumn {
-        public TsDataGridViewColorColumn()
-            : base(new TsDataGridViewColorCell()) {
+    public class TsDataGridViewModeColumn : DataGridViewColumn {
+        public TsDataGridViewModeColumn()
+            : base(new TsDataGridViewModeCell()) {
             this.SortMode = DataGridViewColumnSortMode.Programmatic;
         }
 
@@ -17,10 +18,9 @@ namespace Tsanie.UI {
                 return base.CellTemplate;
             }
             set {
-                // Ensure that the cell used for the template is a TsDataGridViewColorCell.
-                if ((value != null) && !(value is TsDataGridViewColorCell)) {
+                if ((value != null) && !(value is TsDataGridViewModeCell)) {
                     throw new InvalidCastException("Wrong type: " + value.GetType().FullName +
-                        ", require: Tsanie.UI.TsDataGridViewColorCell");
+                        ", require: Tsanie.UI.TsDataGridViewModeCell");
                 }
                 base.CellTemplate = value;
             }
@@ -28,13 +28,19 @@ namespace Tsanie.UI {
 
         public override string ToString() {
             StringBuilder builder = new StringBuilder(0x40);
-            builder.Append("TsDataGridViewColorColumn { Name=");
+            builder.Append("TsDataGridViewModeColumn { Name=");
             builder.Append(base.Name);
             builder.Append(", Index=");
             builder.Append(base.Index.ToString(CultureInfo.CurrentCulture));
             builder.Append(" }");
             return builder.ToString();
         }
+    }
 
+    public class ModeItem {
+        public DanmakuMode mode;
+        public override string ToString() {
+            return Language.Lang["DanmakuMode_" + this.mode];
+        }
     }
 }
