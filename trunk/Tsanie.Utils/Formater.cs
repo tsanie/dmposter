@@ -40,4 +40,10 @@ namespace Tsanie.Utils {
             return new DateTime(ticks, DateTimeKind.Utc).ToLocalTime();
         }
     }
+
+    public static class StringFormater {
+        public static string GetFilename(this string str) {
+            return (str == null ? null : str.Substring(str.LastIndexOf('\\') + 1));
+        }
+    }
 }
