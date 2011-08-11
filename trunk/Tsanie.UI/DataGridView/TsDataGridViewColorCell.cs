@@ -64,6 +64,15 @@ namespace Tsanie.UI {
             return ((Color)value).ToColorString();
         }
 
+        public override object ParseFormattedValue(
+            object formattedValue,
+            DataGridViewCellStyle cellStyle,
+            System.ComponentModel.TypeConverter formattedValueTypeConverter,
+            System.ComponentModel.TypeConverter valueTypeConverter
+        ) {
+            return ((string)formattedValue).ToColor();
+        }
+
         protected override void Paint(
             Graphics graphics,
             Rectangle clipBounds,
