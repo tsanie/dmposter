@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tsanie.UI;
 
 namespace Tsanie.DmPoster.Danmaku {
     /// <summary>
@@ -83,7 +82,7 @@ namespace Tsanie.DmPoster.Danmaku {
 
         public override string Message {
             get {
-                return base.Message + Language.Lang["Property"] + ": " + this._propertyName;
+                return base.Message + "Property: " + this._propertyName;
             }
         }
     }
