@@ -89,14 +89,17 @@ namespace Tsanie.DmPoster {
 
         private void ChangeFileState(FileState fileState) {
             _fileState = fileState;
+            string title = "";
             if (_fileName == null)
-                this.Text = Language.Lang["Untitled"];
+                title = Language.Lang["Untitled"];
             else
-                this.Text = _fileName.Substring(_fileName.LastIndexOf('\\') + 1);
+                title = _fileName.Substring(_fileName.LastIndexOf('\\') + 1);
             if (fileState == FileState.Changed)
-                this.Text += "*";
-            this.Text += " - " + Config.Title;
+                title += "*";
+            this.SafeRun(delegate { this.Text = title + " - " + Config.Title; });
         }
+
+        #region - UI相关 -
         private void EnumMenuItem(ToolStripMenuItem item) {
             foreach (ToolStripItem it in item.DropDownItems) {
                 if (it is ToolStripMenuItem) {
@@ -165,6 +168,7 @@ namespace Tsanie.DmPoster {
                 statusProgressBar.Value = completed;
             });
         }
+        #endregion
 
         private DataGridViewRow CreateRowFromDanmaku(DanmakuBase danmaku) {
             DataGridViewRow row = new DataGridViewRow();
@@ -448,16 +452,18 @@ namespace Tsanie.DmPoster {
                 }, stateCallback, exCallback);
         }
 
-        private bool SaveFile() {
-            if (_fileName == null)
-                return SaveFileAs();
+        private void SaveFile() {
+            if (_fileName == null) {
+                SaveFileAs();
+                return;
+            }
             if (_fileState != FileState.Changed)
-                return false;
-            return SaveFilename(_fileName);
+                return;
+            SaveFilename(_fileName);
         }
-        private bool SaveFileAs() {
+        private void SaveFileAs() {
             if (_fileState != FileState.Changed)
-                return false;
+                return;
             // 新文件
             SaveFileDialog dialog = new SaveFileDialog() {
                 DefaultExt = ".xml",
@@ -466,43 +472,67 @@ namespace Tsanie.DmPoster {
             };
             if (dialog.ShowDialog(this) != System.Windows.Forms.DialogResult.OK) {
                 dialog.Dispose();
-                return false;
+                return;
             }
             _fileName = dialog.FileName;
             dialog.Dispose();
-            return SaveFilename(_fileName);
+            SaveFilename(_fileName);
         }
-        private bool SaveFilename(string filename) {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Encoding = Encoding.UTF8;
-            settings.Indent = true;
-            XmlWriter writer = XmlWriter.Create(filename, settings);
-            writer.WriteStartElement("information");
-            foreach (DanmakuBase danmaku in _listDanmakus) {
-                writer.WriteStartElement("data");
-                // playTime
-                writer.WriteStartElement("playTime");
-                writer.WriteString(danmaku.PlayTime.ToString());
-                writer.WriteEndElement();
-                // message
-                writer.WriteStartElement("message");
-                writer.WriteAttributeString("fontsize", danmaku.Fontsize.ToString());
-                writer.WriteAttributeString("color", danmaku.Color.ToRgbIntString());
-                writer.WriteAttributeString("mode", ((int)danmaku.Mode).ToString());
-                writer.WriteString(Utility.UrlEncode(danmaku.Text));
-                writer.WriteEndElement();
-                // times
-                writer.WriteStartElement("times");
-                writer.WriteString(danmaku.Date.ToString(Config.DateFormat));
-                writer.WriteEndElement();
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-            writer.Flush();
-            writer.Close();
-            writer = null;
-            ChangeFileState(FileState.Saved);
-            return true;
+        private void SaveFilename(string filename) {
+            int total = _listDanmakus.Count;
+            Action<string> done = msg => {
+                EnabledUI(true, null, msg, null);
+                SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
+            };
+            Thread thread = new Thread(delegate() {
+                try {
+                    XmlWriterSettings settings = new XmlWriterSettings();
+                    settings.Encoding = Encoding.UTF8;
+                    settings.Indent = true;
+                    XmlWriter writer = XmlWriter.Create(filename, settings);
+                    writer.WriteStartElement("information");
+                    int n = 0;
+                    foreach (DanmakuBase danmaku in _listDanmakus) {
+                        writer.WriteStartElement("data");
+                        // playTime
+                        writer.WriteStartElement("playTime");
+                        writer.WriteString(danmaku.PlayTime.ToString());
+                        writer.WriteEndElement();
+                        // message
+                        writer.WriteStartElement("message");
+                        writer.WriteAttributeString("fontsize", danmaku.Fontsize.ToString());
+                        writer.WriteAttributeString("color", danmaku.Color.ToRgbIntString());
+                        writer.WriteAttributeString("mode", ((int)danmaku.Mode).ToString());
+                        writer.WriteString(Utility.UrlEncode(danmaku.Text));
+                        writer.WriteEndElement();
+                        // times
+                        writer.WriteStartElement("times");
+                        writer.WriteString(danmaku.Date.ToString(Config.DateFormat));
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+                        // 进度条
+                        SetProgressValue(n++, total);
+                    }
+                    writer.WriteEndElement();
+                    writer.Flush();
+                    writer.Close();
+                    writer = null;
+                    ChangeFileState(FileState.Saved);
+                    done(Language.Lang["SaveFile.Succeed"]);
+                } catch (ThreadAbortException) {
+                    done(Language.Lang["SaveFile.Interrupt"]);
+                }
+            }) { Name = "threadSaveFile_" + filename };
+            EnabledUI(false, null, Language.Lang["SaveFile"], delegate {
+#if DEBUG
+                Console.WriteLine(thread.ThreadState);
+#endif
+                if (thread.ThreadState != ThreadState.Stopped)
+                    thread.Abort();
+            });
+            SetProgressState(TBPFLAG.TBPF_NORMAL);
+            SetProgressValue(0, total);
+            thread.Start();
         }
 
         #endregion
@@ -590,11 +620,15 @@ namespace Tsanie.DmPoster {
                     break;
                     #endregion
                 case "Save":
+                    #region - 保存 -
                     SaveFile();
                     break;
+                    #endregion
                 case "SaveAs":
+                    #region - 另存为 -
                     SaveFileAs();
                     break;
+                    #endregion
                 case "Exit":
                     #region - 退出 -
                     this.Close();

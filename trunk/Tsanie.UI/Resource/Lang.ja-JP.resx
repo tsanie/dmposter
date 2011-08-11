@@ -408,4 +408,7 @@
   <data name="FailedCreateDanmakus" xml:space="preserve">
     <value>{0} 条弹幕因为属性错误无法创建，详情查看日志。</value>
   </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>保存文件</value>
+  </data>
 </root>
