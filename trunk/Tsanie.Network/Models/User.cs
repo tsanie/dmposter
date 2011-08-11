@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Tsanie.DmPoster.Models {
-    class UserModel {
+namespace Tsanie.Network.Models {
+    public class UserModel {
 
         public bool Login = false;
         public string Name = null;
@@ -29,7 +29,7 @@ namespace Tsanie.DmPoster.Models {
     /// <summary>
     /// 级别枚举
     /// </summary>
-    enum Level {
+    public enum Level {
         /// <summary>游客</summary>
         Guest = 0,
         /// <summary>未知</summary>
