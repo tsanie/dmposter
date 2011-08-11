@@ -56,6 +56,9 @@ namespace Tsanie.DmPoster {
                 Program.Version.Minor,
                 Program.Version.Build,
                 Program.Version.Revision);
+#if ALPHA
+            Config.Title += " [alpha]";
+#endif
             Config.AppPath = Application.ExecutablePath.Substring(0,
                 Application.ExecutablePath.LastIndexOf('\\'));
             Config.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Safari/534.12 DmPoster/"
