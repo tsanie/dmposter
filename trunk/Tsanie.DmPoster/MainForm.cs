@@ -137,6 +137,17 @@ namespace Tsanie.DmPoster {
                         });
                     }
                 }
+                this.SafeRun(delegate {
+                    toolLabelInterval.Text = Language.Lang["toolLabelInterval"];
+                    toolTextInterval.Font = Config.Instance.UIFont;
+                    toolLabelPool.Text = Language.Lang["toolLabelPool"];
+                    toolComboPool.Items.AddRange(new string[] {
+                        Language.Lang["Pool_Normal"],
+                        Language.Lang["Pool_Comment"],
+                        Language.Lang["Pool_Special"]
+                    });
+                    toolComboPool.SelectedIndex = 0;
+                });
             }) { Name = "threadLoadUIText" }.Start();
         }
 
@@ -363,6 +374,20 @@ namespace Tsanie.DmPoster {
                             _user = user;
                             this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.logined; });
                             EnabledUI(true, _user.Name + " (" + _user.Level + ")", Language.Lang["Done"], null);
+                            // 发送
+                            if (user.Permission.Contains(Level.Commenter) ||
+                                user.Permission.Contains(Level.Vip) ||
+                                user.Permission.Contains(Level.Major)) {
+                                // 0.5秒
+                                if (Config.Instance.PostInterval >= 500)
+                                    toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
+                                toolComboPool.Enabled = true;
+                                toolComboPool.SelectedIndex = Config.Instance.Pool;
+                            } else {
+                                // 5秒
+                                if (Config.Instance.PostInterval >= 5000)
+                                    toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
+                            }
                         } else {
                             this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.guest; });
                             EnabledUI(true, Language.Lang["Guest"], Language.Lang["Done"], null);
@@ -379,6 +404,8 @@ namespace Tsanie.DmPoster {
                     });
             } else {
                 EnabledUI(true, Language.Lang["Guest"], Language.Lang["Done"], null);
+                if (Config.Instance.PostInterval >= 10000)
+                    toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
             }
         }
 
@@ -430,7 +457,7 @@ namespace Tsanie.DmPoster {
                                         // 失败
                                         failed++;
                                     } else {
-                                        danmaku.Text = HtmlUtility.HtmlDecode(text);
+                                        danmaku.Text = Utility.HtmlDecode(text);
                                         _listDanmakus.Add(danmaku);
                                         count++;
                                     }
@@ -572,7 +599,7 @@ namespace Tsanie.DmPoster {
                     danmaku.Fontsize,
                     danmaku.Color.ToRgbIntString(),
                     (int)danmaku.Mode,
-                    HtmlUtility.HtmlEncode(danmaku.Text)
+                    Utility.HtmlEncode(danmaku.Text)
                         .Replace(Environment.NewLine, "\n")
                         .Replace("/n", "\n"));
                 writer.WriteLine("\t<times>{0}</times>", danmaku.Date.ToString(Config.DateFormat));
@@ -709,7 +736,7 @@ namespace Tsanie.DmPoster {
                                             if (reader.MoveToAttribute("mode"))
                                                 danmaku.Mode = (DanmakuMode)(int.Parse(reader.Value));
                                             reader.MoveToContent();
-                                            danmaku.Text = HtmlUtility.HtmlDecode(reader.ReadElementContentAsString());
+                                            danmaku.Text = Utility.HtmlDecode(reader.ReadElementContentAsString());
                                         } else {
                                             if (!reader.Read())
                                                 break;
@@ -729,7 +756,7 @@ namespace Tsanie.DmPoster {
                                         failed++;
                                     else {
                                         reader.MoveToContent();
-                                        danmaku.Text = HtmlUtility.HtmlDecode(reader.ReadElementContentAsString());
+                                        danmaku.Text = Utility.HtmlDecode(reader.ReadElementContentAsString());
                                         _listDanmakus.Add(danmaku);
                                         count++;
                                     }
