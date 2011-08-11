@@ -408,4 +408,7 @@
   <data name="FailedCreateDanmakus" xml:space="preserve">
     <value>{0}(s) danmakus are failed to created, please check the log file.</value>
   </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Save file</value>
+  </data>
 </root>
