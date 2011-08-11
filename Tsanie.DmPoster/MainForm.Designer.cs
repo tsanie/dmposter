@@ -82,6 +82,11 @@
             this.toolButtonSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.toolButtonPost = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolLabelInterval = new System.Windows.Forms.ToolStripLabel();
+            this.toolTextInterval = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolLabelPool = new System.Windows.Forms.ToolStripLabel();
+            this.toolComboPool = new System.Windows.Forms.ToolStripComboBox();
             this.toolButtonStop = new Tsanie.UI.TsToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolButtonSelect = new System.Windows.Forms.ToolStripButton();
@@ -134,20 +139,21 @@
             // 
             this.menuOperationLogin.Image = global::Tsanie.DmPoster.Properties.Resources.login;
             this.menuOperationLogin.Name = "menuOperationLogin";
-            this.menuOperationLogin.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationLogin.Size = new System.Drawing.Size(116, 22);
             this.menuOperationLogin.Tag = "Login";
             this.menuOperationLogin.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(113, 6);
             // 
             // menuOperationOpen
             // 
             this.menuOperationOpen.Image = global::Tsanie.DmPoster.Properties.Resources.open;
             this.menuOperationOpen.Name = "menuOperationOpen";
-            this.menuOperationOpen.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.menuOperationOpen.Size = new System.Drawing.Size(116, 22);
             this.menuOperationOpen.Tag = "Open";
             this.menuOperationOpen.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -155,27 +161,28 @@
             // 
             this.menuOperationSave.Image = global::Tsanie.DmPoster.Properties.Resources.save;
             this.menuOperationSave.Name = "menuOperationSave";
-            this.menuOperationSave.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.menuOperationSave.Size = new System.Drawing.Size(116, 22);
             this.menuOperationSave.Tag = "Save";
             this.menuOperationSave.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuOperationSaveAs
             // 
             this.menuOperationSaveAs.Name = "menuOperationSaveAs";
-            this.menuOperationSaveAs.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationSaveAs.Size = new System.Drawing.Size(116, 22);
             this.menuOperationSaveAs.Tag = "SaveAs";
             this.menuOperationSaveAs.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(113, 6);
             // 
             // menuOperationDownload
             // 
             this.menuOperationDownload.Image = global::Tsanie.DmPoster.Properties.Resources.download;
             this.menuOperationDownload.Name = "menuOperationDownload";
-            this.menuOperationDownload.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationDownload.Size = new System.Drawing.Size(116, 22);
             this.menuOperationDownload.Tag = "Download";
             this.menuOperationDownload.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -183,19 +190,19 @@
             // 
             this.menuOperationUpload.Image = global::Tsanie.DmPoster.Properties.Resources.upload;
             this.menuOperationUpload.Name = "menuOperationUpload";
-            this.menuOperationUpload.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationUpload.Size = new System.Drawing.Size(116, 22);
             this.menuOperationUpload.Tag = "Upload";
             this.menuOperationUpload.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(113, 6);
             // 
             // menuOperationExit
             // 
             this.menuOperationExit.Name = "menuOperationExit";
-            this.menuOperationExit.Size = new System.Drawing.Size(67, 22);
+            this.menuOperationExit.Size = new System.Drawing.Size(116, 22);
             this.menuOperationExit.Tag = "Exit";
             this.menuOperationExit.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -221,72 +228,72 @@
             // 
             this.menuEditAdd.Image = global::Tsanie.DmPoster.Properties.Resources.newComment;
             this.menuEditAdd.Name = "menuEditAdd";
-            this.menuEditAdd.Size = new System.Drawing.Size(67, 22);
+            this.menuEditAdd.Size = new System.Drawing.Size(68, 22);
             this.menuEditAdd.Tag = "Add";
             this.menuEditAdd.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuEditInsert
             // 
             this.menuEditInsert.Name = "menuEditInsert";
-            this.menuEditInsert.Size = new System.Drawing.Size(67, 22);
+            this.menuEditInsert.Size = new System.Drawing.Size(68, 22);
             this.menuEditInsert.Tag = "Insert";
             this.menuEditInsert.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(65, 6);
             // 
             // menuEditEdit
             // 
             this.menuEditEdit.Name = "menuEditEdit";
-            this.menuEditEdit.Size = new System.Drawing.Size(67, 22);
+            this.menuEditEdit.Size = new System.Drawing.Size(68, 22);
             this.menuEditEdit.Tag = "Edit";
             this.menuEditEdit.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuEditCutting
             // 
             this.menuEditCutting.Name = "menuEditCutting";
-            this.menuEditCutting.Size = new System.Drawing.Size(67, 22);
+            this.menuEditCutting.Size = new System.Drawing.Size(68, 22);
             this.menuEditCutting.Tag = "Cutting";
             this.menuEditCutting.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuEditDelete
             // 
             this.menuEditDelete.Name = "menuEditDelete";
-            this.menuEditDelete.Size = new System.Drawing.Size(67, 22);
+            this.menuEditDelete.Size = new System.Drawing.Size(68, 22);
             this.menuEditDelete.Tag = "Delete";
             this.menuEditDelete.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(65, 6);
             // 
             // menuEditCopy
             // 
             this.menuEditCopy.Name = "menuEditCopy";
-            this.menuEditCopy.Size = new System.Drawing.Size(67, 22);
+            this.menuEditCopy.Size = new System.Drawing.Size(68, 22);
             this.menuEditCopy.Tag = "Copy";
             this.menuEditCopy.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuEditPaste
             // 
             this.menuEditPaste.Name = "menuEditPaste";
-            this.menuEditPaste.Size = new System.Drawing.Size(67, 22);
+            this.menuEditPaste.Size = new System.Drawing.Size(68, 22);
             this.menuEditPaste.Tag = "Paste";
             this.menuEditPaste.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(65, 6);
             // 
             // menuEditMoveUp
             // 
             this.menuEditMoveUp.Image = global::Tsanie.DmPoster.Properties.Resources.up;
             this.menuEditMoveUp.Name = "menuEditMoveUp";
-            this.menuEditMoveUp.Size = new System.Drawing.Size(67, 22);
+            this.menuEditMoveUp.Size = new System.Drawing.Size(68, 22);
             this.menuEditMoveUp.Tag = "MoveUp";
             this.menuEditMoveUp.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -294,7 +301,7 @@
             // 
             this.menuEditMoveDown.Image = global::Tsanie.DmPoster.Properties.Resources.down;
             this.menuEditMoveDown.Name = "menuEditMoveDown";
-            this.menuEditMoveDown.Size = new System.Drawing.Size(67, 22);
+            this.menuEditMoveDown.Size = new System.Drawing.Size(68, 22);
             this.menuEditMoveDown.Tag = "MoveDown";
             this.menuEditMoveDown.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -316,26 +323,26 @@
             // menuMultipleInsertBefore
             // 
             this.menuMultipleInsertBefore.Name = "menuMultipleInsertBefore";
-            this.menuMultipleInsertBefore.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleInsertBefore.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleInsertBefore.Tag = "InsertBefore";
             this.menuMultipleInsertBefore.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuMultipleAppendAfter
             // 
             this.menuMultipleAppendAfter.Name = "menuMultipleAppendAfter";
-            this.menuMultipleAppendAfter.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleAppendAfter.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleAppendAfter.Tag = "AppendAfter";
             this.menuMultipleAppendAfter.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(65, 6);
             // 
             // menuMultipleFontsize
             // 
             this.menuMultipleFontsize.Name = "menuMultipleFontsize";
-            this.menuMultipleFontsize.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleFontsize.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleFontsize.Tag = "Fontsize";
             this.menuMultipleFontsize.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -345,20 +352,20 @@
             this.menuMultipleColorConstant,
             this.menuMultipleColorGradient});
             this.menuMultipleColor.Name = "menuMultipleColor";
-            this.menuMultipleColor.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleColor.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleColor.Tag = "Color";
             // 
             // menuMultipleColorConstant
             // 
             this.menuMultipleColorConstant.Name = "menuMultipleColorConstant";
-            this.menuMultipleColorConstant.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleColorConstant.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleColorConstant.Tag = "ColorConstant";
             this.menuMultipleColorConstant.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuMultipleColorGradient
             // 
             this.menuMultipleColorGradient.Name = "menuMultipleColorGradient";
-            this.menuMultipleColorGradient.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleColorGradient.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleColorGradient.Tag = "ColorGradient";
             this.menuMultipleColorGradient.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -368,39 +375,39 @@
             this.menuMultiplePlayTimeConstant,
             this.menuMultiplePlayTimeIncrease});
             this.menuMultiplePlayTime.Name = "menuMultiplePlayTime";
-            this.menuMultiplePlayTime.Size = new System.Drawing.Size(67, 22);
+            this.menuMultiplePlayTime.Size = new System.Drawing.Size(68, 22);
             this.menuMultiplePlayTime.Tag = "PlayTime";
             // 
             // menuMultiplePlayTimeConstant
             // 
             this.menuMultiplePlayTimeConstant.Name = "menuMultiplePlayTimeConstant";
-            this.menuMultiplePlayTimeConstant.Size = new System.Drawing.Size(67, 22);
+            this.menuMultiplePlayTimeConstant.Size = new System.Drawing.Size(68, 22);
             this.menuMultiplePlayTimeConstant.Tag = "PlayTimeConstant";
             this.menuMultiplePlayTimeConstant.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuMultiplePlayTimeIncrease
             // 
             this.menuMultiplePlayTimeIncrease.Name = "menuMultiplePlayTimeIncrease";
-            this.menuMultiplePlayTimeIncrease.Size = new System.Drawing.Size(67, 22);
+            this.menuMultiplePlayTimeIncrease.Size = new System.Drawing.Size(68, 22);
             this.menuMultiplePlayTimeIncrease.Tag = "PlayTimeIncrease";
             this.menuMultiplePlayTimeIncrease.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // menuMultipleMode
             // 
             this.menuMultipleMode.Name = "menuMultipleMode";
-            this.menuMultipleMode.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleMode.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleMode.Tag = "Mode";
             this.menuMultipleMode.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(65, 6);
             // 
             // menuMultipleMode7
             // 
             this.menuMultipleMode7.Name = "menuMultipleMode7";
-            this.menuMultipleMode7.Size = new System.Drawing.Size(67, 22);
+            this.menuMultipleMode7.Size = new System.Drawing.Size(68, 22);
             this.menuMultipleMode7.Tag = "Mode7";
             // 
             // menuTools
@@ -415,20 +422,20 @@
             // menuToolsOption
             // 
             this.menuToolsOption.Name = "menuToolsOption";
-            this.menuToolsOption.Size = new System.Drawing.Size(67, 22);
+            this.menuToolsOption.Size = new System.Drawing.Size(68, 22);
             this.menuToolsOption.Tag = "Option";
             this.menuToolsOption.Click += new System.EventHandler(this.Command_OnAction);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(64, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(65, 6);
             // 
             // menuToolsPlayer
             // 
             this.menuToolsPlayer.Image = global::Tsanie.DmPoster.Properties.Resources.player;
             this.menuToolsPlayer.Name = "menuToolsPlayer";
-            this.menuToolsPlayer.Size = new System.Drawing.Size(67, 22);
+            this.menuToolsPlayer.Size = new System.Drawing.Size(68, 22);
             this.menuToolsPlayer.Tag = "Player";
             this.menuToolsPlayer.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -443,7 +450,7 @@
             // 
             this.menuHelpAbout.Image = global::Tsanie.DmPoster.Properties.Resources.help;
             this.menuHelpAbout.Name = "menuHelpAbout";
-            this.menuHelpAbout.Size = new System.Drawing.Size(67, 22);
+            this.menuHelpAbout.Size = new System.Drawing.Size(68, 22);
             this.menuHelpAbout.Tag = "About";
             this.menuHelpAbout.Click += new System.EventHandler(this.Command_OnAction);
             // 
@@ -560,7 +567,7 @@
             this.toolButtonUpload});
             this.toolStrip.Location = new System.Drawing.Point(3, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(364, 25);
+            this.toolStrip.Size = new System.Drawing.Size(369, 25);
             this.toolStrip.TabIndex = 0;
             // 
             // toolButtonAdd
@@ -597,11 +604,45 @@
             // 
             // toolButtonPost
             // 
+            this.toolButtonPost.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolLabelInterval,
+            this.toolTextInterval,
+            this.toolStripSeparator13,
+            this.toolLabelPool,
+            this.toolComboPool});
             this.toolButtonPost.Image = global::Tsanie.DmPoster.Properties.Resources.post;
             this.toolButtonPost.Name = "toolButtonPost";
             this.toolButtonPost.Size = new System.Drawing.Size(32, 22);
             this.toolButtonPost.Tag = "Post";
             this.toolButtonPost.ButtonClick += new System.EventHandler(this.Command_OnAction);
+            // 
+            // toolLabelInterval
+            // 
+            this.toolLabelInterval.Name = "toolLabelInterval";
+            this.toolLabelInterval.Size = new System.Drawing.Size(0, 0);
+            // 
+            // toolTextInterval
+            // 
+            this.toolTextInterval.Name = "toolTextInterval";
+            this.toolTextInterval.Size = new System.Drawing.Size(100, 25);
+            this.toolTextInterval.Text = "10.0";
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(178, 6);
+            // 
+            // toolLabelPool
+            // 
+            this.toolLabelPool.Name = "toolLabelPool";
+            this.toolLabelPool.Size = new System.Drawing.Size(0, 0);
+            // 
+            // toolComboPool
+            // 
+            this.toolComboPool.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolComboPool.Enabled = false;
+            this.toolComboPool.Name = "toolComboPool";
+            this.toolComboPool.Size = new System.Drawing.Size(121, 26);
             // 
             // toolButtonStop
             // 
@@ -644,7 +685,7 @@
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(46, 22);
+            this.toolStripLabel1.Size = new System.Drawing.Size(51, 22);
             this.toolStripLabel1.Text = "Av/Vid:";
             // 
             // toolTextVid
@@ -769,6 +810,11 @@
         private System.Windows.Forms.ToolStripProgressBar statusProgressBar;
         private System.Windows.Forms.ToolStripSplitButton toolButtonPost;
         private Tsanie.UI.TsDataGridView gridDanmakus;
+        private System.Windows.Forms.ToolStripTextBox toolTextInterval;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripComboBox toolComboPool;
+        private System.Windows.Forms.ToolStripLabel toolLabelInterval;
+        private System.Windows.Forms.ToolStripLabel toolLabelPool;
     }
 }
 

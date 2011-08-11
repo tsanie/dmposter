@@ -223,5 +223,29 @@ namespace Tsanie.DmPoster {
                 }
             }
         }
+
+        private string _PostInterval = "10000";
+        public int PostInterval {
+            get {
+                int i;
+                if (int.TryParse(_PostInterval, out i))
+                    return i;
+                _PostInterval = "10000";
+                return 10000;
+            }
+            set { _PostInterval = value.ToString(); }
+        }
+
+        private string _Pool = "0";
+        public int Pool {
+            get {
+                int i;
+                if (int.TryParse(_Pool, out i))
+                    if (i >= 0 && i <= 2)
+                        return i;
+                _Pool = "0";
+                return 0;
+            }
+        }
     }
 }

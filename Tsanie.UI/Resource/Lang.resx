@@ -420,4 +420,19 @@
   <data name="LoadFileDone" xml:space="preserve">
     <value>弹幕文件载入完毕，一共 {0} 条弹幕。</value>
   </data>
+  <data name="Pool_Comment" xml:space="preserve">
+    <value>字幕池</value>
+  </data>
+  <data name="Pool_Normal" xml:space="preserve">
+    <value>普通池</value>
+  </data>
+  <data name="Pool_Special" xml:space="preserve">
+    <value>特殊池</value>
+  </data>
+  <data name="toolLabelInterval" xml:space="preserve">
+    <value>发送间隔（秒）：</value>
+  </data>
+  <data name="toolLabelPool" xml:space="preserve">
+    <value>发往：</value>
+  </data>
 </root>

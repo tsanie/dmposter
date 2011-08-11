@@ -420,4 +420,19 @@
   <data name="LoadFileDone" xml:space="preserve">
     <value>Success to load file with {0}(s) danmakus.</value>
   </data>
+  <data name="Pool_Comment" xml:space="preserve">
+    <value>Comment pool</value>
+  </data>
+  <data name="Pool_Normal" xml:space="preserve">
+    <value>Normal pool</value>
+  </data>
+  <data name="Pool_Special" xml:space="preserve">
+    <value>Special pool</value>
+  </data>
+  <data name="toolLabelInterval" xml:space="preserve">
+    <value>Post interval (seconds):</value>
+  </data>
+  <data name="toolLabelPool" xml:space="preserve">
+    <value>Post to:</value>
+  </data>
 </root>
