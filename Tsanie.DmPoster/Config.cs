@@ -26,19 +26,21 @@ namespace Tsanie.DmPoster {
     /// </summary>
     class Config {
         #region - 静态 -
-        internal static readonly Type Type = typeof(Config);
-        private static Config _instance = null;
+        private static Config _instance;
+
+        internal static readonly Type Type;
+        public static readonly Color ColorChanged;
+        public static readonly Color ColorSaved;
 
         private const string ConfigFile = @"\Tsanie.DmPoster.xml";
         private const string LogFile = @"\Tsanie.DmPoster.log";
+        public const string DateFormat = "yyyy-MM-dd HH:mm:ss";
 
         public static readonly string Title;
         public static readonly string AppPath;
         public static readonly string UserAgent;
         public static readonly string PlayerPath;
         public static readonly double Interval;
-
-        public const string DateFormat = "yyyy-MM-dd HH:mm:ss";
 
         public static Config Instance {
             get {
@@ -51,6 +53,11 @@ namespace Tsanie.DmPoster {
             return Config.Instance;
         }
         static Config() {
+            Type = typeof(Config);
+            _instance = null;
+            ColorChanged = Color.Red;
+            ColorSaved = Color.FromArgb(-9641364);    // 0xFF6CE26C
+
             Config.Title = string.Format("DmPoster {0}.{1}.{2}.{3}",
                 Program.Version.Major,
                 Program.Version.Minor,

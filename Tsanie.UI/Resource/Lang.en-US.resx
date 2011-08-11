@@ -414,4 +414,10 @@
   <data name="QuerySaveFile" xml:space="preserve">
     <value>Do you want to save changes to {0}?</value>
   </data>
+  <data name="LoadFile" xml:space="preserve">
+    <value>Open danmaku file</value>
+  </data>
+  <data name="LoadFileDone" xml:space="preserve">
+    <value>Success to load file with {0}(s) danmakus.</value>
+  </data>
 </root>
