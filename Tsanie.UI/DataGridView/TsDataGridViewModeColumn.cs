@@ -38,6 +38,17 @@ namespace Tsanie.UI {
     }
 
     public class ModeItem {
+        public static readonly Dictionary<DanmakuMode, ModeItem> ModeItemEnum;
+        static ModeItem() {
+            ModeItemEnum = new Dictionary<DanmakuMode, ModeItem>();
+            ModeItemEnum.Add(DanmakuMode.Scroll, new ModeItem() { mode = DanmakuMode.Scroll });
+            ModeItemEnum.Add(DanmakuMode.BottomFixed, new ModeItem() { mode = DanmakuMode.BottomFixed });
+            ModeItemEnum.Add(DanmakuMode.TopFixed, new ModeItem() { mode = DanmakuMode.TopFixed });
+            ModeItemEnum.Add(DanmakuMode.ReverseScroll, new ModeItem() { mode = DanmakuMode.ReverseScroll });
+            ModeItemEnum.Add(DanmakuMode.Mode7, new ModeItem() { mode = DanmakuMode.Mode7 });
+            ModeItemEnum.Add(DanmakuMode.That_beam_of_light, new ModeItem() { mode = DanmakuMode.That_beam_of_light });
+        }
+
         public DanmakuMode mode;
         public override string ToString() {
             return Language.Lang["DanmakuMode_" + this.mode];

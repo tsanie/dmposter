@@ -12,19 +12,12 @@ namespace Tsanie.UI {
         private bool valueChanged = false;
         private int rowIndex;
 
-        private ModeItem modeValue;
-
         public TsDataGridViewModeEditingControl() {
             this.TabStop = false;
             this.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.Items.AddRange(new ModeItem[] {
-                new ModeItem() { mode = DanmakuMode.Scroll },
-                new ModeItem() { mode = DanmakuMode.BottomFixed },
-                new ModeItem() { mode = DanmakuMode.TopFixed },
-                new ModeItem() { mode = DanmakuMode.ReverseScroll },
-                new ModeItem() { mode = DanmakuMode.Mode7 },
-                new ModeItem() { mode = DanmakuMode.That_beam_of_light }
-            });
+            foreach (ModeItem item in ModeItem.ModeItemEnum.Values) {
+                this.Items.Add(item);
+            }
         }
 
         #region IDataGridViewEditingControl Members
@@ -39,14 +32,8 @@ namespace Tsanie.UI {
         }
 
         public object EditingControlFormattedValue {
-            get { return modeValue; }
-            set {
-                ModeItem val = value as ModeItem;
-                if (val != null) {
-                    this.modeValue = val;
-                    this.SelectedItem = val;
-                }
-            }
+            get { return this.SelectedItem; }
+            set { this.SelectedItem = value as ModeItem; }
         }
 
         public int EditingControlRowIndex {
@@ -90,11 +77,11 @@ namespace Tsanie.UI {
 
         #endregion
 
-        protected override void OnSelectedItemChanged(EventArgs e) {
+        protected override void OnSelectedIndexChanged(EventArgs e) {
             if (this.grid != null) {
                 this.valueChanged = true;
                 this.grid.NotifyCurrentCellDirty(true);
-                base.OnSelectedItemChanged(e);
+                base.OnSelectedIndexChanged(e);
             }
         }
     }

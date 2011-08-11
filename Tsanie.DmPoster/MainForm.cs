@@ -72,8 +72,8 @@ namespace Tsanie.DmPoster {
                     DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight } },
                 new TsDataGridViewModeColumn(){
                     Name = "datacolMode",
-                    Width = 120,
-                    MinimumWidth = 120 },
+                    Width = 90,
+                    MinimumWidth = 40 },
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolState",
                     ValueType = typeof(System.String),
@@ -87,11 +87,6 @@ namespace Tsanie.DmPoster {
                     ValueType = typeof(System.String),
                     Width = 1000,
                     MinimumWidth = 62}
-                /*new DataGridViewComboBoxColumn() {
-                    Name = "datacolMode",
-                    Width = 120,
-                    MinimumWidth = 120,
-                    ReadOnly = true}*/
             });
             #endregion
             // 文字
@@ -700,27 +695,32 @@ namespace Tsanie.DmPoster {
                         if (reader.NodeType == XmlNodeType.Element) {
                             if (reader.LocalName == "data") {
                                 BiliDanmaku danmaku = new BiliDanmaku();
-                                while (!(reader.Name == "data" && reader.NodeType == XmlNodeType.EndElement)) {
-                                    if (reader.LocalName == "playTime") {
-                                        danmaku.PlayTime = reader.ReadElementContentAsFloat();
-                                    } else if (reader.LocalName == "times") {
-                                        danmaku.SetDate(DateTime.Parse(reader.ReadElementContentAsString()));
-                                    } else if (reader.LocalName == "message") {
-                                        if (reader.MoveToAttribute("fontsize"))
-                                            danmaku.Fontsize = int.Parse(reader.Value);
-                                        if (reader.MoveToAttribute("color"))
-                                            danmaku.Color = reader.Value.ToColor();
-                                        if (reader.MoveToAttribute("mode"))
-                                            danmaku.Mode = (DanmakuMode)(int.Parse(reader.Value));
-                                        reader.MoveToContent();
-                                        danmaku.Text = HtmlUtility.HtmlDecode(reader.ReadElementContentAsString());
-                                    } else {
-                                        if (!reader.Read())
-                                            break;
+                                try {
+                                    while (!(reader.Name == "data" && reader.NodeType == XmlNodeType.EndElement)) {
+                                        if (reader.LocalName == "playTime") {
+                                            danmaku.PlayTime = reader.ReadElementContentAsFloat();
+                                        } else if (reader.LocalName == "times") {
+                                            danmaku.SetDate(DateTime.Parse(reader.ReadElementContentAsString()));
+                                        } else if (reader.LocalName == "message") {
+                                            if (reader.MoveToAttribute("fontsize"))
+                                                danmaku.Fontsize = int.Parse(reader.Value);
+                                            if (reader.MoveToAttribute("color"))
+                                                danmaku.Color = reader.Value.ToColor();
+                                            if (reader.MoveToAttribute("mode"))
+                                                danmaku.Mode = (DanmakuMode)(int.Parse(reader.Value));
+                                            reader.MoveToContent();
+                                            danmaku.Text = HtmlUtility.HtmlDecode(reader.ReadElementContentAsString());
+                                        } else {
+                                            if (!reader.Read())
+                                                break;
+                                        }
                                     }
+                                    _listDanmakus.Add(danmaku);
+                                    count++;
+                                } catch (Exception e) {
+                                    LogUtil.Error(new DanmakuException(e.Message, e), null);
+                                    failed++;
                                 }
-                                _listDanmakus.Add(danmaku);
-                                count++;
                             } else if (reader.LocalName == "d") {
                                 if (reader.MoveToAttribute("p")) {
                                     string properties = reader.Value;
@@ -741,6 +741,7 @@ namespace Tsanie.DmPoster {
                     reader = null;
                     timer.Close();
                     refresher();
+                    _fileName = fileName;
                     ChangeFileState(FileState.Opened);
                     if (failed > 0) {
                         ShowMessage(string.Format(Language.Lang["FailedCreateDanmakus"], failed), Language.Lang["LoadFile"],
@@ -875,15 +876,11 @@ namespace Tsanie.DmPoster {
         }
         private void gridDanmakus_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             DataGridViewRow row = GetCacheRow(_listDanmakus[e.RowIndex]);
-            //if (e.ColumnIndex == 4) {
-            //    e.Value = row.Cells[4].Value.ToString();
-            //} else {
             e.Value = row.Cells[e.ColumnIndex].Value;
             if (e.ColumnIndex == 2) {
                 // Color
                 gridDanmakus[2, e.RowIndex].Style.BackColor = (Color)e.Value;
             }
-            //}
         }
         private void gridDanmakus_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
             DanmakuBase danmaku = _listDanmakus[e.RowIndex];
@@ -906,6 +903,12 @@ namespace Tsanie.DmPoster {
                     if (danmaku.Fontsize == fontsize)
                         return;
                     danmaku.Fontsize = fontsize;
+                    break;
+                case 4: // 模式
+                    DanmakuMode mode = (DanmakuMode)((int)(e.Value));
+                    if (danmaku.Mode == mode)
+                        return;
+                    danmaku.Mode = mode;
                     break;
                 case 6: // 文本
                     string text = (string)(e.Value);
