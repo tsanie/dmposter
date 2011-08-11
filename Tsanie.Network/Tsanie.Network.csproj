@@ -41,20 +41,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CancelledException.cs" />
+    <Compile Include="Danmaku\Downloader.cs" />
+    <Compile Include="Danmaku\LoginChecker.cs" />
     <Compile Include="HttpHelper.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestStateExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tsanie.UI\Tsanie.UI.csproj">
-      <Project>{08B5D7E3-B0DF-4CF5-8572-CC7B50B547D7}</Project>
-      <Name>Tsanie.UI</Name>
+    <ProjectReference Include="..\Tsanie.DmPoster.Danmaku\Tsanie.DmPoster.Danmaku.csproj">
+      <Project>{53C0939C-182E-4D20-B620-B78C5BA98ACE}</Project>
+      <Name>Tsanie.DmPoster.Danmaku</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tsanie.Utils\Tsanie.Utils.csproj">
       <Project>{0AD18C02-A19B-423F-8F71-A16C1D89D99B}</Project>
       <Name>Tsanie.Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

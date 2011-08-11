@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tsanie.UI;
 
 namespace Tsanie.Network {
     public class CancelledException : Exception {
@@ -16,7 +15,7 @@ namespace Tsanie.Network {
         }
 
         public CancelledException(RequestState state, string command)
-            : base(state.Url + " " + Language.Lang["Interrupt"]) {
+            : base(state.Url + " Interrupt.") {
             _command = command;
         }
 

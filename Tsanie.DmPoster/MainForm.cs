@@ -7,15 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Tsanie.DmPoster.Danmaku;
-using Tsanie.Utils;
-using Tsanie.UI;
 using System.Threading;
-using Tsanie.DmPoster.Models;
-using Tsanie.Network;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.IO.Compression;
 using System.Xml;
+using Tsanie.Utils;
+using Tsanie.UI;
+using Tsanie.Network;
+using Tsanie.Network.Models;
+using Tsanie.Network.Danmaku;
+using System.Net;
 
 namespace Tsanie.DmPoster {
     public partial class MainForm : Form {
@@ -285,91 +286,8 @@ namespace Tsanie.DmPoster {
                 });
                 SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
                 // 登录 dad.php 检查权限
-                _state = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/dad.php?r=" + Utility.Rnd.NextDouble(),
-                    (request) => {
-                        request.Headers["Cookie"] = Config.Instance.Cookies;
-                    }, (state) => {
-                        if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
-                            throw new Exception(Language.Lang["CheckLogin.StatusNotOK"] +
-                                state.Response.StatusCode + ": " + state.Response.StatusDescription);
-                        StringBuilder result = new StringBuilder(0x40);
-                        using (StreamReader reader = new StreamReader(state.StreamResponse)) {
-                            if (state.IsCancelled())
-                                throw new CancelledException(state, "CheckLogin.Interrupt");
-                            string line;
-                            while ((line = reader.ReadLine()) != null) {
-                                result.Append(line);
-                            }
-                            reader.Dispose();
-                        }
-                        UserModel user = new UserModel() { Login = false };
-                        Regex reg = new Regex("<([a-zA-Z^>]+)>([^<]+)</([a-zA-Z^>]+)>", RegexOptions.Singleline);
-                        foreach (Match match in reg.Matches(result.ToString())) {
-                            string key = match.Groups[1].Value;
-                            string value = match.Groups[2].Value;
-                            #region - 填充 key/value -
-                            switch (key) {
-                                case "login":
-                                    user.Login = bool.Parse(value);
-                                    break;
-                                case "name":
-                                    user.Name = value;
-                                    break;
-                                case "user":
-                                    user.User = int.Parse(value);
-                                    break;
-                                case "scores":
-                                    user.Scores = int.Parse(value);
-                                    break;
-                                case "money":
-                                    user.Money = int.Parse(value);
-                                    break;
-                                case "pwd":
-                                    user.Pwd = value;
-                                    break;
-                                case "isadmin":
-                                    user.IsAdmin = bool.Parse(value);
-                                    break;
-                                case "permission":
-                                    string[] ps = value.Split(',');
-                                    Level[] levels = new Level[ps.Length];
-                                    for (int i = 0; i < ps.Length; i++)
-                                        levels[i] = (Level)int.Parse(ps[i]);
-                                    user.Permission = levels;
-                                    break;
-                                case "level":
-                                    user.Level = value;
-                                    break;
-                                case "shot":
-                                    user.Shot = bool.Parse(value);
-                                    break;
-                                case "chatid":
-                                    user.ChatID = int.Parse(value);
-                                    break;
-                                case "aid":
-                                    user.Aid = int.Parse(value);
-                                    break;
-                                case "pid":
-                                    user.Pid = int.Parse(value);
-                                    break;
-                                case "acceptguest":
-                                    user.AcceptGuest = bool.Parse(value);
-                                    break;
-                                case "duration":
-                                    user.Duration = value;
-                                    break;
-                                case "acceptaccel":
-                                    user.AcceptAccel = bool.Parse(value);
-                                    break;
-                                case "cache":
-                                    user.Cache = bool.Parse(value);
-                                    break;
-                                case "server":
-                                    user.Server = value;
-                                    break;
-                            }
-                            #endregion
-                        }
+                _state = LoginChecker.CheckLogin(Config.Instance.HttpHost, Config.Instance.Cookies,
+                    (user) => {
                         if (user.Login) {
                             _user = user;
                             this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.logined; });
@@ -397,6 +315,10 @@ namespace Tsanie.DmPoster {
                         if (ex is CancelledException) {
                             EnabledUI(true, Language.Lang["Guest"], Language.Lang[((CancelledException)ex).Command], null);
                         } else {
+                            WebException webe = ex as WebException;
+                            if (webe != null && webe.Status == WebExceptionStatus.UnknownError) {
+                                ex = new Exception(Language.Lang[webe.Message]);
+                            }
                             this.ShowExceptionMessage(ex, Language.Lang["CheckLogin"]);
                             EnabledUI(true, Language.Lang["Guest"], Language.Lang["CheckLogin.Failed"], null);
                         }
@@ -416,15 +338,19 @@ namespace Tsanie.DmPoster {
             // timer
             System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
             timer.Elapsed += (sender, e) => { refresher(); };
+            Action<Exception> exCall = (ex) => {
+                timer.Close();
+                refresher();
+                exCallback.SafeInvoke(ex);
+            };
             try {
                 if (string.IsNullOrWhiteSpace(avOrVid))
                     throw new Exception(Language.Lang["AvVidEmpty"]);
 
-                #region - state callback -
-                Action<RequestState> stateCallback = (state) => {
-                    if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
-                        throw new Exception(Language.Lang["DownloadDanmaku.StatusNotOK"] +
-                            state.Response.StatusCode + ": " + state.Response.StatusDescription);
+                #region - callbacks -
+                int count = 0;
+                int failed = 0;  // 失败的弹幕数
+                Action readyCallback = delegate {
                     this.SafeRun(delegate {
                         gridDanmakus.RowCount = 0;
                         gridDanmakus.Enabled = true;
@@ -432,45 +358,21 @@ namespace Tsanie.DmPoster {
                     });
                     _listDanmakus.Clear();
                     timer.Start();
-                    // 读取压缩流
-                    using (StreamReader reader = new StreamReader(new DeflateStream(state.StreamResponse, CompressionMode.Decompress))) {
-                        StringBuilder builder = new StringBuilder(0x40);
-                        Regex regex = new Regex("<d p=\"([^\"]+?)\">([^<]+?)</d>");
-                        string line;
-                        int count = 0;
-                        int failed = 0;  // 失败的弹幕数
-                        while ((line = reader.ReadLine()) != null) {
-                            if (state.IsCancelled()) {
-                                reader.Dispose();
-                                timer.Close();
-                                refresher();
-                                throw new CancelledException(state, "DownloadDanmaku.Interrupt");
-                            }
-                            builder.AppendLine(line);
-                            if (line.EndsWith("</d>")) {
-                                foreach (Match match in regex.Matches(builder.ToString())) {
-                                    string property = match.Groups[1].Value;
-                                    string text = match.Groups[2].Value;
-                                    // 读取属性
-                                    BiliDanmaku danmaku = BiliDanmaku.CreateFromProperties(property, builder.ToString());
-                                    if (danmaku == null) {
-                                        // 失败
-                                        failed++;
-                                    } else {
-                                        danmaku.Text = Utility.HtmlDecode(text);
-                                        _listDanmakus.Add(danmaku);
-                                        count++;
-                                    }
-                                }
-                                builder.Clear();
-                            }
-                        }
-                        reader.Dispose();
-                        timer.Close();
-                        refresher();
-                        if (callback != null)
-                            callback(count, failed);
+                };
+                Action<BiliDanmaku> danmakuCallback = (danmaku) => {
+                    if (danmaku == null) {
+                        // 失败
+                        failed++;
+                    } else {
+                        _listDanmakus.Add(danmaku);
+                        count++;
                     }
+                };
+                Action doneCallback = delegate {
+                    timer.Close();
+                    refresher();
+                    if (callback != null)
+                        callback(count, failed);
                 };
                 #endregion
                 if (avOrVid.StartsWith("av")) {
@@ -483,16 +385,16 @@ namespace Tsanie.DmPoster {
                     int aid = int.Parse(pars[0]);
                     int pageno = (pars.Length > 1 ? int.Parse(pars[1]) : 1);
                     // 输入的是Av号
-                    GetVidFromAv(aid, pageno, (vid) => DownloadDanmakuFromVid(vid, stateCallback, exCallback), exCallback);
+                    GetVidFromAv(aid, pageno,
+                        (vid) => DownloadDanmakuFromVid(vid, readyCallback, danmakuCallback, doneCallback, exCall),
+                        exCallback);
                 } else {
                     int.Parse(avOrVid);
                     // Vid
-                    DownloadDanmakuFromVid(avOrVid, stateCallback, exCallback);
+                    DownloadDanmakuFromVid(avOrVid, readyCallback, danmakuCallback, doneCallback, exCall);
                 }
             } catch (Exception e) {
-                timer.Close();
-                refresher();
-                exCallback.SafeInvoke(e);
+                exCall.SafeInvoke(e);
             }
         }
         private void GetVidFromAv(int aid, int pageno, Action<string> callback, Action<Exception> exCallback) {
@@ -500,50 +402,20 @@ namespace Tsanie.DmPoster {
                 _state.Cancel();
                 _state = null;
             });
-            string url = Config.Instance.HttpHost + string.Format("/plus/view.php?aid={0}&pageno={1}", aid, pageno);
-            _state = HttpHelper.BeginConnect(url,
-                (request) => {
-                    request.Referer = url;
-                    request.Headers["Cookie"] = Config.Instance.Cookies;
-                }, (state) => {
-                    using (StreamReader reader = new StreamReader(state.StreamResponse)) {
-                        string line;
-                        while ((line = reader.ReadLine()) != null) {
-                            if (state.IsCancelled()) {
-                                reader.Dispose();
-                                throw new CancelledException(state, "GetVidOfAv.Interrupt");
-                            }
-                            int index = line.IndexOf("flashvars=\"");
-                            if (index > 0) {
-                                line = line.Substring(index + 11);
-                                line = line.Substring(0, line.IndexOf('\"'));
-                                line = Utility.UrlDecode(line);
-                                foreach (string pair in line.Split('&')) {
-                                    index = pair.IndexOf("id=");
-                                    if (index >= 0) {
-                                        line = line.Substring(index + 3);
-                                        reader.Dispose();
-                                        if (callback != null)
-                                            callback(line);
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                        reader.Dispose();
-                        throw new CancelledException(state, "GetVidOfAv.Failed");
-                    }
-                }, exCallback);
+            _state = Downloader.GetVidOfAv(Config.Instance.HttpHost, Config.Instance.Cookies, aid, pageno, callback, exCallback);
         }
-        private void DownloadDanmakuFromVid(string vid, Action<RequestState> stateCallback, Action<Exception> exCallback) {
+        private void DownloadDanmakuFromVid(string vid,
+            Action readyCallback,
+            Action<BiliDanmaku> danmakuCallback,
+            Action doneCallback,
+            Action<Exception> exCallback
+        ) {
             EnabledUI(false, null, string.Format(Language.Lang["DownloadDanmakuStatus"], vid), delegate {
                 _state.Cancel();
                 _state = null;
             });
-            _state = HttpHelper.BeginConnect(Config.Instance.HttpHost + "/dm," + vid,
-                (request) => {
-                    request.Referer = Config.PlayerPath;
-                }, stateCallback, exCallback);
+            _state = Downloader.DownloadDanmaku(Config.Instance.HttpHost, Config.PlayerPath, vid,
+                                                readyCallback, danmakuCallback, doneCallback, exCallback);
         }
 
         private bool SaveFile() {
@@ -827,6 +699,10 @@ namespace Tsanie.DmPoster {
                         if (ex is CancelledException) {
                             EnabledUI(true, null, Language.Lang[((CancelledException)ex).Command], null);
                         } else {
+                            WebException webe = ex as WebException;
+                            if (webe != null && webe.Status == WebExceptionStatus.UnknownError) {
+                                ex = new Exception(Language.Lang[webe.Message]);
+                            }
                             this.ShowExceptionMessage(ex, Language.Lang["DownloadDanmaku"]);
                             EnabledUI(true, null, Language.Lang["DownloadDanmaku.Interrupt"], null);
                         }

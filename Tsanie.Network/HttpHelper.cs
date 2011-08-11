@@ -7,7 +7,7 @@ using System.Threading;
 using Tsanie.Utils;
 using System.IO;
 using System.Reflection;
-using Tsanie.UI;
+using System.Globalization;
 
 namespace Tsanie.Network {
     public class HttpHelper {
@@ -15,6 +15,7 @@ namespace Tsanie.Network {
         private static string _userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Safari/534.12 Tsanie/" +
             Assembly.GetExecutingAssembly().GetName().Version.Major + "." +
             Assembly.GetExecutingAssembly().GetName().Version.Minor;
+        private static CultureInfo _culture = null;
 
         public static int Timeout {
             get { return _timeout; }
@@ -26,6 +27,10 @@ namespace Tsanie.Network {
         public static string UserAgent {
             get { return _userAgent; }
             set { _userAgent = value; }
+        }
+        public static CultureInfo CultureInfo {
+            get { return _culture; }
+            set { _culture = value; }
         }
 
         public static RequestState BeginConnect(string url,
@@ -81,8 +86,8 @@ namespace Tsanie.Network {
                 }
             }) { Name = "httpThread_" + url };
             // 设置 UI CultureInfo
-            if (Language.Lang.CultureInfo != null) {
-                result.CurrentUICulture = Language.Lang.CultureInfo;
+            if (_culture != null) {
+                result.CurrentUICulture = _culture;
             }
             result.Start();
             return state;
