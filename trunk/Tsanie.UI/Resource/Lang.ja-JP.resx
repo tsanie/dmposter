@@ -414,4 +414,10 @@
   <data name="QuerySaveFile" xml:space="preserve">
     <value>是否要将改动保存到 {0}？</value>
   </data>
+  <data name="LoadFile" xml:space="preserve">
+    <value>打开弹幕文件</value>
+  </data>
+  <data name="LoadFileDone" xml:space="preserve">
+    <value>弹幕文件载入完毕，一共 {0} 条弹幕。</value>
+  </data>
 </root>

@@ -93,6 +93,53 @@ namespace Tsanie.DmPoster {
 
         #endregion
 
+        #region - 公共方法 -
+
+        /// <summary>
+        /// 装载主体 UI 文字
+        /// </summary>
+        public void LoadMainUIText() {
+            // 主要界面文字
+            this.Font = Config.Instance.UIFont;
+            this.menuStrip.Font = Config.Instance.UIFont;
+            this.toolStrip.Font = Config.Instance.UIFont;
+            this.toolTextVid.Font = Config.Instance.UIFont;
+            this.statusStrip.Font = Config.Instance.UIFont;
+            this.gridDanmakus.DefaultCellStyle.Font = Config.Instance.WidthFont;
+
+            this.Text = Language.Lang["Untitled"] + " - " + Config.Title;
+            foreach (ToolStripMenuItem item in menuStrip.Items) {
+                item.Text = Language.Lang[item.Name];
+            }
+            toolButtonPost.Text = Language.Lang["toolButtonPost"];
+            foreach (DataGridViewColumn column in gridDanmakus.Columns) {
+                if (column.Name != "datacolState")
+                    column.HeaderText = Language.Lang[column.Name];
+            }
+        }
+
+        /// <summary>
+        /// 装载深层 UI 文字
+        /// </summary>
+        public void LoadUIText() {
+            new Thread(delegate() {
+                foreach (ToolStripMenuItem item in menuStrip.Items) {
+                    EnumMenuItem(item);
+                }
+                foreach (ToolStripItem item in toolStrip.Items) {
+                    if (item is ToolStripButton) {
+                        this.SafeRun(delegate { item.Text = Language.Lang[item.Name]; });
+                    } else if (item is ToolStripSplitButton) {
+                        this.SafeRun(delegate {
+                            item.ToolTipText = Language.Lang[item.Name + "_ToolTipText"];
+                        });
+                    }
+                }
+            }) { Name = "threadLoadUIText" }.Start();
+        }
+
+        #endregion
+
         #region - 私有方法 -
 
         private void ChangeFileState(FileState fileState) {
@@ -358,23 +405,14 @@ namespace Tsanie.DmPoster {
                                     string property = match.Groups[1].Value;
                                     string text = match.Groups[2].Value;
                                     // 读取属性
-                                    string[] vals = property.Split(',');
-                                    try {
-                                        _listDanmakus.Add(new BiliDanmaku() {
-                                            PlayTime = float.Parse(vals[0]),
-                                            Mode = (DanmakuMode)int.Parse(vals[1]),
-                                            Fontsize = int.Parse(vals[2]),
-                                            Color = Color.FromArgb(int.Parse(vals[3]) | -16777216),
-                                            Date = long.Parse(vals[4]).ParseDateTime(),
-                                            Pool = int.Parse(vals[5]),
-                                            UsID = vals[6],
-                                            DmID = int.Parse(vals[7]),
-                                            Text = HtmlUtility.HtmlDecode(text)
-                                        });
-                                        count++;
-                                    } catch (Exception e) {
-                                        LogUtil.Error(new DanmakuException(e.Message + "\n" + builder.ToString(), e), null);
+                                    BiliDanmaku danmaku = BiliDanmaku.CreateFromProperties(property, builder.ToString());
+                                    if (danmaku == null) {
+                                        // 失败
                                         failed++;
+                                    } else {
+                                        danmaku.Text = HtmlUtility.HtmlDecode(text);
+                                        _listDanmakus.Add(danmaku);
+                                        count++;
                                     }
                                 }
                                 builder.Clear();
@@ -502,7 +540,9 @@ namespace Tsanie.DmPoster {
             StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8);
             writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.Write("<information>");
-            foreach (DanmakuBase danmaku in _listDanmakus) {
+            //foreach (DanmakuBase danmaku in _listDanmakus) {
+            for (int i = 0; i < total; i++) {
+                DanmakuBase danmaku = _listDanmakus[i];
                 Application.DoEvents();
                 if (cancelled)
                     break;
@@ -517,8 +557,11 @@ namespace Tsanie.DmPoster {
                         .Replace("/n", "\n"));
                 writer.WriteLine("\t<times>{0}</times>", danmaku.Date.ToString(Config.DateFormat));
                 writer.WriteLine("</data>");
-                // 进度条
+                // 进度条，修改框变绿
                 SetProgressValue(n++, total);
+                DataGridViewCellStyle style = gridDanmakus[0, i].Style;
+                if (style.BackColor == Config.ColorChanged)
+                    style.BackColor = Config.ColorSaved;
             }
             writer.Write("</information>");
             writer.Flush();
@@ -574,65 +617,108 @@ namespace Tsanie.DmPoster {
             return true;
         }
 
-        private bool BigThan(DanmakuBase danmaku1, DanmakuBase danmaku2, int columnIndex) {
-            switch (columnIndex) {
-                case 1:
-                    return danmaku1.PlayTime > danmaku2.PlayTime;
-                case 2:
-                    return Comparer<string>.Default.Compare(danmaku1.Color.ToColorString(), danmaku2.Color.ToColorString()) > 0;
-                case 3:
-                    return danmaku1.Fontsize > danmaku2.Fontsize;
-                case 5:
-                    return Comparer<string>.Default.Compare(danmaku1.Text, danmaku2.Text) > 0;
+        private bool LoadFile() {
+            OpenFileDialog dialog = new OpenFileDialog() {
+                Filter = "弹幕文件 (*.xml)|*.xml|所有文件|*.*",
+                Title = "打开弹幕文件"
+            };
+            if (dialog.ShowDialog(this) != System.Windows.Forms.DialogResult.OK) {
+                dialog.Dispose();
+                return false;
             }
-            return false;
+            _fileName = dialog.FileName;
+            dialog.Dispose();
+            return LoadFile(_fileName);
         }
-
-        #endregion
-
-        #region - 公共方法 -
-
-        /// <summary>
-        /// 装载主体 UI 文字
-        /// </summary>
-        public void LoadMainUIText() {
-            // 主要界面文字
-            this.Font = Config.Instance.UIFont;
-            this.menuStrip.Font = Config.Instance.UIFont;
-            this.toolStrip.Font = Config.Instance.UIFont;
-            this.toolTextVid.Font = Config.Instance.UIFont;
-            this.statusStrip.Font = Config.Instance.UIFont;
-            this.gridDanmakus.DefaultCellStyle.Font = Config.Instance.WidthFont;
-
-            this.Text = Language.Lang["Untitled"] + " - " + Config.Title;
-            foreach (ToolStripMenuItem item in menuStrip.Items) {
-                item.Text = Language.Lang[item.Name];
-            }
-            toolButtonPost.Text = Language.Lang["toolButtonPost"];
-            foreach (DataGridViewColumn column in gridDanmakus.Columns) {
-                if (column.Name != "datacolState")
-                    column.HeaderText = Language.Lang[column.Name];
-            }
-        }
-
-        /// <summary>
-        /// 装载深层 UI 文字
-        /// </summary>
-        public void LoadUIText() {
-            new Thread(delegate() {
-                foreach (ToolStripMenuItem item in menuStrip.Items) {
-                    EnumMenuItem(item);
-                }
-                foreach (ToolStripItem item in toolStrip.Items) {
-                    if (item is ToolStripButton) {
-                        this.SafeRun(delegate { item.Text = Language.Lang[item.Name]; });
-                    } else if (item is ToolStripSplitButton) {
-                        this.SafeRun(delegate {
-                            item.ToolTipText = Language.Lang[item.Name + "_ToolTipText"];
-                        });
+        private bool LoadFile(string fileName) {
+            Thread thread = new Thread(delegate() {
+                Action refresher = delegate {
+                    this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
+                };
+                // timer
+                System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
+                timer.Elapsed += (sender, e) => { refresher(); };
+                // count
+                int count = 0;
+                int failed = 0;
+                Action<string> done = msg => {
+                    EnabledUI(true, null, msg, null);
+                    SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
+                };
+                XmlReader reader = XmlReader.Create(
+                    new StreamReader(fileName, Encoding.UTF8),
+                    new XmlReaderSettings() {
+                        IgnoreComments = true,
+                        IgnoreWhitespace = true
+                    });
+                try {
+                    timer.Start();
+                    while (reader.Read()) {
+                        if (reader.NodeType == XmlNodeType.Element) {
+                            if (reader.LocalName == "data") {
+                                BiliDanmaku danmaku = new BiliDanmaku();
+                                while (!(reader.Name == "data" && reader.NodeType == XmlNodeType.EndElement)) {
+                                    if (reader.LocalName == "playTime") {
+                                        danmaku.PlayTime = reader.ReadElementContentAsFloat();
+                                    } else if (reader.LocalName == "times") {
+                                        danmaku.SetDate(DateTime.Parse(reader.ReadElementContentAsString()));
+                                    } else if (reader.LocalName == "message") {
+                                        if (reader.MoveToAttribute("fontsize"))
+                                            danmaku.Fontsize = int.Parse(reader.Value);
+                                        if (reader.MoveToAttribute("color"))
+                                            danmaku.Color = reader.Value.ToColor();
+                                        if (reader.MoveToAttribute("mode"))
+                                            danmaku.Mode = (DanmakuMode)(int.Parse(reader.Value));
+                                        reader.MoveToContent();
+                                        danmaku.Text = HtmlUtility.HtmlDecode(reader.ReadElementContentAsString());
+                                    } else {
+                                        if (!reader.Read())
+                                            break;
+                                    }
+                                }
+                                _listDanmakus.Add(danmaku);
+                                count++;
+                            } else if (reader.LocalName == "d") {
+                                if (reader.MoveToAttribute("p")) {
+                                    string properties = reader.Value;
+                                    BiliDanmaku danmaku = BiliDanmaku.CreateFromProperties(properties, properties);
+                                    if (danmaku == null)
+                                        failed++;
+                                    else {
+                                        reader.MoveToContent();
+                                        danmaku.Text = HtmlUtility.HtmlDecode(reader.ReadElementContentAsString());
+                                        _listDanmakus.Add(danmaku);
+                                        count++;
+                                    }
+                                }
+                            }
+                        }
                     }
+                    reader.Close();
+                    reader = null;
+                    timer.Close();
+                    refresher();
+                    ChangeFileState(FileState.Opened);
+                    if (failed > 0) {
+                        ShowMessage(string.Format(Language.Lang["FailedCreateDanmakus"], failed), Language.Lang["LoadFile"],
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    done(string.Format(Language.Lang["LoadFileDone"], count));
+                } catch (ThreadAbortException) {
+                    timer.Close();
+                    refresher();
+                    done(Language.Lang["LoadFile.Interrupt"]);
                 }
-            }) { Name = "threadLoadUIText" }.Start();
+            }) { Name = "threadLoadFile_" + fileName };
+            EnabledUI(false, null, Language.Lang["LoadFile"], delegate {
+                if (thread.ThreadState != ThreadState.Stopped)
+                    thread.Abort();
+            });
+            SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
+            gridDanmakus.RowCount = 0;
+            _listDanmakus.Clear();
+            thread.Start();
+            return true;
         }
 
         #endregion
@@ -649,6 +735,11 @@ namespace Tsanie.DmPoster {
                     if (result == System.Windows.Forms.DialogResult.OK) {
                         CheckLogin();
                     }
+                    break;
+                    #endregion
+                case "Open":
+                    #region - 打开 -
+                    LoadFile();
                     break;
                     #endregion
                 case "Download":
@@ -763,21 +854,33 @@ namespace Tsanie.DmPoster {
             DataGridViewRow row = GetCacheRow(danmaku);
             switch (e.ColumnIndex) {
                 case 1: // 时间
-                    danmaku.PlayTime = (float)(e.Value);
+                    float playTime = (float)(e.Value);
+                    if (danmaku.PlayTime == playTime)
+                        return;
+                    danmaku.PlayTime = playTime;
                     break;
                 case 2: // 颜色
-                    danmaku.Color = (Color)(e.Value);
+                    Color color = (Color)(e.Value);
+                    if (danmaku.Color == color)
+                        return;
+                    danmaku.Color = color;
                     break;
                 case 3: // 字号
-                    danmaku.Fontsize = (int)(e.Value);
+                    int fontsize = (int)(e.Value);
+                    if (danmaku.Fontsize == fontsize)
+                        return;
+                    danmaku.Fontsize = fontsize;
                     break;
                 case 5: // 文本
-                    danmaku.Text = (string)(e.Value);
+                    string text = (string)(e.Value);
+                    if (danmaku.Text == text)
+                        return;
+                    danmaku.Text = text;
                     break;
                 default:
                     return;
             }
-            gridDanmakus[0, e.RowIndex].Style.BackColor = Color.Red;
+            gridDanmakus[0, e.RowIndex].Style.BackColor = Config.ColorChanged;
             row.Cells[e.ColumnIndex].Value = e.Value;
             ChangeFileState(FileState.Changed);
         }

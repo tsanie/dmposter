@@ -23,7 +23,7 @@ namespace Tsanie.Utils {
         public static Color ToColor(this string str) {
             if (str == null || str.Length == 0)
                 throw new NullReferenceException("ColorString");
-            if (str[0] != '#') {
+            if (str[0] == '#') {
                 return Color.FromArgb(int.Parse(str.Substring(1), System.Globalization.NumberStyles.HexNumber) | -16777216);
             }
             return Color.FromArgb(int.Parse(str) | -16777216);
