@@ -411,4 +411,7 @@
   <data name="SaveFile" xml:space="preserve">
     <value>保存文件</value>
   </data>
+  <data name="QuerySaveFile" xml:space="preserve">
+    <value>是否要将改动保存到 {0}？</value>
+  </data>
 </root>
