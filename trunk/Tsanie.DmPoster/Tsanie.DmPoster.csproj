@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{707F7CCB-E562-4C40-8D0A-237B25760575}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tsanie.DmPoster</RootNamespace>
     <AssemblyName>Tsanie.DmPoster</AssemblyName>
