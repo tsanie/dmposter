@@ -7,7 +7,7 @@ namespace Tsanie.DmPoster.Danmaku {
     /// <summary>
     /// 弹幕模式枚举
     /// </summary>
-    public enum DanmakuMode {
+    public enum DanmakuMode : int {
         /// <summary>
         /// 滚动弹幕 - 1
         /// </summary>

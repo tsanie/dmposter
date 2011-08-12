@@ -22,4 +22,17 @@ namespace Tsanie.Utils {
                 callback();
         }
     }
+
+    public static class StringExtension {
+
+        /// <summary>
+        /// 取值或默认值
+        /// </summary>
+        /// <param name="value">返回值</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns>返回值为空则返回默认值</returns>
+        public static string Default(this string value, string defaultValue) {
+            return (value == null ? defaultValue : value);
+        }
+    }
 }

@@ -82,7 +82,7 @@ namespace Tsanie.DmPoster.Danmaku {
 
         public override string Message {
             get {
-                return base.Message + "Property: " + this._propertyName;
+                return base.Message + ". Property: " + this._propertyName;
             }
         }
     }

@@ -435,4 +435,13 @@
   <data name="toolLabelPool" xml:space="preserve">
     <value>Post to:</value>
   </data>
+  <data name="PostDanmaku" xml:space="preserve">
+    <value>Post Danmaku</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>, are you sure?</value>
+  </data>
+  <data name="PostOnlySelected" xml:space="preserve">
+    <value>Do you want post danmakus only selected?</value>
+  </data>
 </root>

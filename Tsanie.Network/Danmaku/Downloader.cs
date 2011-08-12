@@ -10,7 +10,22 @@ using System.IO.Compression;
 using System.Text.RegularExpressions;
 
 namespace Tsanie.Network.Danmaku {
+
+    /// <summary>
+    /// BiLiBiLi 弹幕下载工具类
+    /// </summary>
     public class Downloader {
+
+        /// <summary>
+        /// 根据传入的视频Av号获取其弹幕池Vid号
+        /// </summary>
+        /// <param name="host">BiLiBiLi 主站地址</param>
+        /// <param name="cookie">Cookie 信息</param>
+        /// <param name="aid">视频 aid</param>
+        /// <param name="pageno">分页号</param>
+        /// <param name="callback">成功回调，string</param>
+        /// <param name="exCallback">异常回调</param>
+        /// <returns>该动作的请求状态实例</returns>
         public static RequestState GetVidOfAv(
             string host,
             string cookie,
@@ -19,12 +34,16 @@ namespace Tsanie.Network.Danmaku {
             Action<string> callback,
             Action<Exception> exCallback
         ) {
-            string url = host + string.Format("/plus/view.php?aid={0}&pageno={1}", aid, pageno);
+            string url = host.Default(Config.DEFAULT_HOST) + string.Format("/plus/view.php?aid={0}&pageno={1}", aid, pageno);
             return HttpHelper.BeginConnect(url,
                 (request) => {
                     request.Referer = url;
                     request.Headers["Cookie"] = cookie;
                 }, (state) => {
+                    if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
+                        throw new WebException("GetVidOfAv.StatusNotOK. " +
+                            state.Response.StatusCode + ": " +
+                            state.Response.StatusDescription, WebExceptionStatus.UnknownError);
                     using (StreamReader reader = new StreamReader(state.StreamResponse)) {
                         string line;
                         while ((line = reader.ReadLine()) != null) {
@@ -49,12 +68,23 @@ namespace Tsanie.Network.Danmaku {
                                 }
                             }
                         }
-                        reader.Dispose();
+                        reader.Close();
                         throw new CancelledException(state, "GetVidOfAv.Failed");
                     }
                 }, exCallback);
         }
 
+        /// <summary>
+        /// 根据弹幕池Vid号下载其弹幕
+        /// </summary>
+        /// <param name="host">BiliBili 主站地址</param>
+        /// <param name="playerPath">播放器路径</param>
+        /// <param name="vid">弹幕池 Vid</param>
+        /// <param name="readyCallback">准备下载回调</param>
+        /// <param name="callback">弹幕回调, BiliDanmaku</param>
+        /// <param name="doneCallback">完成回调</param>
+        /// <param name="exCallback">异常回调</param>
+        /// <returns>该动作的请求状态实例</returns>
         public static RequestState DownloadDanmaku(
             string host,
             string playerPath,
@@ -64,10 +94,10 @@ namespace Tsanie.Network.Danmaku {
             Action doneCallback,
             Action<Exception> exCallback
         ) {
-            return HttpHelper.BeginConnect(host + "/dm," + vid,
+            return HttpHelper.BeginConnect(host.Default(Config.DEFAULT_HOST) + "/dm," + vid,
                 (request) => {
                     //request.Headers["Cookie"] = cookie;
-                    request.Referer = playerPath;
+                    request.Referer = playerPath.Default(Config.DEFAULT_PLAYERPATH);
                 }, (state) => {
                     if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
                         throw new WebException("DownloadDanmaku.StatusNotOK. " +

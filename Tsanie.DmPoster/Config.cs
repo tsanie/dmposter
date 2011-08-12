@@ -181,7 +181,7 @@ namespace Tsanie.DmPoster {
                 if (value == null || value.Length <= 0)
                     return;
                 Tsanie.UI.Language.Lang.CultureInfo = new CultureInfo(value);
-                HttpHelper.CultureInfo = Tsanie.UI.Language.Lang.CultureInfo;
+                HttpHelper.CurrentUICulture = Tsanie.UI.Language.Lang.CultureInfo;
             }
         }
 
