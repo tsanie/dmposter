@@ -65,8 +65,10 @@ namespace Tsanie.DmPoster.Danmaku {
         public virtual float PlayTime {
             get { return _playTime; }
             set {
+#if !TRACE
                 if (value < 0)
                     throw new DanmakuPropertyException("PropertyInvalid, " + value, "PlayTime");
+#endif
                 _playTime = value;
             }
         }
@@ -77,8 +79,10 @@ namespace Tsanie.DmPoster.Danmaku {
         public virtual int Fontsize {
             get { return _fontsize; }
             set {
+#if !TRACE
                 if (value < 1 || value > 127)
                     throw new DanmakuPropertyException("PropertyInvalid, " + value, "Fontsize");
+#endif
                 _fontsize = value;
             }
         }

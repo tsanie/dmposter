@@ -435,4 +435,13 @@
   <data name="toolLabelPool" xml:space="preserve">
     <value>发往：</value>
   </data>
+  <data name="PostDanmaku" xml:space="preserve">
+    <value>发送弹幕</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>，确认吗？</value>
+  </data>
+  <data name="PostOnlySelected" xml:space="preserve">
+    <value>是否只发送已选中的弹幕？</value>
+  </data>
 </root>

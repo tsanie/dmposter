@@ -43,6 +43,7 @@ namespace Tsanie.Utils {
             if ((((ch >= 'a') && (ch <= 'z')) || ((ch >= 'A') && (ch <= 'Z'))) || ((ch >= '0') && (ch <= '9'))) {
                 return true;
             }
+#if SAFECHAR
             switch (ch) {
                 case '\'':
                 case '(':
@@ -54,21 +55,31 @@ namespace Tsanie.Utils {
                 case '!':
                     return true;
             }
+#endif
             return false;
         }
 
         private static byte[] UrlEncodeBytesToBytesInternal(byte[] bytes, int offset, int count, bool alwaysCreateReturnValue) {
+#if SAFECHAR
             int num = 0;
+#endif
             int num2 = 0;
             for (int i = 0; i < count; i++) {
                 char ch = (char)bytes[offset + i];
+#if SAFECHAR
                 if (ch == ' ') {
                     num++;
-                } else if (!IsSafe(ch)) {
-                    num2++;
-                }
+                } else
+#endif
+                    if (!IsSafe(ch)) {
+                        num2++;
+                    }
             }
-            if ((!alwaysCreateReturnValue && (num == 0)) && (num2 == 0)) {
+            if (!alwaysCreateReturnValue &&
+#if SAFECHAR
+                (num == 0) &&
+#endif
+                (num2 == 0)) {
                 return bytes;
             }
             byte[] buffer = new byte[count + (num2 * 2)];
@@ -78,8 +89,10 @@ namespace Tsanie.Utils {
                 char ch2 = (char)num6;
                 if (IsSafe(ch2)) {
                     buffer[num4++] = num6;
+#if SAFECHAR
                 } else if (ch2 == ' ') {
                     buffer[num4++] = 0x2b;
+#endif
                 } else {
                     buffer[num4++] = 0x25;
                     buffer[num4++] = (byte)IntToHex((num6 >> 4) & 15);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Timers;
+using Tsanie.Utils;
 
 namespace Tsanie.UI {
     public static class ControlsExtension {
@@ -62,6 +64,18 @@ namespace Tsanie.UI {
                 return;
             taskbar.SetProgressValue(window.Handle, (ulong)completed, (ulong)total);
         }
+
     }
 
+    public class ThreadExtension {
+        public static System.Timers.Timer SetTimeout(double interval, Action<ElapsedEventArgs> action) {
+            System.Timers.Timer timer = new System.Timers.Timer(interval);
+            timer.Elapsed += (sender, e) => {
+                action.SafeInvoke(e);
+                timer.Close();
+            };
+            timer.Start();
+            return timer;
+        }
+    }
 }

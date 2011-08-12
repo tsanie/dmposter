@@ -4,25 +4,70 @@ using System.Linq;
 using System.Text;
 
 namespace Tsanie.Network.Models {
+
+    /// <summary>
+    /// 登录用户模型
+    /// </summary>
     public class UserModel {
 
+        /// <summary>
+        /// 是否登录
+        /// </summary>
         public bool Login = false;
+        /// <summary>
+        /// 昵称
+        /// </summary>
         public string Name = null;
+        /// <summary>
+        /// Uid
+        /// </summary>
         public int User = 0;
+        /// <summary>
+        /// 积分数
+        /// </summary>
         public int Scores = 0;
+        /// <summary>
+        /// 硬币
+        /// </summary>
         public int Money = 0;
+        /// <summary>
+        /// 用户识别码（播放器用）
+        /// </summary>
         public string Pwd = null;
+        /// <summary>
+        /// 是否为管理员
+        /// </summary>
         public bool IsAdmin = false;
+        /// <summary>
+        /// 拥有的权限
+        /// </summary>
         public Level[] Permission = new Level[0];
+        /// <summary>
+        /// 权限字符串
+        /// </summary>
         public string Level = null;
+        /// <summary>
+        /// Shot
+        /// </summary>
         public bool Shot = false;
-        public int ChatID = 0;
-        public int Aid = 0;
-        public int Pid = 0;
-        public bool AcceptGuest = false;
-        public string Duration = null;
+        /// <summary>
+        /// 视频权限信息
+        /// </summary>
+        public VideoDad VideoDad = new VideoDad() {
+            ChatID = 0,
+            Aid = 0,
+            Pid = 0,
+            AcceptGuest = false,
+            Duration = null,
+            Cache = false
+        };
+        /// <summary>
+        /// Accept Accel
+        /// </summary>
         public bool AcceptAccel = false;
-        public bool Cache = false;
+        /// <summary>
+        /// 聊天服务器
+        /// </summary>
         public string Server = null;
     }
 

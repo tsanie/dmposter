@@ -10,6 +10,10 @@ using System.Reflection;
 using System.Globalization;
 
 namespace Tsanie.Network {
+
+    /// <summary>
+    /// Http 辅助类
+    /// </summary>
     public class HttpHelper {
         private static int _timeout = 10000;  // default to 10 秒
         private static string _userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Safari/534.12 Tsanie/" +
@@ -17,6 +21,9 @@ namespace Tsanie.Network {
             Assembly.GetExecutingAssembly().GetName().Version.Minor;
         private static CultureInfo _culture = null;
 
+        /// <summary>
+        /// 获取或设置超时时间（毫秒），默认10秒
+        /// </summary>
         public static int Timeout {
             get { return _timeout; }
             set {
@@ -24,19 +31,35 @@ namespace Tsanie.Network {
                     _timeout = value;
             }
         }
+        /// <summary>
+        /// 获取或设置用户代理字符串
+        /// </summary>
         public static string UserAgent {
             get { return _userAgent; }
             set { _userAgent = value; }
         }
-        public static CultureInfo CultureInfo {
+        /// <summary>
+        /// 获取或设置当前UI区域信息
+        /// </summary>
+        public static CultureInfo CurrentUICulture {
             get { return _culture; }
             set { _culture = value; }
         }
 
-        public static RequestState BeginConnect(string url,
+        /// <summary>
+        /// 开始连接请求
+        /// </summary>
+        /// <param name="url">url地址</param>
+        /// <param name="requestBefore">请求发出前回调, HttpWebRequest</param>
+        /// <param name="asyncCallback">回应回调，RequestState</param>
+        /// <param name="errCallback">异常回调</param>
+        /// <returns>该动作的请求状态实例</returns>
+        public static RequestState BeginConnect(
+            string url,
             Action<HttpWebRequest> requestBefore,
             Action<RequestState> asyncCallback,
-            Action<Exception> errCallback) {
+            Action<Exception> errCallback
+        ) {
             // 请求状态对象
             RequestState state = new RequestState() { Url = url };
             Thread result = new Thread(() => {
@@ -102,15 +125,43 @@ namespace Tsanie.Network {
         }
     }
 
+    /// <summary>
+    /// 请求状态类
+    /// </summary>
     public class RequestState {
+        /// <summary>
+        /// 默认的缓存块大小（1024）
+        /// </summary>
         public static readonly int BUFFER_SIZE = 1024;
 
+        /// <summary>
+        /// 获取缓存块
+        /// </summary>
         public byte[] Buffer { get; private set; }
-        public string Url { get; set; }
-        public HttpWebRequest Request { get; set; }
-        public HttpWebResponse Response { get; set; }
-        public Stream StreamResponse { get; set; }
-        public bool Cancelled { get; set; }
+        /// <summary>
+        /// 获取Url
+        /// </summary>
+        public string Url { get; internal set; }
+        /// <summary>
+        /// 获取连接请求
+        /// </summary>
+        public HttpWebRequest Request { get; internal set; }
+        /// <summary>
+        /// 获取连接回应
+        /// </summary>
+        public HttpWebResponse Response { get; internal set; }
+        /// <summary>
+        /// 获取连接回应数据流
+        /// </summary>
+        public Stream StreamResponse { get; internal set; }
+        /// <summary>
+        /// 获取连接是否已取消
+        /// </summary>
+        public bool Cancelled { get; internal set; }
+
+        /// <summary>
+        /// 构造请求状态实例
+        /// </summary>
         public RequestState() {
             Buffer = new byte[RequestState.BUFFER_SIZE];
             Request = null;

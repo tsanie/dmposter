@@ -9,14 +9,27 @@ using System.Text.RegularExpressions;
 using System.IO;
 
 namespace Tsanie.Network.Danmaku {
+
+    /// <summary>
+    /// BiLiBiLi 登录检查工具类
+    /// </summary>
     public class LoginChecker {
+
+        /// <summary>
+        /// 根据传入的Cookie获取其登录信息
+        /// </summary>
+        /// <param name="host">BiLiBiLi 主站地址</param>
+        /// <param name="cookie">Cookie 信息</param>
+        /// <param name="callback">用户模型回调, UserModel</param>
+        /// <param name="exCallback">异常回调</param>
+        /// <returns>该动作的请求状态实例</returns>
         public static RequestState CheckLogin(
             string host,
             string cookie,
             Action<UserModel> callback,
             Action<Exception> exCallback
         ) {
-            return HttpHelper.BeginConnect(host + "/dad.php?r=" + Utility.Rnd.NextDouble(),
+            return HttpHelper.BeginConnect(host.Default(Config.DEFAULT_HOST) + "/dad.php?r=" + Utility.Rnd.NextDouble(),
                 (request) => {
                     request.Headers["Cookie"] = cookie;
                 }, (state) => {
@@ -76,25 +89,25 @@ namespace Tsanie.Network.Danmaku {
                                 user.Shot = bool.Parse(value);
                                 break;
                             case "chatid":
-                                user.ChatID = int.Parse(value);
+                                user.VideoDad.ChatID = int.Parse(value);
                                 break;
                             case "aid":
-                                user.Aid = int.Parse(value);
+                                user.VideoDad.Aid = int.Parse(value);
                                 break;
                             case "pid":
-                                user.Pid = int.Parse(value);
+                                user.VideoDad.Pid = int.Parse(value);
                                 break;
                             case "acceptguest":
-                                user.AcceptGuest = bool.Parse(value);
+                                user.VideoDad.AcceptGuest = bool.Parse(value);
                                 break;
                             case "duration":
-                                user.Duration = value;
+                                user.VideoDad.Duration = value;
                                 break;
                             case "acceptaccel":
                                 user.AcceptAccel = bool.Parse(value);
                                 break;
                             case "cache":
-                                user.Cache = bool.Parse(value);
+                                user.VideoDad.Cache = bool.Parse(value);
                                 break;
                             case "server":
                                 user.Server = value;
