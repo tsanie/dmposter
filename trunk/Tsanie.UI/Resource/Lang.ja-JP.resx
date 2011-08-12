@@ -444,4 +444,19 @@
   <data name="PostOnlySelected" xml:space="preserve">
     <value>それは、弾幕が選択されて送信するだけです？</value>
   </data>
+  <data name="Posting" xml:space="preserve">
+    <value>送信された {0} 弾幕、戻り値：{1}</value>
+  </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>コレクションの弾幕を送信することは空です！</value>
+  </data>
+  <data name="NumberFormatInvalid" xml:space="preserve">
+    <value>デジタル形式が正しくありません！</value>
+  </data>
+  <data name="PostInterval" xml:space="preserve">
+    <value>間隔を送る</value>
+  </data>
+  <data name="Invalid" xml:space="preserve">
+    <value>無効な！</value>
+  </data>
 </root>

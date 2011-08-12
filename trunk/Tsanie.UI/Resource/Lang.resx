@@ -444,4 +444,19 @@
   <data name="PostOnlySelected" xml:space="preserve">
     <value>是否只发送已选中的弹幕？</value>
   </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>所要发送的弹幕集合为空！</value>
+  </data>
+  <data name="Posting" xml:space="preserve">
+    <value>已发送 {0} 条弹幕，返回值：{1}</value>
+  </data>
+  <data name="NumberFormatInvalid" xml:space="preserve">
+    <value>数字格式不正确！</value>
+  </data>
+  <data name="PostInterval" xml:space="preserve">
+    <value>发送间隔</value>
+  </data>
+  <data name="Invalid" xml:space="preserve">
+    <value>无效！</value>
+  </data>
 </root>

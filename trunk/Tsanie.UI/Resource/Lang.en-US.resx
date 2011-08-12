@@ -444,4 +444,19 @@
   <data name="PostOnlySelected" xml:space="preserve">
     <value>Do you want post danmakus only selected?</value>
   </data>
+  <data name="Posting" xml:space="preserve">
+    <value>{0} danmaku(s) has posted, return value: {1}</value>
+  </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>The collection will be posted is empty!</value>
+  </data>
+  <data name="NumberFormatInvalid" xml:space="preserve">
+    <value>Number format is not correct!</value>
+  </data>
+  <data name="PostInterval" xml:space="preserve">
+    <value>Post Interval</value>
+  </data>
+  <data name="Invalid" xml:space="preserve">
+    <value> invalid!</value>
+  </data>
 </root>

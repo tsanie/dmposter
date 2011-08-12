@@ -17,6 +17,16 @@ namespace Tsanie.Utils {
                 callback(t);
         }
 
+        public static void SafeInvoke<T1, T2>(this Action<T1, T2> callback, T1 t1, T2 t2) {
+            if (callback != null)
+                callback(t1, t2);
+        }
+
+        public static void SafeInvoke<T1, T2, T3>(this Action<T1, T2, T3> callback, T1 t1, T2 t2, T3 t3) {
+            if (callback != null)
+                callback(t1, t2, t3);
+        }
+
         public static void SafeInvoke(this Action callback) {
             if (callback != null)
                 callback();
