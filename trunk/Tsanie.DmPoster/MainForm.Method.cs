@@ -205,6 +205,7 @@ namespace Tsanie.DmPoster {
 
         private bool ApplyPermission(bool logined) {
             bool flag = true;
+            bool isPermission = false;
             if (!logined || _user == null) {
                 if (Config.Instance.PostInterval < 10000) {
                     Config.Instance.PostInterval = 10000;
@@ -214,6 +215,7 @@ namespace Tsanie.DmPoster {
                 if (_user.Permission.Contains(Level.Commenter) ||
                     _user.Permission.Contains(Level.Vip) ||
                     _user.Permission.Contains(Level.Major)) {
+                    isPermission = true;
                     // 0.5秒
                     if (Config.Instance.PostInterval < 500) {
                         Config.Instance.PostInterval = 500;
@@ -227,6 +229,12 @@ namespace Tsanie.DmPoster {
                 }
             }
             toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
+            if (!isPermission) {
+                toolComboPool.SelectedIndex = 0;
+                toolComboPool.Enabled = false;
+            } else {
+                toolComboPool.Enabled = true;
+            }
             return flag;
         }
         private void CheckLogin() {
