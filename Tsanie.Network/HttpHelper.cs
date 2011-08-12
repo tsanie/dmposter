@@ -65,6 +65,7 @@ namespace Tsanie.Network {
             Thread result = new Thread(() => {
                 try {
                     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+                    request.AllowAutoRedirect = false;
                     request.Method = "GET";
                     request.KeepAlive = true;
                     request.Accept = "*/*";
@@ -89,8 +90,7 @@ namespace Tsanie.Network {
                             if (ex is WebException) {
                                 if (((WebException)ex).Status == WebExceptionStatus.RequestCanceled) {
                                     LogUtil.Info(ex.Message);
-                                    if (errCallback != null)
-                                        errCallback(new CancelledException(state, ex.Message));
+                                    errCallback.SafeInvoke(new CancelledException(state, ex.Message));
                                     return;
                                 }
                             }

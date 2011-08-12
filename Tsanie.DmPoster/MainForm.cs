@@ -18,6 +18,7 @@ namespace Tsanie.DmPoster {
         private Dictionary<DanmakuBase, DataGridViewRow> _cacheRows;
         private UserModel _user;
         private RequestState _state;
+        private System.Timers.Timer _timer;
         private DataGridViewColumn _lastOrderColumn;
         private FileState _fileState;
         private string _fileName;
@@ -29,11 +30,14 @@ namespace Tsanie.DmPoster {
         public MainForm() {
             InitializeComponent();
             this.Icon = Tsanie.DmPoster.Properties.Resources.AppIcon;
+            this.toolTextInterval.LostFocus += new EventHandler(toolTextInterval_LostFocus);
+            this.toolComboPool.SelectedIndexChanged += new EventHandler(toolComboPool_SelectedIndexChanged);
             // 变量初始化
             _listDanmakus = new List<DanmakuBase>();
             _cacheRows = new Dictionary<DanmakuBase, DataGridViewRow>();
             _user = null;
             _state = null;
+            _timer = null;
             _lastOrderColumn = null;
             _fileName = null;
             _fileState = FileState.Untitled;
@@ -80,6 +84,7 @@ namespace Tsanie.DmPoster {
                     Width = 24,
                     MinimumWidth = 20,
                     ReadOnly = true,
+                    Resizable = DataGridViewTriState.False,
                     DefaultCellStyle = new DataGridViewCellStyle() { Font = new Font("Webdings", 9f) } },
                 new DataGridViewTextBoxColumn() {
                     Name = "datacolText",
@@ -115,6 +120,16 @@ namespace Tsanie.DmPoster {
                     #endregion
                 case "Download":
                     #region - 下载 -
+                    if (_fileState == FileState.Changed) {
+                        // 询问保存
+                        DialogResult dr = QuerySave();
+                        if (dr == System.Windows.Forms.DialogResult.Cancel)
+                            return;
+                        else if (dr == System.Windows.Forms.DialogResult.Yes)
+                            if (!SaveFile())
+                                return;
+                    }
+                    // 开始下载
                     SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
                     DownloadDanmaku(toolTextVid.Text.ToLower(), (count, failed) => {
                         if (failed > 0) {
@@ -152,18 +167,19 @@ namespace Tsanie.DmPoster {
                     #region - 发送 -
                     IEnumerable danmakuRows;
                     DataGridViewSelectedRowCollection rowCollection = gridDanmakus.SelectedRows;
-                    if (rowCollection.Count > 0) {
+                    int total = rowCollection.Count;
+                    if (total > 0) {
                         // 已选择
                         DialogResult dr = MessageBox.Show(
                             this,
                             Language.Lang["PostOnlySelected"],
-                            Language.Lang["PostDanmakus"],
+                            Language.Lang["PostDanmaku"],
                             MessageBoxButtons.YesNoCancel,
                             MessageBoxIcon.Question);
                         if (dr == System.Windows.Forms.DialogResult.Cancel)
                             return;
                         if (dr == System.Windows.Forms.DialogResult.Yes) {
-                            danmakuRows = new DataGridViewRow[rowCollection.Count];
+                            danmakuRows = new DataGridViewRow[total];
                             rowCollection.CopyTo((DataGridViewRow[])danmakuRows, 0);
                         } else {
                             danmakuRows = gridDanmakus.Rows;
@@ -172,28 +188,32 @@ namespace Tsanie.DmPoster {
                         // 发送所有
                         DialogResult dr = MessageBox.Show(
                             this,
-                            Language.Lang["PostDanmakus.Confirm"],
-                            Language.Lang["PostDanmakus"],
+                            Language.Lang["PostDanmaku.Confirm"],
+                            Language.Lang["PostDanmaku"],
                             MessageBoxButtons.OKCancel,
                             MessageBoxIcon.Question);
                         if (dr == System.Windows.Forms.DialogResult.Cancel)
                             return;
                         danmakuRows = gridDanmakus.Rows;
+                        total = gridDanmakus.RowCount;
                     }
-                    PostDanmakus(toolTextVid.Text, danmakuRows,
+                    PostDanmakus(toolTextVid.Text, danmakuRows, total,
                         (count) => {
                             // 总发送个数
-
+                            ShowMessage(Language.Lang["PostDanmaku.Succeed"], Language.Lang["PostDanmaku"],
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            EnabledUI(true, null, null, null);
+                            SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         }, (ex) => {
                             if (ex is CancelledException) {
-                                EnabledUI(true, null, Language.Lang[((CancelledException)ex).Command], null);
+                                EnabledUI(true, null, Language.Lang["PostDanmaku.Interrupt"], null);
                             } else {
                                 WebException webe = ex as WebException;
                                 if (webe != null && webe.Status == WebExceptionStatus.UnknownError) {
                                     ex = new Exception(Language.Lang[webe.Message]);
                                 }
-                                this.ShowExceptionMessage(ex, Language.Lang["PostDanmakus"]);
-                                EnabledUI(true, null, Language.Lang["PostDanmakus.Interrupt"], null);
+                                this.ShowExceptionMessage(ex, Language.Lang["PostDanmaku"]);
+                                EnabledUI(true, null, Language.Lang["PostDanmaku.Interrupt"], null);
                             }
                             SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         });
@@ -316,6 +336,29 @@ namespace Tsanie.DmPoster {
         private void gridDanmakus_DragDrop(object sender, DragEventArgs e) {
             string file = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
             LoadFile(file);
+        }
+
+        private void toolComboPool_SelectedIndexChanged(object sender, EventArgs e) {
+            Config.Instance.SetValue("Pool", toolComboPool.SelectedIndex);
+        }
+
+        private void toolTextInterval_LostFocus(object sender, EventArgs e) {
+            float f;
+            if (!float.TryParse(toolTextInterval.Text, out f)) {
+                ShowMessage(Language.Lang["NumberFormatInvalid"], Language.Lang["PostInterval"],
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
+                toolTextInterval.Focus();
+                return;
+            }
+            int interval = (int)(f * 1000);
+            Config.Instance.PostInterval = interval;
+            if (!ApplyPermission(true)) {
+                ShowMessage(Language.Lang["PostInterval.Invalid"], Language.Lang["PostInterval"],
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                toolTextInterval.Focus();
+            }
+            Config.Instance.SetValue("PostInterval", interval);
         }
 
         #endregion

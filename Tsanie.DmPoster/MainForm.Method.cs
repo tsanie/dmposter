@@ -36,7 +36,8 @@ namespace Tsanie.DmPoster {
             }
             toolButtonPost.Text = Language.Lang["toolButtonPost"];
             foreach (DataGridViewColumn column in gridDanmakus.Columns) {
-                if (column.Name != "datacolState")
+                if (column.Name != "datacolState" &&
+                    column.Name != "datacolChange")
                     column.HeaderText = Language.Lang[column.Name];
             }
         }
@@ -121,6 +122,9 @@ namespace Tsanie.DmPoster {
                     statusMessage.Text = message;
             });
         }
+        public void SetStatusMessage(string message) {
+            this.SafeRun(delegate { statusMessage.Text = message; });
+        }
         private void SetProgressState(TBPFLAG flag) {
             this.SafeRun(delegate {
                 Program.Taskbar.SetProgressState(this, flag);
@@ -195,9 +199,36 @@ namespace Tsanie.DmPoster {
             if (_cacheRows.TryGetValue(danmaku, out row))
                 return row;
             row = CreateRowFromDanmaku(danmaku);
+            _cacheRows.Add(danmaku, row);
             return row;
         }
 
+        private bool ApplyPermission(bool logined) {
+            bool flag = true;
+            if (!logined || _user == null) {
+                if (Config.Instance.PostInterval < 10000) {
+                    Config.Instance.PostInterval = 10000;
+                    flag = false;
+                }
+            } else {
+                if (_user.Permission.Contains(Level.Commenter) ||
+                    _user.Permission.Contains(Level.Vip) ||
+                    _user.Permission.Contains(Level.Major)) {
+                    // 0.5秒
+                    if (Config.Instance.PostInterval < 500) {
+                        Config.Instance.PostInterval = 500;
+                        flag = false;
+                    }
+                } else {
+                    if (Config.Instance.PostInterval < 5000) {
+                        Config.Instance.PostInterval = 5000;
+                        flag = false;
+                    }
+                }
+            }
+            toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
+            return flag;
+        }
         private void CheckLogin() {
             if (!string.IsNullOrEmpty(Config.Instance.Cookies)) {
                 EnabledUI(false, Language.Lang["CheckLogin"], Language.Lang["Communicating"], delegate {
@@ -212,23 +243,11 @@ namespace Tsanie.DmPoster {
                             _user = user;
                             this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.logined; });
                             EnabledUI(true, _user.Name + " (" + _user.Level + ")", Language.Lang["Done"], null);
-                            // 发送
-                            if (user.Permission.Contains(Level.Commenter) ||
-                                user.Permission.Contains(Level.Vip) ||
-                                user.Permission.Contains(Level.Major)) {
-                                // 0.5秒
-                                if (Config.Instance.PostInterval >= 500)
-                                    toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
-                                toolComboPool.Enabled = true;
-                                toolComboPool.SelectedIndex = Config.Instance.Pool;
-                            } else {
-                                // 5秒
-                                if (Config.Instance.PostInterval >= 5000)
-                                    toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
-                            }
+                            ApplyPermission(true);
                         } else {
                             this.SafeRun(delegate { statusAccountIcon.Image = Tsanie.DmPoster.Properties.Resources.guest; });
                             EnabledUI(true, Language.Lang["Guest"], Language.Lang["Done"], null);
+                            ApplyPermission(false);
                         }
                         SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                     }, (ex) => {
@@ -242,12 +261,12 @@ namespace Tsanie.DmPoster {
                             this.ShowExceptionMessage(ex, Language.Lang["CheckLogin"]);
                             EnabledUI(true, Language.Lang["Guest"], Language.Lang["CheckLogin.Failed"], null);
                         }
+                        ApplyPermission(false);
                         SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                     });
             } else {
                 EnabledUI(true, Language.Lang["Guest"], Language.Lang["Done"], null);
-                if (Config.Instance.PostInterval >= 10000)
-                    toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
+                ApplyPermission(false);
             }
         }
 
@@ -256,10 +275,9 @@ namespace Tsanie.DmPoster {
                 this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
             };
             // timer
-            System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
-            timer.Elapsed += (sender, e) => { refresher(); };
+            _timer = _timer.CreateTimer(Config.Interval, (e) => refresher());
             Action<Exception> exCall = (ex) => {
-                timer.Close();
+                _timer.Cancel();
                 refresher();
                 exCallback.SafeInvoke(ex);
             };
@@ -276,7 +294,7 @@ namespace Tsanie.DmPoster {
                         ChangeFileState(FileState.Changed);
                     });
                     _listDanmakus.Clear();
-                    timer.Start();
+                    _timer.Start();
                 };
                 Action<BiliDanmaku> danmakuCallback = (danmaku) => {
                     if (danmaku == null) {
@@ -288,7 +306,7 @@ namespace Tsanie.DmPoster {
                     }
                 };
                 Action doneCallback = delegate {
-                    timer.Close();
+                    _timer.Cancel();
                     refresher();
                     if (callback != null)
                         callback(count, failed);
@@ -297,8 +315,7 @@ namespace Tsanie.DmPoster {
                 if (avOrVid.StartsWith("av")) {
                     if (avOrVid.Length == 2)
                         throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
-                    avOrVid = avOrVid.Substring(2);
-                    string[] pars = avOrVid.Split(',');
+                    string[] pars = avOrVid.Substring(2).Split(',');
                     if (pars.Length > 2)
                         throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
                     int aid = int.Parse(pars[0]);
@@ -354,25 +371,88 @@ namespace Tsanie.DmPoster {
         private void PostDanmakus(
             string avOrVid,
             IEnumerable danmakus,
+            int total,
             Action<int> callback,
             Action<Exception> exCallback
         ) {
+            Action<Exception> exCall = (ex) => {
+                _timer.Cancel();
+                exCallback.SafeInvoke(ex);
+            };
             try {
+                IEnumerator enumerator = danmakus.GetEnumerator();
+                if (!enumerator.MoveNext())
+                    throw new Exception(Language.Lang["PostEmpty"]);
+                Action<int, int, BiliDanmaku> rtnCallback = (rtn, count, danmaku) => {
+                    SetProgressValue(count, total);
+                    GetCacheRow(danmaku).Cells[5].Value = "a";
+                    gridDanmakus.Invalidate();
+                    SetStatusMessage(string.Format(Language.Lang["Posting"], count, rtn));
+                };
+                Action<string> ready = (vid) => {
+                    EnabledUI(false, null, Language.Lang["PostDanmaku"], delegate {
+                        _timer.Cancel();
+                        _state.Cancel();
+                        _state = null;
+                        exCall.SafeInvoke(new CancelledException(null, "PostDanmaku.Interrupt"));
+                    });
+                    SetProgressState(TBPFLAG.TBPF_NORMAL);
+                    SetProgressValue(0, total);
+                    PostDanmaku(vid, 0, enumerator, rtnCallback, callback, exCall);
+                };
                 if (string.IsNullOrWhiteSpace(avOrVid))
                     throw new Exception(Language.Lang["AvVidEmpty"]);
-                IEnumerator enume;
+                if (avOrVid.StartsWith("av")) {
+                    if (avOrVid.Length == 2)
+                        throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
+                    string[] pars = avOrVid.Substring(2).Split(',');
+                    if (pars.Length > 2)
+                        throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
+                    int aid = int.Parse(pars[0]);
+                    int pageno = (pars.Length > 1 ? int.Parse(pars[1]) : 1);
+                    // 输入的是Av号
+                    GetVidFromAv(aid, pageno, ready, exCall);
+                } else {
+                    int.Parse(avOrVid);
+                    // Vid
+                    ready(avOrVid);
+                }
             } catch (Exception e) {
-                exCallback.SafeInvoke(e);
+                exCall.SafeInvoke(e);
             }
         }
         private void PostDanmaku(
             string vid,
+            int count,
             IEnumerator enumerator,
-            Action<int> responseCallback,
+            Action<int, int, BiliDanmaku> responseCallback,
+            Action<int> totalCallback,
             Action<Exception> exCallback
         ) {
-
-            //_state = Uploader.PostDanmaku(
+            DataGridViewRow row = (DataGridViewRow)enumerator.Current;
+            BiliDanmaku danmaku = (BiliDanmaku)_listDanmakus[row.Index];
+            _state = Uploader.PostDanmaku(
+                Config.Instance.HttpHost,
+                Config.PlayerPath,
+                Config.Instance.Cookies,
+                vid,
+                Config.Instance.Pool,
+                danmaku,
+                (total) => {
+                    // 返回
+                    count++;
+                    responseCallback.SafeInvoke(total, count, danmaku);
+                    if (!enumerator.MoveNext()) {
+                        // 完毕
+                        _timer.Cancel();
+                        totalCallback.SafeInvoke(count);
+                    } else {
+                        _timer = _timer.CreateTimeout(Config.Instance.PostInterval, delegate {
+                            PostDanmaku(vid, count, enumerator, responseCallback, totalCallback, exCallback);
+                        });
+                    }
+                },
+                exCallback);
         }
 
         private bool SaveFile() {
@@ -530,8 +610,7 @@ namespace Tsanie.DmPoster {
                     this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
                 };
                 // timer
-                System.Timers.Timer timer = new System.Timers.Timer(Config.Interval);
-                timer.Elapsed += (sender, e) => { refresher(); };
+                _timer = _timer.CreateTimer(Config.Interval, (e) => refresher());
                 // count
                 int count = 0;
                 int failed = 0;
@@ -546,7 +625,7 @@ namespace Tsanie.DmPoster {
                         IgnoreWhitespace = true
                     });
                 try {
-                    timer.Start();
+                    _timer.Start();
                     while (reader.Read()) {
                         if (reader.NodeType == XmlNodeType.Element) {
                             if (reader.LocalName == "data") {
@@ -595,7 +674,7 @@ namespace Tsanie.DmPoster {
                     }
                     reader.Close();
                     reader = null;
-                    timer.Close();
+                    _timer.Cancel();
                     refresher();
                     _fileName = fileName;
                     ChangeFileState(FileState.Opened);
@@ -605,7 +684,7 @@ namespace Tsanie.DmPoster {
                     }
                     done(string.Format(Language.Lang["LoadFileDone"], count));
                 } catch (ThreadAbortException) {
-                    timer.Close();
+                    _timer.Cancel();
                     refresher();
                     done(Language.Lang["LoadFile.Interrupt"]);
                 }

@@ -24,7 +24,7 @@ namespace Tsanie.Network {
         /// <param name="state">当前的请求状态实例</param>
         /// <param name="command">命令字符串</param>
         public CancelledException(RequestState state, string command)
-            : base(state.Url + " Interrupt.") {
+            : base((state == null ? null : state.Url) + " Interrupt.") {
             _command = command;
         }
 

@@ -21,6 +21,7 @@ namespace Tsanie.Network.Danmaku {
         /// <param name="cookie">Cookie 信息</param>
         /// <param name="playerPath">播放器地址</param>
         /// <param name="vid">弹幕池 Vid</param>
+        /// <param name="pool">将要发送到的弹幕池</param>
         /// <param name="danmaku">弹幕实例</param>
         /// <param name="callback"></param>
         /// <param name="exCallback"></param>
@@ -29,15 +30,12 @@ namespace Tsanie.Network.Danmaku {
             string host,
             string playerPath,
             string cookie,
-            int vid,
+            string vid,
+            int pool,
             BiliDanmaku danmaku,
             Action<int> callback,
             Action<Exception> exCallback
         ) {
-            if (danmaku == null) {
-                exCallback.SafeInvoke(new NullReferenceException("danmaku"));
-                return null;
-            }
             return HttpHelper.BeginConnect(host.Default(Config.DEFAULT_HOST) + "/dmpost",
                 (request) => {
                     request.Method = "POST";
@@ -50,21 +48,38 @@ namespace Tsanie.Network.Danmaku {
                             request.Headers["Origin"] = playerPath.Substring(0, index);
                         }
                     }
+                    request.Headers["Cookie"] = cookie;
                     string dataString = string.Format(
                         "mode={0}&rnd={1}&pool={2}&message={3}&date={4}&playTime={5}&fontsize={6}&vid={7}&color={8}",
                         (int)danmaku.Mode,
                         Utility.Rnd.Next(1000, 9999),
-                        danmaku.Pool,
+                        pool,
                         Utility.UrlEncode(danmaku.Text),
-                        Utility.UrlEncode(danmaku.Date.ToString(Config.DEFAULT_DATEFORMAT)),
+                        Utility.UrlEncode(DateTime.Now.ToString(Config.DEFAULT_DATEFORMAT)),
                         Utility.UrlEncode(danmaku.PlayTime.ToString()),
                         danmaku.Fontsize,
                         vid,
                         danmaku.Color.ToRgbIntString());
                     byte[] data = Encoding.ASCII.GetBytes(dataString);
+#if DEBUG
+                    foreach (string key in request.Headers.Keys) {
+                        Console.WriteLine("[" + key + "]\t" + " - " + request.Headers[key]);
+                    }
+                    Console.WriteLine(new string('-', 20));
+                    Console.WriteLine(dataString);
+                    Console.WriteLine(new string('-', 20));
+                    for (int i = 0; i < data.Length; i++) {
+                        Console.Write(data[i].ToString("X2") + " ");
+                        if (i % 21 == 20)
+                            Console.WriteLine();
+                    }
+                    Console.WriteLine();
+#endif
+                    request.ContentType = "application/x-www-form-urlencoded";
                     request.ContentLength = data.Length;
                     using (Stream stream = request.GetRequestStream()) {
                         stream.Write(data, 0, data.Length);
+                        stream.Flush();
                         stream.Close();
                     }
                 }, (state) => {

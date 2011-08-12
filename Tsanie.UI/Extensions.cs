@@ -67,7 +67,7 @@ namespace Tsanie.UI {
 
     }
 
-    public class ThreadExtension {
+    public static class ThreadExtension {
         public static System.Timers.Timer SetTimeout(double interval, Action<ElapsedEventArgs> action) {
             System.Timers.Timer timer = new System.Timers.Timer(interval);
             timer.Elapsed += (sender, e) => {
@@ -76,6 +76,33 @@ namespace Tsanie.UI {
             };
             timer.Start();
             return timer;
+        }
+
+        public static System.Timers.Timer CreateTimer(
+            this System.Timers.Timer timer,
+            double interval,
+            Action<ElapsedEventArgs> action
+        ) {
+            timer.Cancel();
+            timer = new System.Timers.Timer(interval);
+            timer.Elapsed += (sender, e) => {
+                action.SafeInvoke(e);
+            };
+            return timer;
+        }
+
+        public static System.Timers.Timer CreateTimeout(
+            this System.Timers.Timer timer,
+            double interval,
+            Action<ElapsedEventArgs> action
+        ) {
+            timer.Cancel();
+            return SetTimeout(interval, action);
+        }
+
+        public static void Cancel(this System.Timers.Timer timer) {
+            if (timer != null)
+                timer.Close();
         }
     }
 }

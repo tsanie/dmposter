@@ -247,6 +247,7 @@ namespace Tsanie.DmPoster {
                 _Pool = "0";
                 return 0;
             }
+            set { _Pool = value.ToString(); }
         }
     }
 }
