@@ -12,6 +12,7 @@ using Tsanie.Network;
 using Tsanie.Network.Models;
 using Tsanie.Network.Danmaku;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Tsanie.DmPoster {
     partial class MainForm {
@@ -110,6 +111,8 @@ namespace Tsanie.DmPoster {
                             toolButtonStop.ClickHandler = action;
                         }
                         toolButtonStop.Enabled = !enabled;
+                    } else if (item == toolButtonUpload) {
+                        toolButtonUpload.Enabled = enabled && _isPermission;
                     } else {
                         item.Enabled = enabled;
                     }
@@ -202,10 +205,63 @@ namespace Tsanie.DmPoster {
             _cacheRows.Add(danmaku, row);
             return row;
         }
+        private List<int> GetDanmakuEnumerable(string command, string prompt) {
+            int total;
+            return GetDanmakuEnumerable(command, prompt, out total);
+        }
+        private List<int> GetDanmakuEnumerable(string command, string prompt, out int total) {
+            List<int> danmakuRows = new List<int>();
+            int count = 0;
+            DataGridViewSelectedRowCollection rowCollection = gridDanmakus.SelectedRows;
+            if (rowCollection.Count > 0) {
+                // 已选择
+                DialogResult dr = MessageBox.Show(
+                    this,
+                    prompt,
+                    Language.Lang[command],
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
+                if (dr == System.Windows.Forms.DialogResult.Cancel) {
+                    total = 0;
+                    return null;
+                }
+                if (dr == System.Windows.Forms.DialogResult.Yes) {
+                    foreach (DataGridViewRow row in rowCollection) {
+                        count++;
+                        danmakuRows.Add(row.Index);
+                    }
+                }
+            } else {
+                // 发送所有
+                DialogResult dr = MessageBox.Show(
+                    this,
+                    Language.Lang[command + ".Confirm"],
+                    Language.Lang[command],
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question);
+                if (dr == System.Windows.Forms.DialogResult.Cancel) {
+                    total = 0;
+                    return null;
+                }
+            }
+            if (count == 0) {
+                foreach (DataGridViewRow row in gridDanmakus.Rows) {
+                    count++;
+                    danmakuRows.Add(row.Index);
+                }
+            }
+            if (count == 0) {// 无需要发送的弹幕
+                total = 0;
+                return null;
+            }
+            danmakuRows.Sort();
+            total = count;
+            return danmakuRows;
+        }
 
         private bool ApplyPermission(bool logined) {
             bool flag = true;
-            bool isPermission = false;
+            _isPermission = false;
             if (!logined || _user == null) {
                 if (Config.Instance.PostInterval < 10000) {
                     Config.Instance.PostInterval = 10000;
@@ -215,7 +271,7 @@ namespace Tsanie.DmPoster {
                 if (_user.Permission.Contains(Level.Commenter) ||
                     _user.Permission.Contains(Level.Vip) ||
                     _user.Permission.Contains(Level.Major)) {
-                    isPermission = true;
+                    _isPermission = true;
                     // 0.5秒
                     if (Config.Instance.PostInterval < 500) {
                         Config.Instance.PostInterval = 500;
@@ -229,12 +285,18 @@ namespace Tsanie.DmPoster {
                 }
             }
             toolTextInterval.Text = (Config.Instance.PostInterval / 1000.0f).ToString("0.0");
-            if (!isPermission) {
-                toolComboPool.SelectedIndex = 0;
-                toolComboPool.Enabled = false;
-            } else {
-                toolComboPool.Enabled = true;
-            }
+            this.SafeRun(delegate {
+                if (!_isPermission) {
+                    toolButtonUpload.Enabled = false;
+                    menuOperationUpload.Enabled = false;
+                    toolComboPool.SelectedIndex = 0;
+                    toolComboPool.Enabled = false;
+                } else {
+                    toolButtonUpload.Enabled = true;
+                    menuOperationUpload.Enabled = true;
+                    toolComboPool.Enabled = true;
+                }
+            });
             return flag;
         }
         private void CheckLogin() {
@@ -342,7 +404,7 @@ namespace Tsanie.DmPoster {
             }
         }
         private void GetVidFromAv(int aid, int pageno, Action<string> callback, Action<Exception> exCallback) {
-            EnabledUI(false, null, string.Format(Language.Lang["GetVidOfAv"], aid + "," + pageno), delegate {
+            EnabledUI(false, null, string.Format(Language.Lang["GetVidOfAvStatus"], aid + "," + pageno), delegate {
                 _state.Cancel();
                 _state = null;
             });
@@ -351,6 +413,19 @@ namespace Tsanie.DmPoster {
                 Config.Instance.Cookies,
                 aid,
                 pageno,
+                callback,
+                exCallback
+            );
+        }
+        private void GetDmIDFromVid(string vid, Action<string> callback, Action<Exception> exCallback) {
+            EnabledUI(false, null, string.Format(Language.Lang["GetDmIDOfVidStatus"], vid), delegate {
+                _state.Cancel();
+                _state = null;
+            });
+            _state = Downloader.GetDmIDOfVid(
+                Config.Instance.HttpHost,
+                Config.PlayerPath,
+                vid,
                 callback,
                 exCallback
             );
@@ -376,6 +451,55 @@ namespace Tsanie.DmPoster {
             );
         }
 
+        private void UploadDanmakus(
+            string avOrVid,
+            IEnumerable danmakus,
+            Action<string> callback,
+            Action<Exception> exCallback
+        ) {
+            try{
+                if (string.IsNullOrWhiteSpace(avOrVid))
+                    throw new Exception(Language.Lang["AvVidEmpty"]);
+                if (danmakus == null)
+                    throw new Exception(Language.Lang["PostEmpty"]);
+                Action<string> start = (dmid) => {
+                    EnabledUI(false, null, Language.Lang["UploadDanmakus"], delegate {
+                        _state.Cancel();
+                        _state = null;
+                        exCallback.SafeInvoke(new CancelledException(null, "UploadDanmakus.Interrupt"));
+                    });
+                    SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
+                    List<DanmakuBase> list = new List<DanmakuBase>();
+                    IEnumerator enumerator = danmakus.GetEnumerator();
+                    while (enumerator.MoveNext()){
+                        list.Add(_listDanmakus[(int)enumerator.Current]);
+                    }
+                    DanmakuBase[] lst = list.ToArray();
+                    Uploader.UploadDanmakus(Config.Instance.HttpHost, Config.Instance.Cookies,
+                        dmid, lst, callback, exCallback);
+                };
+                Action<string> vidToDmID = (vid) => { GetDmIDFromVid(vid, start, exCallback); };
+                // 开始
+                if (avOrVid.StartsWith("av")) {
+                    if (avOrVid.Length == 2)
+                        throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
+                    string[] pars = avOrVid.Substring(2).Split(',');
+                    if (pars.Length > 2)
+                        throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
+                    int aid = int.Parse(pars[0]);
+                    int pageno = (pars.Length > 1 ? int.Parse(pars[1]) : 1);
+                    // 输入的是Av号
+                    GetVidFromAv(aid, pageno, vidToDmID, exCallback);
+                } else {
+                    int.Parse(avOrVid);
+                    // Vid
+                    vidToDmID(avOrVid);
+                }
+            } catch (Exception e) {
+                exCallback.SafeInvoke(e);
+            }
+        }
+
         private void PostDanmakus(
             string avOrVid,
             IEnumerable danmakus,
@@ -388,6 +512,9 @@ namespace Tsanie.DmPoster {
                 exCallback.SafeInvoke(ex);
             };
             try {
+                if (string.IsNullOrWhiteSpace(avOrVid))
+                    throw new Exception(Language.Lang["AvVidEmpty"]);
+
                 IEnumerator enumerator = danmakus.GetEnumerator();
                 if (!enumerator.MoveNext())
                     throw new Exception(Language.Lang["PostEmpty"]);
@@ -408,8 +535,6 @@ namespace Tsanie.DmPoster {
                     SetProgressValue(0, total);
                     PostDanmaku(vid, 0, enumerator, rtnCallback, callback, exCall);
                 };
-                if (string.IsNullOrWhiteSpace(avOrVid))
-                    throw new Exception(Language.Lang["AvVidEmpty"]);
                 if (avOrVid.StartsWith("av")) {
                     if (avOrVid.Length == 2)
                         throw new Exception(Language.Lang["PropertyInvalidAvOrVid"]);
@@ -437,8 +562,8 @@ namespace Tsanie.DmPoster {
             Action<int> totalCallback,
             Action<Exception> exCallback
         ) {
-            DataGridViewRow row = (DataGridViewRow)enumerator.Current;
-            BiliDanmaku danmaku = (BiliDanmaku)_listDanmakus[row.Index];
+            int rowIndex = (int)enumerator.Current;
+            BiliDanmaku danmaku = (BiliDanmaku)_listDanmakus[rowIndex];
             _state = Uploader.PostDanmaku(
                 Config.Instance.HttpHost,
                 Config.PlayerPath,

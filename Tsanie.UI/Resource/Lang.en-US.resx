@@ -459,4 +459,16 @@
   <data name="Invalid" xml:space="preserve">
     <value> invalid!</value>
   </data>
+  <data name="UploadDanmakus" xml:space="preserve">
+    <value>Upload danmakus</value>
+  </data>
+  <data name="UploadOnlySelected" xml:space="preserve">
+    <value>Do you want upload danmakus only selected?</value>
+  </data>
+  <data name="GetDmIDOfVid" xml:space="preserve">
+    <value>Get the DmID</value>
+  </data>
+  <data name="GetDmIDOfVidStatus" xml:space="preserve">
+    <value>Getting the dmid of vid: {0}...</value>
+  </data>
 </root>

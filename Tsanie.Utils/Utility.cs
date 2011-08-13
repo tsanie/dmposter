@@ -14,13 +14,19 @@ namespace Tsanie.Utils {
         }
 
         public static string UrlEncode(string url) {
-            return UrlEncode(url, Encoding.UTF8);
+            return UrlEncode(url, Encoding.UTF8, false);
         }
         public static string UrlEncode(string url, Encoding encoding) {
+            return UrlEncode(url, encoding, false);
+        }
+        public static string UrlEncode(string url, bool notSafe) {
+            return UrlEncode(url, Encoding.UTF8, notSafe);
+        }
+        public static string UrlEncode(string url, Encoding encoding, bool notSafe) {
             if (url == null)
                 return null;
             byte[] bytes = encoding.GetBytes(url);
-            return Encoding.ASCII.GetString(UrlEncodeBytesToBytesInternal(bytes, 0, bytes.Length, false));
+            return Encoding.ASCII.GetString(UrlEncodeBytesToBytesInternal(bytes, 0, bytes.Length, false, notSafe));
         }
         public static string UrlDecode(string url) {
             return UrlDecode(url, Encoding.UTF8);
@@ -39,11 +45,12 @@ namespace Tsanie.Utils {
             return (char)((n - 10) + 0x41); // 0x61 => 0x41，修改%e6等为%E6
         }
 
-        internal static bool IsSafe(char ch) {
+        internal static bool IsSafe(char ch, bool notSafe) {
             if ((((ch >= 'a') && (ch <= 'z')) || ((ch >= 'A') && (ch <= 'Z'))) || ((ch >= '0') && (ch <= '9'))) {
                 return true;
             }
-#if SAFECHAR
+            if (!notSafe)
+                return false;
             switch (ch) {
                 case '\'':
                 case '(':
@@ -55,30 +62,28 @@ namespace Tsanie.Utils {
                 case '!':
                     return true;
             }
-#endif
             return false;
         }
 
-        private static byte[] UrlEncodeBytesToBytesInternal(byte[] bytes, int offset, int count, bool alwaysCreateReturnValue) {
-#if SAFECHAR
+        private static byte[] UrlEncodeBytesToBytesInternal(
+            byte[] bytes,
+            int offset,
+            int count,
+            bool alwaysCreateReturnValue,
+            bool notSafe
+        ) {
             int num = 0;
-#endif
             int num2 = 0;
             for (int i = 0; i < count; i++) {
                 char ch = (char)bytes[offset + i];
-#if SAFECHAR
-                if (ch == ' ') {
+                if (notSafe && ch == ' ') {
                     num++;
-                } else
-#endif
-                    if (!IsSafe(ch)) {
-                        num2++;
-                    }
+                } else if (!IsSafe(ch, notSafe)) {
+                    num2++;
+                }
             }
             if (!alwaysCreateReturnValue &&
-#if SAFECHAR
-                (num == 0) &&
-#endif
+                (notSafe && (num == 0)) &&
                 (num2 == 0)) {
                 return bytes;
             }
@@ -87,12 +92,10 @@ namespace Tsanie.Utils {
             for (int j = 0; j < count; j++) {
                 byte num6 = bytes[offset + j];
                 char ch2 = (char)num6;
-                if (IsSafe(ch2)) {
+                if (IsSafe(ch2, notSafe)) {
                     buffer[num4++] = num6;
-#if SAFECHAR
-                } else if (ch2 == ' ') {
+                } else if (notSafe && ch2 == ' ') {
                     buffer[num4++] = 0x2b;
-#endif
                 } else {
                     buffer[num4++] = 0x25;
                     buffer[num4++] = (byte)IntToHex((num6 >> 4) & 15);

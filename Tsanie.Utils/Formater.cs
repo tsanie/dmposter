@@ -13,7 +13,11 @@ namespace Tsanie.Utils {
         }
 
         public static string ToColorString(this Color color) {
-            return "#" + (color.ToArgb() & 0xffffff).ToString("X6");
+            return color.ToColorString(true);
+        }
+
+        public static string ToColorString(this Color color, bool mark) {
+            return (mark ? "#" : null) + (color.ToArgb() & 0xffffff).ToString("X6");
         }
 
         public static string ToRgbIntString(this Color color) {
