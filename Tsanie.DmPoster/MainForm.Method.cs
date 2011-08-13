@@ -589,16 +589,14 @@ namespace Tsanie.DmPoster {
         }
 
         private bool SaveFile() {
+            if (_fileState != FileState.Changed)
+                return false;
             if (_fileName == null) {
                 return SaveFileAs();
             }
-            if (_fileState != FileState.Changed)
-                return false;
             return SaveFilename(_fileName);
         }
         private bool SaveFileAs() {
-            if (_fileState != FileState.Changed)
-                return false;
             // 新文件
             SaveFileDialog dialog = new SaveFileDialog() {
                 DefaultExt = ".xml",
