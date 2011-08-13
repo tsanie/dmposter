@@ -22,6 +22,7 @@ namespace Tsanie.DmPoster {
         private DataGridViewColumn _lastOrderColumn;
         private FileState _fileState;
         private string _fileName;
+        private bool _isPermission;
 
         #endregion
 
@@ -40,6 +41,7 @@ namespace Tsanie.DmPoster {
             _timer = null;
             _lastOrderColumn = null;
             _fileName = null;
+            _isPermission = false;
             _fileState = FileState.Untitled;
             // DataGridView 列初始化
             #region - gridDanmakus -
@@ -165,38 +167,10 @@ namespace Tsanie.DmPoster {
                     #endregion
                 case "Post":
                     #region - 发送 -
-                    IEnumerable danmakuRows;
-                    DataGridViewSelectedRowCollection rowCollection = gridDanmakus.SelectedRows;
-                    int total = rowCollection.Count;
-                    if (total > 0) {
-                        // 已选择
-                        DialogResult dr = MessageBox.Show(
-                            this,
-                            Language.Lang["PostOnlySelected"],
-                            Language.Lang["PostDanmaku"],
-                            MessageBoxButtons.YesNoCancel,
-                            MessageBoxIcon.Question);
-                        if (dr == System.Windows.Forms.DialogResult.Cancel)
-                            return;
-                        if (dr == System.Windows.Forms.DialogResult.Yes) {
-                            danmakuRows = new DataGridViewRow[total];
-                            rowCollection.CopyTo((DataGridViewRow[])danmakuRows, 0);
-                        } else {
-                            danmakuRows = gridDanmakus.Rows;
-                        }
-                    } else {
-                        // 发送所有
-                        DialogResult dr = MessageBox.Show(
-                            this,
-                            Language.Lang["PostDanmaku.Confirm"],
-                            Language.Lang["PostDanmaku"],
-                            MessageBoxButtons.OKCancel,
-                            MessageBoxIcon.Question);
-                        if (dr == System.Windows.Forms.DialogResult.Cancel)
-                            return;
-                        danmakuRows = gridDanmakus.Rows;
-                        total = gridDanmakus.RowCount;
-                    }
+                    int total;
+                    IEnumerable danmakuRows = GetDanmakuEnumerable("PostDanmaku", Language.Lang["PostOnlySelected"], out total);
+                    if (danmakuRows == null)
+                        return;
                     PostDanmakus(toolTextVid.Text, danmakuRows, total,
                         (count) => {
                             // 总发送个数
@@ -214,6 +188,31 @@ namespace Tsanie.DmPoster {
                                 }
                                 this.ShowExceptionMessage(ex, Language.Lang["PostDanmaku"]);
                                 EnabledUI(true, null, Language.Lang["PostDanmaku.Interrupt"], null);
+                            }
+                            SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
+                        });
+                    break;
+                    #endregion
+                case "Upload":
+                    #region - 上传 -
+                    IEnumerable danmakuRows1 = GetDanmakuEnumerable("UploadDanmakus", Language.Lang["UploadOnlySelected"]);
+                    UploadDanmakus(toolTextVid.Text, danmakuRows1,
+                        (msg) => {
+                            // 返回信息
+                            ShowMessage(msg, Language.Lang["UploadDanmakus"],
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            EnabledUI(true, null, null, null);
+                            SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
+                        }, (ex) => {
+                            if (ex is CancelledException) {
+                                EnabledUI(true, null, Language.Lang["UploadDanmakus.Interrupt"], null);
+                            } else {
+                                WebException webe = ex as WebException;
+                                if (webe != null && webe.Status == WebExceptionStatus.UnknownError) {
+                                    ex = new Exception(Language.Lang[webe.Message]);
+                                }
+                                this.ShowExceptionMessage(ex, Language.Lang["UploadDanmakus"]);
+                                EnabledUI(true, null, Language.Lang["UploadDanmakus.Interrupt"], null);
                             }
                             SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         });

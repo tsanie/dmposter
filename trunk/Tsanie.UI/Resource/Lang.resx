@@ -459,4 +459,16 @@
   <data name="Invalid" xml:space="preserve">
     <value>无效！</value>
   </data>
+  <data name="GetDmIDOfVid" xml:space="preserve">
+    <value>获取 DmID</value>
+  </data>
+  <data name="GetDmIDOfVidStatus" xml:space="preserve">
+    <value>正在获取 vid: {0} 的 dmid...</value>
+  </data>
+  <data name="UploadDanmakus" xml:space="preserve">
+    <value>上传弹幕</value>
+  </data>
+  <data name="UploadOnlySelected" xml:space="preserve">
+    <value>是否只上传已选中的弹幕？</value>
+  </data>
 </root>

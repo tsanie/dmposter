@@ -48,7 +48,7 @@ namespace Tsanie.Network.Danmaku {
                         string line;
                         while ((line = reader.ReadLine()) != null) {
                             if (state.IsCancelled()) {
-                                reader.Dispose();
+                                reader.Close();
                                 throw new CancelledException(state, "GetVidOfAv.Interrupt");
                             }
                             int index = line.IndexOf("flashvars=\"");
@@ -60,9 +60,8 @@ namespace Tsanie.Network.Danmaku {
                                     index = pair.IndexOf("id=");
                                     if (index >= 0) {
                                         line = line.Substring(index + 3);
-                                        reader.Dispose();
-                                        if (callback != null)
-                                            callback(line);
+                                        reader.Close();
+                                        callback.SafeInvoke(line);
                                         return;
                                     }
                                 }
@@ -70,6 +69,54 @@ namespace Tsanie.Network.Danmaku {
                         }
                         reader.Close();
                         throw new CancelledException(state, "GetVidOfAv.Failed");
+                    }
+                }, exCallback);
+        }
+
+        /// <summary>
+        /// 根据传入的弹幕池Vid号获取其弹幕DmID号
+        /// </summary>
+        /// <param name="host">BiLiBiLi 主站地址</param>
+        /// <param name="playerPath">播放器路径</param>
+        /// <param name="vid">弹幕池 Vid</param>
+        /// <param name="callback">成功回调，string</param>
+        /// <param name="exCallback">异常回调</param>
+        /// <returns>该动作的请求状态实例</returns>
+        public static RequestState GetDmIDOfVid(
+            string host,
+            string playerPath,
+            string vid,
+            Action<string> callback,
+            Action<Exception> exCallback
+        ) {
+            string url = host.Default(Config.DEFAULT_HOST) + "/dm," + vid;
+            return HttpHelper.BeginConnect(url,
+                (request) => {
+                    request.Referer = playerPath.Default(Config.DEFAULT_PLAYERPATH);
+                }, (state) => {
+                    if (state.Response.StatusCode != System.Net.HttpStatusCode.OK)
+                        throw new WebException("GetDmIDOfVid.StatusNotOK. " +
+                            state.Response.StatusCode + ": " +
+                            state.Response.StatusDescription, WebExceptionStatus.UnknownError);
+                    // 读取压缩流
+                    using (StreamReader reader = new StreamReader(new DeflateStream(state.StreamResponse, CompressionMode.Decompress))) {
+                        Regex regex = new Regex("<chatid>([0-9]+?)</chatid>");
+                        string line;
+                        while ((line = reader.ReadLine()) != null) {
+                            if (state.IsCancelled()) {
+                                reader.Close();
+                                throw new CancelledException(state, "GetDmIDOfVid.Interrupt");
+                            }
+                            Match match = regex.Match(line);
+                            if (match != null) {
+                                // 匹配
+                                reader.Close();
+                                callback.SafeInvoke(match.Groups[1].Value);
+                                return;
+                            }
+                        }
+                        reader.Close();
+                        throw new CancelledException(state, "GetDmIDOfVid.Failed");
                     }
                 }, exCallback);
         }

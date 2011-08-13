@@ -459,4 +459,16 @@
   <data name="Invalid" xml:space="preserve">
     <value>無効な！</value>
   </data>
+  <data name="UploadDanmakus" xml:space="preserve">
+    <value>弾幕をアップロード</value>
+  </data>
+  <data name="UploadOnlySelected" xml:space="preserve">
+    <value>れだけで弾幕が選択されてアップロードされる？</value>
+  </data>
+  <data name="GetDmIDOfVid" xml:space="preserve">
+    <value>DmID を取得</value>
+  </data>
+  <data name="GetDmIDOfVidStatus" xml:space="preserve">
+    <value>DmID の vid: {0} を取得することです...</value>
+  </data>
 </root>

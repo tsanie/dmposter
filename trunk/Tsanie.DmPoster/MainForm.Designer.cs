@@ -189,6 +189,7 @@
             // menuOperationUpload
             // 
             this.menuOperationUpload.Image = global::Tsanie.DmPoster.Properties.Resources.upload;
+            this.menuOperationUpload.Enabled = false;
             this.menuOperationUpload.Name = "menuOperationUpload";
             this.menuOperationUpload.Size = new System.Drawing.Size(110, 22);
             this.menuOperationUpload.Tag = "Upload";
@@ -707,6 +708,7 @@
             // 
             this.toolButtonUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolButtonUpload.Image = global::Tsanie.DmPoster.Properties.Resources.upload;
+            this.toolButtonUpload.Enabled = false;
             this.toolButtonUpload.Name = "toolButtonUpload";
             this.toolButtonUpload.Size = new System.Drawing.Size(23, 22);
             this.toolButtonUpload.Tag = "Upload";
