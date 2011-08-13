@@ -41,6 +41,12 @@ namespace Tsanie.DmPoster {
                     column.Name != "datacolChange")
                     column.HeaderText = Language.Lang[column.Name];
             }
+            toolComboPool.Items.AddRange(new string[] {
+                Language.Lang["Pool_Normal"],
+                Language.Lang["Pool_Comment"],
+                Language.Lang["Pool_Special"]
+            });
+            toolComboPool.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -64,12 +70,6 @@ namespace Tsanie.DmPoster {
                     toolLabelInterval.Text = Language.Lang["toolLabelInterval"];
                     toolTextInterval.Font = Config.Instance.UIFont;
                     toolLabelPool.Text = Language.Lang["toolLabelPool"];
-                    toolComboPool.Items.AddRange(new string[] {
-                        Language.Lang["Pool_Normal"],
-                        Language.Lang["Pool_Comment"],
-                        Language.Lang["Pool_Special"]
-                    });
-                    toolComboPool.SelectedIndex = 0;
                 });
             }) { Name = "threadLoadUIText" }.Start();
         }
