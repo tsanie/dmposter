@@ -62,8 +62,11 @@ namespace Tsanie.Network {
         ) {
             // 请求状态对象
             RequestState state = new RequestState() { Url = url };
-            Thread result = new Thread(() => {
+            Thread result = ThreadExt.Create(_culture, delegate() {
                 try {
+#if DEBUG
+                    Thread.CurrentThread.WriteCulture();
+#endif
                     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
                     request.AllowAutoRedirect = false;
                     request.Method = "GET";
@@ -76,6 +79,11 @@ namespace Tsanie.Network {
                     state.Request = request;
                     // 开始异步请求
                     IAsyncResult ar = request.BeginGetResponse((iar) => {
+                        if (_culture != null)
+                            Thread.CurrentThread.CurrentUICulture = _culture;
+#if DEBUG
+                        Thread.CurrentThread.WriteCulture();
+#endif
                         RequestState requestState = (RequestState)iar.AsyncState;
                         HttpWebRequest webRequest = requestState.Request;
                         try {
@@ -107,11 +115,8 @@ namespace Tsanie.Network {
                 } catch (Exception e) {
                     LogUtil.Error(e, errCallback);
                 }
-            }) { Name = "httpThread_" + url };
-            // 设置 UI CultureInfo
-            if (_culture != null) {
-                result.CurrentUICulture = _culture;
-            }
+            });
+            result.Name = "httpThread_" + url;
             result.Start();
             return state;
         }

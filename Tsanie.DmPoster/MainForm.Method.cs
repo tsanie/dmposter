@@ -53,7 +53,7 @@ namespace Tsanie.DmPoster {
         /// 装载深层 UI 文字
         /// </summary>
         public void LoadUIText() {
-            new Thread(delegate() {
+            ThreadExt.Create("threadLoadUIText", Language.Lang.CultureInfo, delegate() {
                 foreach (ToolStripMenuItem item in menuStrip.Items) {
                     EnumMenuItem(item);
                 }
@@ -71,7 +71,7 @@ namespace Tsanie.DmPoster {
                     toolTextInterval.Font = Config.Instance.UIFont;
                     toolLabelPool.Text = Language.Lang["toolLabelPool"];
                 });
-            }) { Name = "threadLoadUIText" }.Start();
+            }).Start();
         }
 
         #endregion
@@ -395,7 +395,6 @@ namespace Tsanie.DmPoster {
                         (vid) => DownloadDanmakuFromVid(vid, readyCallback, danmakuCallback, doneCallback, exCall),
                         exCallback);
                 } else {
-                    int.Parse(avOrVid);
                     // Vid
                     DownloadDanmakuFromVid(avOrVid, readyCallback, danmakuCallback, doneCallback, exCall);
                 }
@@ -457,7 +456,7 @@ namespace Tsanie.DmPoster {
             Action<string> callback,
             Action<Exception> exCallback
         ) {
-            try{
+            try {
                 if (string.IsNullOrWhiteSpace(avOrVid))
                     throw new Exception(Language.Lang["AvVidEmpty"]);
                 if (danmakus == null)
@@ -471,7 +470,7 @@ namespace Tsanie.DmPoster {
                     SetProgressState(TBPFLAG.TBPF_INDETERMINATE);
                     List<DanmakuBase> list = new List<DanmakuBase>();
                     IEnumerator enumerator = danmakus.GetEnumerator();
-                    while (enumerator.MoveNext()){
+                    while (enumerator.MoveNext()) {
                         list.Add(_listDanmakus[(int)enumerator.Current]);
                     }
                     DanmakuBase[] lst = list.ToArray();
@@ -491,7 +490,6 @@ namespace Tsanie.DmPoster {
                     // 输入的是Av号
                     GetVidFromAv(aid, pageno, vidToDmID, exCallback);
                 } else {
-                    int.Parse(avOrVid);
                     // Vid
                     vidToDmID(avOrVid);
                 }
@@ -546,7 +544,6 @@ namespace Tsanie.DmPoster {
                     // 输入的是Av号
                     GetVidFromAv(aid, pageno, ready, exCall);
                 } else {
-                    int.Parse(avOrVid);
                     // Vid
                     ready(avOrVid);
                 }
@@ -736,7 +733,7 @@ namespace Tsanie.DmPoster {
             return LoadFile(_fileName);
         }
         private bool LoadFile(string fileName) {
-            Thread thread = new Thread(delegate() {
+            Thread thread = ThreadExt.Create(Language.Lang.CultureInfo, delegate() {
                 Action refresher = delegate {
                     this.SafeRun(delegate { gridDanmakus.RowCount = _listDanmakus.Count; });
                 };
@@ -819,7 +816,8 @@ namespace Tsanie.DmPoster {
                     refresher();
                     done(Language.Lang["LoadFile.Interrupt"]);
                 }
-            }) { Name = "threadLoadFile_" + fileName };
+            });
+            thread.Name = "threadLoadFile_" + fileName;
             EnabledUI(false, null, Language.Lang["LoadFile"], delegate {
                 if (thread.ThreadState != ThreadState.Stopped)
                     thread.Abort();

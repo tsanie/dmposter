@@ -106,22 +106,22 @@ namespace Tsanie.DmPoster {
         private void Command_OnAction(object sender, EventArgs e) {
             string command = (sender as ToolStripItem).Tag as string;
             switch (command) {
+                #region - 登录 -
                 case "Login":
-                    #region - 登录 -
                     LoginForm login = new LoginForm();
                     DialogResult result = login.ShowDialog(this);
                     if (result == System.Windows.Forms.DialogResult.OK) {
                         CheckLogin();
                     }
                     break;
-                    #endregion
+                #endregion
+                #region - 打开 -
                 case "Open":
-                    #region - 打开 -
                     LoadFile();
                     break;
-                    #endregion
+                #endregion
+                #region - 下载 -
                 case "Download":
-                    #region - 下载 -
                     if (_fileState == FileState.Changed) {
                         // 询问保存
                         DialogResult dr = QuerySave();
@@ -154,19 +154,19 @@ namespace Tsanie.DmPoster {
                         SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                     });
                     break;
-                    #endregion
+                #endregion
+                #region - 保存 -
                 case "Save":
-                    #region - 保存 -
                     SaveFile();
                     break;
-                    #endregion
+                #endregion
+                #region - 另存为 -
                 case "SaveAs":
-                    #region - 另存为 -
                     SaveFileAs();
                     break;
-                    #endregion
+                #endregion
+                #region - 发送 -
                 case "Post":
-                    #region - 发送 -
                     int total;
                     IEnumerable danmakuRows = GetDanmakuEnumerable("PostDanmaku", Language.Lang["PostOnlySelected"], out total);
                     if (danmakuRows == null)
@@ -192,9 +192,9 @@ namespace Tsanie.DmPoster {
                             SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         });
                     break;
-                    #endregion
+                #endregion
+                #region - 上传 -
                 case "Upload":
-                    #region - 上传 -
                     IEnumerable danmakuRows1 = GetDanmakuEnumerable("UploadDanmakus", Language.Lang["UploadOnlySelected"]);
                     UploadDanmakus(toolTextVid.Text, danmakuRows1,
                         (msg) => {
@@ -217,13 +217,20 @@ namespace Tsanie.DmPoster {
                             SetProgressState(TBPFLAG.TBPF_NOPROGRESS);
                         });
                     break;
-                    #endregion
+                #endregion
+
+                #region - 播放器 -
+                case "Player":
+                    Program.PlayerForm = new PlayerForm();
+                    Program.PlayerForm.Show(this);
+                    break;
+                #endregion
+                #region - 退出 -
                 case "Exit":
-                    #region - 退出 -
                     this.Close();
                     Application.Exit();
                     break;
-                    #endregion
+                #endregion
                 default:
                     this.ShowMessage(Language.Lang["NotImplemented"] + ": " + command, Language.Lang["Event"],
                                      MessageBoxButtons.OK, MessageBoxIcon.Warning);
