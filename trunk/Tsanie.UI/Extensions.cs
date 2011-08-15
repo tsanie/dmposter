@@ -5,6 +5,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Timers;
 using Tsanie.Utils;
+using System.Threading;
+using System.Globalization;
 
 namespace Tsanie.UI {
     public static class ControlsExtension {

@@ -12,6 +12,9 @@ namespace Tsanie.DmPoster {
     static class Program {
         public static readonly Version Version;
         public static readonly ITaskbarList3 Taskbar;
+        private static MainForm _mainForm;
+        public static MainForm MainForm { get { return _mainForm; } }
+        public static PlayerForm PlayerForm;
 
         static Program() {
             Version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -21,6 +24,8 @@ namespace Tsanie.DmPoster {
                 Taskbar = (ITaskbarList3)new ProgressTaskbar();
 
             Config.GetInstance();
+            _mainForm = null;
+            PlayerForm = null;
         }
 
         /// <summary>
@@ -55,9 +60,16 @@ namespace Tsanie.DmPoster {
                 });
             return;
 #endif
+            System.Threading.Thread.CurrentThread.CurrentUICulture = Language.Lang.CultureInfo;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.ThreadExit += new EventHandler(Application_ThreadExit);
+            Program._mainForm = new DmPoster.MainForm();
+            Application.Run(Program._mainForm);
+        }
+
+        static void Application_ThreadExit(object sender, EventArgs e) {
+            Console.WriteLine(System.Threading.Thread.CurrentThread.Name);
         }
 
     }

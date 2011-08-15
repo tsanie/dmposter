@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Globalization;
 
 namespace Tsanie.Utils {
 
@@ -43,6 +45,27 @@ namespace Tsanie.Utils {
         /// <returns>返回值为空则返回默认值</returns>
         public static string Default(this string value, string defaultValue) {
             return (value == null ? defaultValue : value);
+        }
+    }
+
+    public static class ThreadExt {
+        public static Thread Create(CultureInfo cultureInfo, ThreadStart start) {
+            return ThreadExt.Create(null, cultureInfo, start);
+        }
+        public static Thread Create(string name, CultureInfo cultureInfo, ThreadStart start) {
+            if (cultureInfo == null)
+                return new Thread(start) { Name = name };
+            return new Thread(start) {
+                Name = name,
+                CurrentUICulture = cultureInfo
+            };
+        }
+        public static void WriteCulture(this Thread thread) {
+            Console.WriteLine("[{0:HH:mm:ss.fffffff}] {1}: {2} - {3}",
+                DateTime.Now,
+                thread.ManagedThreadId,
+                thread.Name ?? "Untitled",
+                thread.CurrentUICulture);
         }
     }
 }
